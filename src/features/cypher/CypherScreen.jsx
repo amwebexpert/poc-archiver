@@ -28,6 +28,8 @@ export const CypherScreen = () => {
       <View style={styles.root}>
         <TextInput
           label="Data"
+          multiline={true}
+          numberOfLines={5}
           placeholder="Type some text here"
           mode="outlined"
           value={text}
@@ -37,7 +39,7 @@ export const CypherScreen = () => {
           label="Result"
           multiline={true}
           numberOfLines={5}
-          placeholder="Type some text here"
+          placeholder="Result will be displayed here"
           mode="outlined"
           value={result}
         />
