@@ -6,13 +6,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
 import { HomeScreen } from "~/features/home/HomeScreen";
-import { CombinedDefaultTheme } from "~/theme";
+import { appTheme } from "~/theme";
 
 const Drawer = createDrawerNavigator();
 
 const App = () => (
-  <NavigationContainer theme={CombinedDefaultTheme}>
-    <PaperProvider theme={CombinedDefaultTheme}>
+  <NavigationContainer theme={appTheme}>
+    <PaperProvider theme={appTheme}>
       <Drawer.Navigator
         initialRouteName="Home"
         screenOptions={{ headerShown: false }}
@@ -23,7 +23,13 @@ const App = () => (
           initialParams={{}}
           options={{
             title: "Home screen",
-            drawerIcon: ({ size }) => <Ionicons name="md-home" size={size} />,
+            drawerIcon: ({ size }) => (
+              <Ionicons
+                name="md-home"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
           }}
         />
         <Drawer.Screen
@@ -31,7 +37,13 @@ const App = () => (
           component={SettingsScreen}
           options={{
             title: "Settings screen",
-            drawerIcon: ({ size }) => <Ionicons name="settings" size={size} />,
+            drawerIcon: ({ size }) => (
+              <Ionicons
+                name="settings"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
           }}
           initialParams={{}}
         />

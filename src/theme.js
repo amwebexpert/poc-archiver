@@ -30,3 +30,6 @@ export const CombinedDarkTheme = {
     ...DarkTheme.colors,
   },
 };
+
+// default theme until we provide a user preference and a theme toggle context
+export const appTheme = CombinedDarkTheme;
