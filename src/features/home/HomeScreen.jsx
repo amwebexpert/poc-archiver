@@ -1,9 +1,11 @@
-import { DrawerActions } from "@react-navigation/native";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import { View } from "react-native";
 import { Text, Button, Appbar } from "react-native-paper";
 
-export function HomeScreen({ navigation }) {
+export const HomeScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <>
       <Appbar.Header>

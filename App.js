@@ -10,38 +10,34 @@ import { CombinedDefaultTheme } from "~/theme";
 
 const Drawer = createDrawerNavigator();
 
-function App() {
-  return (
-    <NavigationContainer theme={CombinedDefaultTheme}>
-      <PaperProvider theme={CombinedDefaultTheme}>
-        <Drawer.Navigator
-          initialRouteName="Home"
-          screenOptions={{ headerShown: false }}
-        >
-          <Drawer.Screen
-            name="Home"
-            component={HomeScreen}
-            initialParams={{}}
-            options={{
-              title: "Home screen",
-              drawerIcon: ({ size }) => <Ionicons name="md-home" size={size} />,
-            }}
-          />
-          <Drawer.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{
-              title: "Settings screen",
-              drawerIcon: ({ size }) => (
-                <Ionicons name="settings" size={size} />
-              ),
-            }}
-            initialParams={{}}
-          />
-        </Drawer.Navigator>
-      </PaperProvider>
-    </NavigationContainer>
-  );
-}
+const App = () => (
+  <NavigationContainer theme={CombinedDefaultTheme}>
+    <PaperProvider theme={CombinedDefaultTheme}>
+      <Drawer.Navigator
+        initialRouteName="Home"
+        screenOptions={{ headerShown: false }}
+      >
+        <Drawer.Screen
+          name="Home"
+          component={HomeScreen}
+          initialParams={{}}
+          options={{
+            title: "Home screen",
+            drawerIcon: ({ size }) => <Ionicons name="md-home" size={size} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            title: "Settings screen",
+            drawerIcon: ({ size }) => <Ionicons name="settings" size={size} />,
+          }}
+          initialParams={{}}
+        />
+      </Drawer.Navigator>
+    </PaperProvider>
+  </NavigationContainer>
+);
 
 export default App;

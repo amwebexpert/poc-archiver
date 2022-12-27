@@ -1,9 +1,13 @@
-import { DrawerActions, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  DrawerActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import * as React from "react";
 import { View } from "react-native";
 import { Text, Button, Appbar } from "react-native-paper";
 
-export function SettingsScreen() {
+export const SettingsScreen = () => {
   const route = useRoute();
   const { itemId, otherParam } = route.params;
   const navigation = useNavigation();
@@ -32,4 +36,4 @@ export function SettingsScreen() {
       </View>
     </>
   );
-}
+};
