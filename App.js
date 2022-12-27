@@ -9,6 +9,7 @@ import { SettingsScreen } from "~/features/settings/SettingsScreen";
 import { HomeScreen } from "~/features/home/HomeScreen";
 import { appTheme } from "~/theme";
 import { CypherScreen } from "./src/features/cypher/CypherScreen";
+import { FilesScreen } from "./src/features/files/FilesScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -16,7 +17,7 @@ const App = () => (
   <NavigationContainer theme={appTheme}>
     <PaperProvider theme={appTheme}>
       <Drawer.Navigator
-        initialRouteName="Cypher"
+        initialRouteName="Files"
         screenOptions={{ headerShown: false }}
       >
         <Drawer.Screen
@@ -42,6 +43,21 @@ const App = () => (
             drawerIcon: ({ size }) => (
               <MaterialIcons
                 name="enhanced-encryption"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
+          }}
+          initialParams={{}}
+        />
+        <Drawer.Screen
+          name="Files"
+          component={FilesScreen}
+          options={{
+            title: "Files screen",
+            drawerIcon: ({ size }) => (
+              <MaterialIcons
+                name="save"
                 size={size}
                 color={appTheme.colors.secondary}
               />
