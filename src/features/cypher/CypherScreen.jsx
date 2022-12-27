@@ -1,10 +1,14 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import { View, StyleSheet, ToastAndroid } from "react-native";
+import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 export const CypherScreen = () => {
   const [text, setText] = React.useState("Here the text to encrypt");
+
+  const encryptData = () => {
+    ToastAndroid.show(text, ToastAndroid.SHORT);
+  }
 
   return (
     <AppLayout title="Cypher screen">
@@ -17,6 +21,13 @@ export const CypherScreen = () => {
           onChangeText={(text) => setText(text)}
         />
       </View>
+
+      <Button
+          mode="contained"
+          onPress={encryptData}
+        >
+          Encrypt
+        </Button>
     </AppLayout>
   );
 };
@@ -24,6 +35,5 @@ export const CypherScreen = () => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    margin: 8,
   },
 });
