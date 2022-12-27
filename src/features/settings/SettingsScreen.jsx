@@ -2,7 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import * as React from "react";
 import { View } from "react-native";
 import { Text, Button } from "react-native-paper";
-import { NavBar } from "~/components/navbar/NavBar";
+import { AppLayout } from "../../components/layout/AppLayout";
 
 export const SettingsScreen = () => {
   const route = useRoute();
@@ -10,8 +10,7 @@ export const SettingsScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <>
-      <NavBar title="Settings screen"></NavBar>
+    <AppLayout title="Settings screen">
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Settings Screen</Text>
         <Text>itemId: {JSON.stringify(itemId)}</Text>
@@ -25,6 +24,6 @@ export const SettingsScreen = () => {
           Go back
         </Button>
       </View>
-    </>
+    </AppLayout>
   );
 };

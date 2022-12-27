@@ -1,28 +1,29 @@
 import * as React from "react";
-import { View } from "react-native";
-import { NavBar } from "~/components/navbar/NavBar";
+import { View, StyleSheet } from "react-native";
+import { TextInput } from "react-native-paper";
+import { AppLayout } from "~/components/layout/AppLayout";
 
 export const CypherScreen = () => {
-  const [text, setText] = React.useState("");
+  const [text, setText] = React.useState("Here the text to encrypt");
 
   return (
-    <>
-      <NavBar title="Cypher screen"></NavBar>
+    <AppLayout title="Cypher screen">
       <View style={styles.root}>
         <TextInput
-          label="Email"
+          label="Text to encrypt"
+          placeholder="Type some text here"
+          mode="outlined"
           value={text}
           onChangeText={(text) => setText(text)}
         />
       </View>
-    </>
+    </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    margin: 8,
   },
 });

@@ -3,10 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as React from "react";
 import { Provider as PaperProvider } from "react-native-paper";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
 import { HomeScreen } from "~/features/home/HomeScreen";
 import { appTheme } from "~/theme";
+import { CypherScreen } from "./src/features/cypher/CypherScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -31,6 +33,21 @@ const App = () => (
               />
             ),
           }}
+        />
+        <Drawer.Screen
+          name="Cypher"
+          component={CypherScreen}
+          options={{
+            title: "Cypher screen",
+            drawerIcon: ({ size }) => (
+              <MaterialIcons
+                name="enhanced-encryption"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
+          }}
+          initialParams={{}}
         />
         <Drawer.Screen
           name="Settings"
