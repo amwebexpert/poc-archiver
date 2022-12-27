@@ -1,23 +1,46 @@
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
 import * as React from "react";
 import { Provider as PaperProvider } from "react-native-paper";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { CombinedDarkTheme, CombinedDefaultTheme } from "~/theme";
-import { HomeScreen } from "~/features/home/HomeScreen";
-import { DetailsScreen } from "~/features/details/DetailsScreen";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const Stack = createNativeStackNavigator();
+import { SettingsScreen } from "~/features/settings/SettingsScreen";
+import { HomeScreen } from "~/features/home/HomeScreen";
+import { CombinedDefaultTheme } from "~/theme";
+
+const Drawer = createDrawerNavigator();
 
 function App() {
   return (
-    <PaperProvider theme={CombinedDefaultTheme}>
-      <NavigationContainer theme={CombinedDefaultTheme}>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Details" component={DetailsScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <NavigationContainer theme={CombinedDefaultTheme}>
+      <PaperProvider theme={CombinedDefaultTheme}>
+        <Drawer.Navigator
+          initialRouteName="Home"
+          screenOptions={{ headerShown: false }}
+        >
+          <Drawer.Screen
+            name="Home"
+            component={HomeScreen}
+            initialParams={{}}
+            options={{
+              title: "Home screen",
+              drawerIcon: ({ size }) => <Ionicons name="md-home" size={size} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              title: "Settings screen",
+              drawerIcon: ({ size }) => (
+                <Ionicons name="settings" size={size} />
+              ),
+            }}
+            initialParams={{}}
+          />
+        </Drawer.Navigator>
+      </PaperProvider>
+    </NavigationContainer>
   );
 }
 
