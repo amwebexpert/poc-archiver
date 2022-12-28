@@ -4,32 +4,46 @@ import { Button, Snackbar, TextInput } from "react-native-paper";
 import * as FileSystem from "expo-file-system";
 import { AppLayout } from "~/components/layout/AppLayout";
 import { LONG_TEXT } from "./data";
+import * as fileService from "~/services/file-service";
 
 export const FilesScreen = () => {
-  const fileUri = FileSystem.documentDirectory + "device-data.txt";
+  const filename = "device-data.txt";
+  const fileUri = FileSystem.documentDirectory + filename;
   const [text, setText] = React.useState(LONG_TEXT);
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const saveData = async () => {
-    const fileInfo = await FileSystem.getInfoAsync(fileUri);
-    await FileSystem.writeAsStringAsync(fileUri, text, {
-      encoding: FileSystem.EncodingType.UTF8,
+    const { exists, error } = await fileService.saveTextContent({
+      fileUri,
+      text,
     });
-    if (fileInfo.exists) {
-      setSnackbarText(`File replaced:\n ${fileUri}`);
+
+    if (error) {
+      setSnackbarText(`Error while storing data:\n ➡ ${error.message}`);
+      return;
+    }
+
+    if (exists) {
+      setSnackbarText(`File replaced:\n ➡ ${filename}`);
+    } else {
+      setSnackbarText(`File created:\n ➡ ${filename}`);
     }
   };
 
   const loadData = async () => {
-    const fileInfo = await FileSystem.getInfoAsync(fileUri);
-    if (fileInfo.exists) {
-      const deviceTextFileContent = await FileSystem.readAsStringAsync(
-        fileUri,
-        { encoding: FileSystem.EncodingType.UTF8 }
-      );
-      setText(deviceTextFileContent);
+    const { exists, content, error } = await fileService.loadTextContent(
+      fileUri
+    );
+
+    if (!exists) {
+      setSnackbarText(`File not found:\n ➡ ${filename}`);
+      return;
+    }
+
+    if (error) {
+      setSnackbarText(`Error while loading:\n ➡ ${error.message}`);
     } else {
-      setSnackbarText(`File not found:\n ${fileUri}`);
+      setText(content);
     }
   };
 
@@ -38,12 +52,17 @@ export const FilesScreen = () => {
   };
 
   const deleteFile = async () => {
-    const fileInfo = await FileSystem.getInfoAsync(fileUri);
-    if (fileInfo.exists) {
-      await FileSystem.deleteAsync(fileUri);
-      setSnackbarText(`File deleted`);
+    const { exists, error } = await fileService.deleteFile(fileUri);
+
+    if (!exists) {
+      setSnackbarText(`File not found:\n ➡ ${filename}`);
+      return;
+    }
+
+    if (error) {
+      setSnackbarText(`Error while deleting:\n ➡ ${error.message}`);
     } else {
-      setSnackbarText(`File not found:\n ${fileUri}`);
+      setSnackbarText(`File deleted:\n ➡ ${filename}`);
     }
   };
 

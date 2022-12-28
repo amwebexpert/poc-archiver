@@ -1,26 +1,22 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
-import CryptoES from "crypto-es";
 
-export const CypherScreen = () => {
-  const [text, setText] = React.useState("Data: ➡ Here the original data in clear text.");
+import * as fileService from "~/services/file-service";
+import * as archiveService from "~/services/archive-service";
+
+export const DatabaseScreen = () => {
+  const [text, setText] = React.useState("Data: ➡ Here the data as text");
   const [result, setResult] = React.useState("");
 
-  const encryptData = () => {
-    const result = CryptoES.AES.encrypt(text, "my-passphrase");
-    setResult(result.toString());
-  };
+  const insertData = () => {
+    const filename = "device-data.txt";
+    const fileUri = fileService.getDocumentFullFilename(filename);
+    const archive = archiveService.getUniqueDbFilename();
 
-  const decryptData = () => {
-    const result = CryptoES.AES.decrypt(text, "my-passphrase");
-    setResult(result.toString(CryptoES.enc.Utf8));
-  };
-
-  const switchResult = () => {
-    setText(result);
-    setResult("");
+    const { dbFilename } = archiveService.archiveFile(archive, fileUri);
+    setResult(dbFilename);
   };
 
   return (
@@ -29,7 +25,7 @@ export const CypherScreen = () => {
         <TextInput
           label="Data"
           multiline={true}
-          numberOfLines={5}
+          numberOfLines={1}
           placeholder="Type some text here"
           mode="outlined"
           value={text}
@@ -46,16 +42,8 @@ export const CypherScreen = () => {
       </View>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={encryptData}>
-          Encrypt
-        </Button>
-
-        <Button mode="contained" onPress={decryptData}>
-          Decrypt
-        </Button>
-
-        <Button mode="contained" onPress={switchResult}>
-          Switch result
+        <Button mode="contained" onPress={insertData}>
+          Insert
         </Button>
       </View>
     </AppLayout>

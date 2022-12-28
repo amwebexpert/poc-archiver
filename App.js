@@ -4,12 +4,14 @@ import * as React from "react";
 import { Provider as PaperProvider } from "react-native-paper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
 import { HomeScreen } from "~/features/home/HomeScreen";
 import { appTheme } from "~/theme";
 import { CypherScreen } from "./src/features/cypher/CypherScreen";
 import { FilesScreen } from "./src/features/files/FilesScreen";
+import { DatabaseScreen } from "./src/features/database/DatabaseScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -34,6 +36,21 @@ const App = () => (
               />
             ),
           }}
+        />
+        <Drawer.Screen
+          name="Database"
+          component={DatabaseScreen}
+          options={{
+            title: "Database screen",
+            drawerIcon: ({ size }) => (
+              <MaterialCommunityIcons
+                name="database"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
+          }}
+          initialParams={{}}
         />
         <Drawer.Screen
           name="Cypher"
