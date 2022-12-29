@@ -1,31 +1,17 @@
 import React from "react";
-import { useAssets } from "expo-asset";
 
 import { View, StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
-
-import * as fileService from "~/services/file-service";
-import * as archiveService from "~/services/archive-service";
-import { AppAssets } from "~/assets";
+import * as service from "./service";
 
 export const DatabaseScreen = () => {
   const [text, setText] = React.useState("");
   const [result, setResult] = React.useState("");
 
-  const insertData = () => {
-    const filename = "device-data.txt";
-    const textFileUri = fileService.getDocumentFullFilename(filename);
-    const filesToArchive = [
-      textFileUri,
-      AppAssets.backgrounds.dark.localUri,
-      AppAssets.backgrounds.light.localUri,
-    ];
-
-    const archive = archiveService.getUniqueDbFilename();
-    const { dbFilename } = archiveService.archiveFiles(archive, filesToArchive);
-
-    setResult(dbFilename);
+  const insertData = async () => {
+    const archive = await service.insertData();
+    setResult(archive);
   };
 
   return (

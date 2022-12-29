@@ -19,7 +19,7 @@ const App = () => (
   <NavigationContainer theme={appTheme}>
     <PaperProvider theme={appTheme}>
       <Drawer.Navigator
-        initialRouteName="Files"
+        initialRouteName="Database"
         screenOptions={{ headerShown: false }}
       >
         <Drawer.Screen
