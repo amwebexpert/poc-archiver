@@ -64,7 +64,7 @@ export const archiveFile = async (existingFilename, fileUri) => {
 
   const result = await sqlService.executeSql(db, "SELECT * FROM FILE");
   for (let i = 0; i < result.rows.length; i++) {
-    console.log(`FILE table row.... ${i}`, result.rows.item(i));
+    console.log(`FILE table row ${i}`, result.rows.item(i));
   }
 
   return {
