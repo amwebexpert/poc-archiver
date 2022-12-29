@@ -1,17 +1,33 @@
 import React from "react";
 
 import { View, StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, Snackbar, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 import * as service from "./service";
+import * as openerService from "./opener-service";
 
 export const DatabaseScreen = () => {
   const [text, setText] = React.useState("");
   const [result, setResult] = React.useState("");
+  const [snackbarText, setSnackbarText] = React.useState("");
 
   const insertData = async () => {
-    const archive = await service.insertData();
+    const archive = await service.archiveDataDemo();
     setResult(archive);
+  };
+
+  const openHtmlFile = async () => {
+    const { error } = await openerService.openHtmlFileDemo();
+    if (error) {
+      setSnackbarText(error.message);
+    }
+  };
+
+  const openTextFile = async () => {
+    const { error } = await openerService.openTextFileDemo();
+    if (error) {
+      setSnackbarText(error.message);
+    }
   };
 
   return (
@@ -38,7 +54,19 @@ export const DatabaseScreen = () => {
         <Button mode="contained" onPress={insertData}>
           Insert
         </Button>
+
+        <Button mode="contained" onPress={openTextFile}>
+          Open text
+        </Button>
+
+        <Button mode="contained" onPress={openHtmlFile}>
+          Open html
+        </Button>
       </View>
+
+      <Snackbar duration={3000} visible={!!snackbarText} onDismiss={() => setSnackbarText("")}>
+        {snackbarText}
+      </Snackbar>
     </AppLayout>
   );
 };

@@ -23,7 +23,8 @@
     "react-native-screens": "~3.18.0",
     "expo-file-system": "~15.1.1",
     "expo-sqlite": "~11.0.0",
-    "expo-asset": "~8.7.0"
+    "expo-asset": "~8.7.0",
+    "expo-sharing": "~11.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

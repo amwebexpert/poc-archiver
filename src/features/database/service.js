@@ -1,10 +1,11 @@
 import * as FileSystem from "expo-file-system";
 import * as fileService from "~/services/file-service";
 import * as archiveService from "~/services/archive-service";
+
 import { AppAssets } from "~/assets";
 import { LONG_TEXT } from "./data";
 
-export const insertData = async () => {
+export const archiveDataDemo = async () => {
   const textFileUri = await createTextFile();
   const documentPictures = await copyAssetsToDocumentFolder();
   const files = [textFileUri, ...documentPictures];
@@ -34,9 +35,9 @@ export const copyAssetsToDocumentFolder = async () => {
 };
 
 export const createTextFile = async () => {
-  const textFileUri = fileService.getDocumentFullFilename("device-data.txt");
+  const fileUri = fileService.getDocumentFullFilename("device-data.txt");
   const { error } = await fileService.saveTextContent({
-    fileUri: textFileUri,
+    fileUri,
     text: LONG_TEXT,
   });
 
@@ -44,5 +45,5 @@ export const createTextFile = async () => {
     throw error;
   }
 
-  return textFileUri;
+  return fileUri;
 };
