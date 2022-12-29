@@ -56,6 +56,7 @@ const storeFileInfo = async ({ db, fileUri }) => {
     [name, size, modifiedAtISO, archivedAtISO]
   );
 };
+
 export const archiveFile = async (existingFilename, fileUri) => {
   const { db, dbFilename } = await setupDbTables(existingFilename);
 
