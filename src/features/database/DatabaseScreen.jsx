@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAssets } from "expo-asset";
 
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
@@ -10,20 +10,21 @@ import * as archiveService from "~/services/archive-service";
 import { AppAssets } from "~/assets";
 
 export const DatabaseScreen = () => {
-  const [assets] = useAssets([
-    AppAssets.backgrounds.dark,
-    AppAssets.backgrounds.light,
-  ]);
   const [text, setText] = React.useState("");
   const [result, setResult] = React.useState("");
 
   const insertData = () => {
     const filename = "device-data.txt";
-    const fileUri = fileService.getDocumentFullFilename(filename);
-    const archive = archiveService.getUniqueDbFilename();
+    const textFileUri = fileService.getDocumentFullFilename(filename);
+    const filesToArchive = [
+      textFileUri,
+      AppAssets.backgrounds.dark.localUri,
+      AppAssets.backgrounds.light.localUri,
+    ];
 
-    const fileURIs = [fileUri, ...assets.map((a) => a.localUri)];
-    const { dbFilename } = archiveService.archiveFiles(archive, fileURIs);
+    const archive = archiveService.getUniqueDbFilename();
+    const { dbFilename } = archiveService.archiveFiles(archive, filesToArchive);
+
     setResult(dbFilename);
   };
 

@@ -1,6 +1,8 @@
+import { Asset } from "expo-asset";
+
 export const AppAssets = {
   backgrounds: {
-    dark: require("../assets/images/backgrounds/background-dark.jpg"),
-    light: require("../assets/images/backgrounds/background-light.jpg"),
+    dark: Asset.fromModule(require("../assets/images/backgrounds/background-dark.jpg")),
+    light: Asset.fromModule(require("../assets/images/backgrounds/background-light.jpg")),
   },
 };
