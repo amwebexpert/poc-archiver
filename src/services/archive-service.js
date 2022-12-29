@@ -2,6 +2,8 @@ import * as FileSystem from "expo-file-system";
 import * as fileService from "./file-service";
 import * as sqlService from "./sql-service";
 
+const CHUNK_SIZE = 100 * 1024; // 100kB
+
 const SQL_TABLE_FILE = `CREATE TABLE IF NOT EXISTS 
   FILE (
     ID                 INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,11 +52,30 @@ const storeFileInfo = async ({ db, fileUri }) => {
   const { name, size, modifiedAtISO } = await getFileInfo(fileUri);
   const archivedAtISO = new Date().toISOString();
 
-  sqlService.executeSql(
+  return await sqlService.executeSql(
     db,
     "INSERT INTO FILE (NAME, SIZE, MODIFICATION_TIME, ARCHIVED_AT) VALUES (?, ?, ?, ?);",
     [name, size, modifiedAtISO, archivedAtISO]
   );
+};
+
+const storeFileContent = async ({ db, fileId, fileUri }) => {
+  const { size } = await getFileInfo(fileUri);
+  const sql = "INSERT INTO CHUNK (FILE_ID, DATA) VALUES (?, ?);";
+  let bytesCount = 0;
+  let chunk;
+
+  do {
+    chunk = await FileSystem.readAsStringAsync(fileUri, {
+      encoding: FileSystem.EncodingType.Base64,
+      position: bytesCount,
+      length: CHUNK_SIZE,
+    });
+
+    await sqlService.executeSql(db, sql, [fileId, chunk]);
+
+    bytesCount += chunk.length;
+  } while (bytesCount < size);
 };
 
 export const archiveFiles = async (existingFilename, fileURIs = []) => {
@@ -62,12 +83,18 @@ export const archiveFiles = async (existingFilename, fileURIs = []) => {
 
   for (let i = 0; i < fileURIs.length; i++) {
     const fileUri = fileURIs[i];
-    await storeFileInfo({ db, fileUri });
+    const { insertId } = await storeFileInfo({ db, fileUri });
+    await storeFileContent({ db, fileId: insertId, fileUri });
   }
 
-  const result = await sqlService.executeSql(db, "SELECT * FROM FILE");
+  let result = await sqlService.executeSql(db, "SELECT * FROM FILE");
   for (let i = 0; i < result.rows.length; i++) {
     console.log(`FILE table row ${i}`, result.rows.item(i));
+  }
+
+  result = await sqlService.executeSql(db, "SELECT * FROM CHUNK");
+  for (let i = 0; i < result.rows.length; i++) {
+    console.log(`CHUNK table row ${i}`, result.rows.item(i));
   }
 
   return {
