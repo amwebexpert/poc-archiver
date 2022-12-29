@@ -57,10 +57,13 @@ const storeFileInfo = async ({ db, fileUri }) => {
   );
 };
 
-export const archiveFile = async (existingFilename, fileUri) => {
+export const archiveFiles = async (existingFilename, fileURIs = []) => {
   const { db, dbFilename } = await setupDbTables(existingFilename);
 
-  await storeFileInfo({ db, fileUri });
+  for (let i = 0; i < fileURIs.length; i++) {
+    const fileUri = fileURIs[i];
+    await storeFileInfo({ db, fileUri });
+  }
 
   const result = await sqlService.executeSql(db, "SELECT * FROM FILE");
   for (let i = 0; i < result.rows.length; i++) {

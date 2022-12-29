@@ -1,12 +1,19 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { useAssets } from "expo-asset";
+
+import { View, StyleSheet, Image } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import * as fileService from "~/services/file-service";
 import * as archiveService from "~/services/archive-service";
+import { AppAssets } from "~/assets";
 
 export const DatabaseScreen = () => {
+  const [assets] = useAssets([
+    AppAssets.backgrounds.dark,
+    AppAssets.backgrounds.light,
+  ]);
   const [text, setText] = React.useState("");
   const [result, setResult] = React.useState("");
 
@@ -15,7 +22,8 @@ export const DatabaseScreen = () => {
     const fileUri = fileService.getDocumentFullFilename(filename);
     const archive = archiveService.getUniqueDbFilename();
 
-    const { dbFilename } = archiveService.archiveFile(archive, fileUri);
+    const fileURIs = [fileUri, ...assets.map((a) => a.localUri)];
+    const { dbFilename } = archiveService.archiveFiles(archive, fileURIs);
     setResult(dbFilename);
   };
 
