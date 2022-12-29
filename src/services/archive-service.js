@@ -6,14 +6,14 @@ const SQL_TABLE_FILE = `CREATE TABLE IF NOT EXISTS
   FILE (
     ID                 INTEGER PRIMARY KEY AUTOINCREMENT,
     NAME               TEXT NOT NULL,
-    SIZE               INT NOT NULL,
-    MODIFICATION_TIME  INT NOT NULL
+    SIZE               INTEGER NOT NULL,
+    MODIFICATION_TIME  TEXT NOT NULL
   );`;
 
 const SQL_TABLE_CHUNK = `CREATE TABLE IF NOT EXISTS 
   CHUNK (
     ID                 INTEGER PRIMARY KEY AUTOINCREMENT,
-    FILE_ID            INTEGER PRIMARY KEY AUTOINCREMENT,
+    FILE_ID            INTEGER NOT NULL,
     DATA               BLOB NOT NULL
   );`;
 
@@ -36,20 +36,32 @@ const createDbInstance = async (existingFilename) => {
   const dbFilename = existingFilename ?? getUniqueDbFilename();
   const db = SQLite.openDatabase(dbFilename);
 
-  return { dbFilename, db };
+  return { db, dbFilename };
 };
 
-const setupDbTables = async (existingFilename) => {
-  const { db, dbFilename } = createDbInstance(existingFilename);
+const executeSql = async (db, sql = "", params = []) =>
+  new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        sql,
+        params,
+        (_, result) => resolve(result),
+        (_, error) => reject(error)
+      );
+    });
+  });
 
-  await db.executeSql(SQL_TABLE_FILE);
-  await db.executeSql(SQL_TABLE_CHUNK);
+const setupDbTables = async (existingFilename) => {
+  const { db, dbFilename } = await createDbInstance(existingFilename);
+
+  await executeSql(db, SQL_TABLE_FILE);
+  await executeSql(db, SQL_TABLE_CHUNK);
 
   return { db, dbFilename };
 };
 
 export const archiveFile = async (existingFilename, fileUri) => {
-  const { db, dbFilename } = setupDbTables(existingFilename);
+  const { db, dbFilename } = await setupDbTables(existingFilename);
 
   const name = fileService.getDocumentFolderRelativePath(fileUri);
   const { exists, size, modificationTime } = await FileSystem.getInfoAsync(
@@ -60,17 +72,15 @@ export const archiveFile = async (existingFilename, fileUri) => {
     throw Error(`File not found\n ➡ "${name}"`);
   }
 
-  await db.executeSql(
-    `INSERT INTO FILE (NAME, SIZE, MODIFICATION_TIME) VALUES (?, ?, ?);`,
-    [name, size, modificationTime]
-  );
+  const modifiedAtISO = new Date(modificationTime * 1000).toISOString();
+  const sql =
+    "INSERT INTO FILE (NAME, SIZE, MODIFICATION_TIME) VALUES (?, ?, ?);";
+  await executeSql(db, sql, [name, size, modifiedAtISO]);
 
-  const results = await db.executeSql("SELECT * FROM FILE");
-  results.forEach((result) => {
-    for (let i = 0; i < result.rows.length; i++) {
-      console.log(`FILE table row ${i}`, result.rows.item(i));
-    }
-  });
+  const result = await executeSql(db, "SELECT * FROM FILE");
+  for (let i = 0; i < result.rows.length; i++) {
+    console.log(`FILE table row ${i}`, result.rows.item(i));
+  }
 
   return {
     dbFilename,

@@ -7,7 +7,7 @@ import * as fileService from "~/services/file-service";
 import * as archiveService from "~/services/archive-service";
 
 export const DatabaseScreen = () => {
-  const [text, setText] = React.useState("Data: ➡ Here the data as text");
+  const [text, setText] = React.useState("");
   const [result, setResult] = React.useState("");
 
   const insertData = () => {
@@ -20,13 +20,12 @@ export const DatabaseScreen = () => {
   };
 
   return (
-    <AppLayout title="Cypher screen">
+    <AppLayout title="Database screen">
       <View style={styles.root}>
         <TextInput
           label="Data"
           multiline={true}
           numberOfLines={1}
-          placeholder="Type some text here"
           mode="outlined"
           value={text}
           onChangeText={(text) => setText(text)}
@@ -35,7 +34,6 @@ export const DatabaseScreen = () => {
           label="Result"
           multiline={true}
           numberOfLines={5}
-          placeholder="Result will be displayed here"
           mode="outlined"
           value={result}
         />
