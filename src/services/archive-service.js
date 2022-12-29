@@ -7,7 +7,8 @@ const SQL_TABLE_FILE = `CREATE TABLE IF NOT EXISTS
     ID                 INTEGER PRIMARY KEY AUTOINCREMENT,
     NAME               TEXT NOT NULL,
     SIZE               INTEGER NOT NULL,
-    MODIFICATION_TIME  TEXT NOT NULL
+    MODIFICATION_TIME  TEXT NOT NULL,
+    ARCHIVED_AT        TEXT NOT NULL
   );`;
 
 const SQL_TABLE_CHUNK = `CREATE TABLE IF NOT EXISTS 
@@ -31,9 +32,7 @@ const setupDbTables = async (existingFilename) => {
   return { db, dbFilename };
 };
 
-export const archiveFile = async (existingFilename, fileUri) => {
-  const { db, dbFilename } = await setupDbTables(existingFilename);
-
+const getFileInfo = async (fileUri) => {
   const name = fileService.getDocumentFolderRelativePath(fileUri);
   const { exists, size, modificationTime } = await FileSystem.getInfoAsync(
     fileUri
@@ -44,9 +43,23 @@ export const archiveFile = async (existingFilename, fileUri) => {
   }
 
   const modifiedAtISO = new Date(modificationTime * 1000).toISOString();
-  const sql =
-    "INSERT INTO FILE (NAME, SIZE, MODIFICATION_TIME) VALUES (?, ?, ?);";
-  await sqlService.executeSql(db, sql, [name, size, modifiedAtISO]);
+  return { name, size, modifiedAtISO };
+};
+
+const storeFileInfo = async ({ db, fileUri }) => {
+  const { name, size, modifiedAtISO } = await getFileInfo(fileUri);
+  const archivedAtISO = new Date().toISOString();
+
+  sqlService.executeSql(
+    db,
+    "INSERT INTO FILE (NAME, SIZE, MODIFICATION_TIME, ARCHIVED_AT) VALUES (?, ?, ?, ?);",
+    [name, size, modifiedAtISO, archivedAtISO]
+  );
+};
+export const archiveFile = async (existingFilename, fileUri) => {
+  const { db, dbFilename } = await setupDbTables(existingFilename);
+
+  await storeFileInfo({ db, fileUri });
 
   const result = await sqlService.executeSql(db, "SELECT * FROM FILE");
   for (let i = 0; i < result.rows.length; i++) {
