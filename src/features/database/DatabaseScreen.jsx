@@ -4,7 +4,6 @@ import { View, StyleSheet } from "react-native";
 import { Button, Snackbar, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 import * as service from "./service";
-import * as openerService from "./opener-service";
 
 export const DatabaseScreen = () => {
   const [archiveName, setArchiveName] = React.useState("");
@@ -19,20 +18,6 @@ export const DatabaseScreen = () => {
   const unarchiveDemo = async () => {
     const result = await service.unarchiveDataDemo(archiveName);
     setResult(JSON.stringify(result));
-  };
-
-  const openHtmlFileDemo = async () => {
-    const { error } = await openerService.openHtmlFileDemo();
-    if (error) {
-      setSnackbarText(error.message);
-    }
-  };
-
-  const openTextFileDemo = async () => {
-    const { error } = await openerService.openTextFileDemo();
-    if (error) {
-      setSnackbarText(error.message);
-    }
   };
 
   return (
@@ -60,14 +45,6 @@ export const DatabaseScreen = () => {
 
         <Button mode="contained" onPress={unarchiveDemo}>
           Unarchive
-        </Button>
-
-        <Button mode="contained" onPress={openTextFileDemo}>
-          OpenTxt
-        </Button>
-
-        <Button mode="contained" onPress={openHtmlFileDemo}>
-          OpenHtml
         </Button>
       </View>
 

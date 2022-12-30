@@ -6,12 +6,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
+import { appTheme } from "~/theme";
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
 import { HomeScreen } from "~/features/home/HomeScreen";
-import { appTheme } from "~/theme";
-import { CypherScreen } from "./src/features/cypher/CypherScreen";
-import { FilesScreen } from "./src/features/files/FilesScreen";
-import { DatabaseScreen } from "./src/features/database/DatabaseScreen";
+import { CypherScreen } from "~/features/cypher/CypherScreen";
+import { FilesScreen } from "~/features/files/FilesScreen";
+import { DatabaseScreen } from "~/features/database/DatabaseScreen";
+import { ShareScreen } from "~/features/share/ShareScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -45,6 +46,21 @@ const App = () => (
             drawerIcon: ({ size }) => (
               <MaterialCommunityIcons
                 name="database"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
+          }}
+          initialParams={{}}
+        />
+        <Drawer.Screen
+          name="Share"
+          component={ShareScreen}
+          options={{
+            title: "Share screen",
+            drawerIcon: ({ size }) => (
+              <MaterialCommunityIcons
+                name="share"
                 size={size}
                 color={appTheme.colors.secondary}
               />

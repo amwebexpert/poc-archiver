@@ -6,8 +6,8 @@ import { AppAssets } from "~/assets";
 import { LONG_TEXT } from "./data";
 
 export const archiveDataDemo = async () => {
-  const textFileUri = await createTextFile();
-  const documentPictures = await copyAssetsToDocumentFolder();
+  const textFileUri = await createTextFileInDocumentFolder();
+  const documentPictures = await copyAssetsPicturesToDocumentFolder();
   const fileURIs = [textFileUri, ...documentPictures];
 
   const archiveName = archiveService.getUniqueArchiveFilename();
@@ -27,7 +27,7 @@ export const unarchiveDataDemo = async (archiveName = "") => {
   }
 };
 
-export const copyAssetsToDocumentFolder = async () => {
+export const copyAssetsPicturesToDocumentFolder = async () => {
   const picturesFolder = `${FileSystem.documentDirectory}MyPictures`;
   const { dark, light } = AppAssets.backgrounds;
   const pictures = [dark, light];
@@ -45,7 +45,7 @@ export const copyAssetsToDocumentFolder = async () => {
   return documentPictures;
 };
 
-export const createTextFile = async () => {
+export const createTextFileInDocumentFolder = async () => {
   const fileUri = fileService.getDocumentFullFilename("device-data.txt");
   const { error } = await fileService.saveTextContent({
     fileUri,
