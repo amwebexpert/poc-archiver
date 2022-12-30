@@ -7,23 +7,28 @@ import * as service from "./service";
 import * as openerService from "./opener-service";
 
 export const DatabaseScreen = () => {
-  const [text, setText] = React.useState("");
+  const [archiveName, setArchiveName] = React.useState("");
   const [result, setResult] = React.useState("");
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  const insertData = async () => {
-    const archive = await service.archiveDataDemo();
-    setResult(archive);
+  const archiveDemo = async () => {
+    const name = await service.archiveDataDemo();
+    setArchiveName(name);
   };
 
-  const openHtmlFile = async () => {
+  const unarchiveDemo = async () => {
+    const result = await service.unarchiveDataDemo(archiveName);
+    setResult(JSON.stringify(result));
+  };
+
+  const openHtmlFileDemo = async () => {
     const { error } = await openerService.openHtmlFileDemo();
     if (error) {
       setSnackbarText(error.message);
     }
   };
 
-  const openTextFile = async () => {
+  const openTextFileDemo = async () => {
     const { error } = await openerService.openTextFileDemo();
     if (error) {
       setSnackbarText(error.message);
@@ -34,37 +39,43 @@ export const DatabaseScreen = () => {
     <AppLayout title="Database screen">
       <View style={styles.root}>
         <TextInput
-          label="Data"
-          multiline={true}
-          numberOfLines={1}
+          label="Archive name"
           mode="outlined"
-          value={text}
-          onChangeText={(text) => setText(text)}
+          value={archiveName}
+          onChangeText={setArchiveName}
         />
         <TextInput
           label="Result"
           multiline={true}
-          numberOfLines={5}
+          numberOfLines={10}
           mode="outlined"
           value={result}
         />
       </View>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={insertData}>
-          Insert
+        <Button mode="contained" onPress={archiveDemo}>
+          Archive
         </Button>
 
-        <Button mode="contained" onPress={openTextFile}>
-          Open text
+        <Button mode="contained" onPress={unarchiveDemo}>
+          Unarchive
         </Button>
 
-        <Button mode="contained" onPress={openHtmlFile}>
-          Open html
+        <Button mode="contained" onPress={openTextFileDemo}>
+          OpenTxt
+        </Button>
+
+        <Button mode="contained" onPress={openHtmlFileDemo}>
+          OpenHtml
         </Button>
       </View>
 
-      <Snackbar duration={3000} visible={!!snackbarText} onDismiss={() => setSnackbarText("")}>
+      <Snackbar
+        duration={3000}
+        visible={!!snackbarText}
+        onDismiss={() => setSnackbarText("")}
+      >
         {snackbarText}
       </Snackbar>
     </AppLayout>

@@ -8,12 +8,20 @@ import { LONG_TEXT } from "./data";
 export const archiveDataDemo = async () => {
   const textFileUri = await createTextFile();
   const documentPictures = await copyAssetsToDocumentFolder();
-  const files = [textFileUri, ...documentPictures];
+  const fileURIs = [textFileUri, ...documentPictures];
 
-  const archive = archiveService.getUniqueDbFilename();
-  const { dbFilename } = await archiveService.archiveFiles(archive, files);
+  const archiveName = archiveService.getUniqueArchiveFilename();
+  await archiveService.archiveFiles({
+    archiveName,
+    fileURIs,
+  });
 
-  return dbFilename;
+  return archiveName;
+};
+
+export const unarchiveDataDemo = async (archiveName = "") => {
+  const result = await archiveService.unarchiveFiles(archiveName);
+  console.log("Unarchive result", result);
 };
 
 export const copyAssetsToDocumentFolder = async () => {

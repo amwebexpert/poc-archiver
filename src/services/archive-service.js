@@ -20,13 +20,11 @@ const SQL_TABLE_CHUNK = `CREATE TABLE IF NOT EXISTS
     DATA               BLOB NOT NULL
   );`;
 
-export const getUniqueDbFilename = () =>
+export const getUniqueArchiveFilename = () =>
   sqlService.getUniqueDbFilename("archive-");
 
-const setupDbTables = async (existingFilename) => {
-  const { db, dbFilename } = await sqlService.createDbInstance(
-    existingFilename
-  );
+const setupDbTables = async (archiveName = "") => {
+  const { db, dbFilename } = await sqlService.createDbInstance(archiveName);
 
   await sqlService.executeSql(db, SQL_TABLE_FILE);
   await sqlService.executeSql(db, SQL_TABLE_CHUNK);
@@ -34,7 +32,7 @@ const setupDbTables = async (existingFilename) => {
   return { db, dbFilename };
 };
 
-const getFileInfo = async (fileUri) => {
+const getFileInfo = async (fileUri = "") => {
   const name = fileService.getDocumentFolderRelativePath(fileUri);
   const { exists, size, modificationTime } = await FileSystem.getInfoAsync(
     fileUri
@@ -48,7 +46,7 @@ const getFileInfo = async (fileUri) => {
   return { name, size, modifiedAtISO };
 };
 
-const storeFileInfo = async ({ db, fileUri }) => {
+const storeFileInfo = async ({ db, fileUri = "" }) => {
   const { name, size, modifiedAtISO } = await getFileInfo(fileUri);
   const archivedAtISO = new Date().toISOString();
 
@@ -59,7 +57,7 @@ const storeFileInfo = async ({ db, fileUri }) => {
   );
 };
 
-const storeFileContent = async ({ db, fileId, fileUri }) => {
+const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
   const { size } = await getFileInfo(fileUri);
   const sql = "INSERT INTO CHUNK (FILE_ID, DATA) VALUES (?, ?);";
   let bytesCount = 0;
@@ -78,8 +76,29 @@ const storeFileContent = async ({ db, fileId, fileUri }) => {
   } while (bytesCount < size);
 };
 
-export const archiveFiles = async (existingFilename, fileURIs = []) => {
-  const { db, dbFilename } = await setupDbTables(existingFilename);
+export const unarchiveFiles = async (archiveName = "") => {
+  if (!archiveName || archiveName.trim().length === 0) {
+    throw Error("Invalid archiveName argument");
+  }
+
+  const { db } = await setupDbTables(archiveName);
+
+  const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
+  const files = [];
+  for (let i = 0; i < filesResultset.rows.length; i++) {
+    const { ID: id, NAME: filename } = filesResultset.rows.item(i);
+    files.push({ id, filename });
+  }
+
+  //console.log("Files", files);
+};
+
+export const archiveFiles = async ({ archiveName = "", fileURIs = [] }) => {
+  if (!fileURIs || fileURIs.length === 0) {
+    throw Error("Invalid fileURIs argument");
+  }
+
+  const { db, dbFilename } = await setupDbTables(archiveName);
 
   for (let i = 0; i < fileURIs.length; i++) {
     const fileUri = fileURIs[i];
@@ -89,15 +108,21 @@ export const archiveFiles = async (existingFilename, fileURIs = []) => {
 
   let result = await sqlService.executeSql(db, "SELECT * FROM FILE");
   for (let i = 0; i < result.rows.length; i++) {
-    console.log(`FILE table row ${i}`, result.rows.item(i));
+    const item = result.rows.item(i);
+    console.log(`*** FILE table row ${i}`, item);
   }
 
   result = await sqlService.executeSql(db, "SELECT * FROM CHUNK");
   for (let i = 0; i < result.rows.length; i++) {
-    console.log(`CHUNK table row ${i}`, result.rows.item(i));
+    const { ID, FILE_ID, DATA } = result.rows.item(i);
+    console.log(`*** CHUNK table row ${i}`, {
+      data: DATA.substring(0, 20) + "…",
+      id: ID,
+      fileId: FILE_ID,
+    });
   }
 
   return {
-    dbFilename,
+    archiveName: dbFilename,
   };
 };
