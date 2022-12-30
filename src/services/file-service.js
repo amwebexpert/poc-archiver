@@ -10,21 +10,24 @@ export const isFileExists = async (fileUri = "") => {
 
 export const getFilenameOnly = (fileUri = "/") => fileUri.split("/").pop();
 
+export const getDirectoryOnly = (fileUri = "/") =>
+  fileUri.substring(0, fileUri.lastIndexOf("/"));
+
 export const getDocumentFolderRelativePath = (fileUri = "/") =>
   fileUri.substring(FileSystem.documentDirectory.length);
 
 export const getDocumentFullFilename = (filename) =>
   FileSystem.documentDirectory + filename;
 
-export const createDirectoryStructure = async (fileUri) => {
-  const exists = await isFileExists(fileUri);
+export const createDirectoryStructure = async (folderUri) => {
+  const exists = await isFileExists(folderUri);
 
   if (exists) {
     return { exists: true };
   }
 
   try {
-    await FileSystem.makeDirectoryAsync(fileUri, { intermediates: true });
+    await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
     return { exists: true };
   } catch (error) {
     return {

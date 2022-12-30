@@ -3,6 +3,7 @@ import * as fileService from "./file-service";
 import * as sqlService from "./sql-service";
 
 const CHUNK_SIZE = 100 * 1024; // 100kB
+const OPTIONS = { encoding: FileSystem.EncodingType.Base64 };
 
 const SQL_TABLE_FILE = `CREATE TABLE IF NOT EXISTS 
   FILE (
@@ -65,7 +66,7 @@ const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
 
   do {
     chunk = await FileSystem.readAsStringAsync(fileUri, {
-      encoding: FileSystem.EncodingType.Base64,
+      ...OPTIONS,
       position: bytesCount,
       length: CHUNK_SIZE,
     });
@@ -82,13 +83,27 @@ export const unarchiveFiles = async (archiveName = "") => {
   }
 
   const archiveFolderUri = await createArchiveFolder(archiveName);
-
   const { db } = await setupDbTables(archiveName);
-  const fileURIs = await getFileURIs(db, archiveFolderUri);
+  const archiveFiles = await getArchiveFiles(db, archiveFolderUri);
 
-  console.log("__________ FILES __________");
-  fileURIs.forEach((f) => console.log(f.fileUriRelative));
-  // await FileSystem.writeAsStringAsync(fileUri, text, DEFAULT_OPTIONS);
+  for (let i = 0; i < archiveFiles.length; i++) {
+    const { id, fileUri, folderUri } = archiveFiles[i];
+    const data = await getFileContent(db, id);
+    await fileService.createDirectoryStructure(folderUri);
+    await FileSystem.writeAsStringAsync(fileUri, data, OPTIONS);
+  }
+};
+
+const getFileContent = async (db, fileId) => {
+  let data = "";
+  const sql = "SELECT DATA FROM CHUNK WHERE FILE_ID = ?";
+  const chucksResulset = await sqlService.executeSql(db, sql, [fileId]);
+
+  for (let i = 0; i < chucksResulset.rows.length; i++) {
+    data += chucksResulset.rows.item(i).DATA;
+  }
+
+  return data;
 };
 
 const createArchiveFolder = async (archiveName) => {
@@ -99,23 +114,24 @@ const createArchiveFolder = async (archiveName) => {
   return archiveFolderUri;
 };
 
-const getFileURIs = async (db, archiveFolderUri) => {
-  const fileURIs = [];
+const getArchiveFiles = async (db, archiveFolderUri) => {
+  const files = [];
   const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
 
   for (let i = 0; i < filesResultset.rows.length; i++) {
-    const { ID: id, NAME: filename } = filesResultset.rows.item(i);
-
-    const fileUri = `${archiveFolderUri}/${filename}`;
-    fileURIs.push({
-      id,
-      filename,
-      fileUri,
-      fileUriRelative: fileUri.substring(fileUri.indexOf("/Documents/")),
-    });
+    const { ID: id, NAME } = filesResultset.rows.item(i);
+    const fileUri = `${archiveFolderUri}/${NAME}`;
+    const folderUri = fileService.getDirectoryOnly(fileUri);
+    files.push({ id, fileUri, folderUri });
   }
 
-  return fileURIs;
+  console.log("__________ getFiles __________");
+  files.forEach(({ fileUri }) => {
+    const startIndex = fileUri.indexOf("/Documents/");
+    console.log(fileUri.substring(startIndex));
+  });
+
+  return files;
 };
 
 export const archiveFiles = async ({ archiveName = "", fileURIs = [] }) => {
