@@ -33,7 +33,7 @@ const setupDbTables = async (archiveName = "") => {
   return { db, dbFilename };
 };
 
-const getFileInfo = async (fileUri = "") => {
+const buildArchiveFileInfo = async (fileUri = "") => {
   const name = fileService.getDocumentFolderRelativePath(fileUri);
   const { exists, size, modificationTime } = await FileSystem.getInfoAsync(
     fileUri
@@ -48,7 +48,7 @@ const getFileInfo = async (fileUri = "") => {
 };
 
 const storeFileInfo = async ({ db, fileUri = "" }) => {
-  const { name, size, modifiedAtISO } = await getFileInfo(fileUri);
+  const { name, size, modifiedAtISO } = await buildArchiveFileInfo(fileUri);
   const archivedAtISO = new Date().toISOString();
 
   return await sqlService.executeSql(
@@ -59,7 +59,7 @@ const storeFileInfo = async ({ db, fileUri = "" }) => {
 };
 
 const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
-  const { size } = await getFileInfo(fileUri);
+  const { size } = await buildArchiveFileInfo(fileUri);
   const sql = "INSERT INTO CHUNK (FILE_ID, DATA) VALUES (?, ?);";
   let bytesCount = 0;
   let chunk;
