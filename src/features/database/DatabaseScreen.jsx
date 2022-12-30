@@ -1,41 +1,39 @@
 import React from "react";
 
-import { View, StyleSheet } from "react-native";
-import { Button, Snackbar, TextInput } from "react-native-paper";
+import { View, StyleSheet, FlatList } from "react-native";
+import { Button, Snackbar, TextInput, useTheme } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
+import { spacing } from "~/theme";
 import * as service from "./service";
+import { FileInfo } from "./FileInfo";
 
 export const DatabaseScreen = () => {
+  const styles = useStyles();
   const [archiveName, setArchiveName] = React.useState("");
-  const [result, setResult] = React.useState("");
+  const [files, setFiles] = React.useState([]);
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const archiveDemo = async () => {
     const name = await service.archiveDataDemo();
     setArchiveName(name);
+    setFiles([]);
   };
 
   const unarchiveDemo = async () => {
-    const result = await service.unarchiveDataDemo(archiveName);
-    setResult(JSON.stringify(result));
+    const archiveFiles = await service.unarchiveDataDemo(archiveName);
+    setFiles(archiveFiles);
   };
 
   return (
     <AppLayout title="Database screen">
+      <TextInput
+        label="Archive name"
+        mode="outlined"
+        value={archiveName}
+        onChangeText={setArchiveName}
+      />
       <View style={styles.root}>
-        <TextInput
-          label="Archive name"
-          mode="outlined"
-          value={archiveName}
-          onChangeText={setArchiveName}
-        />
-        <TextInput
-          label="Result"
-          multiline={true}
-          numberOfLines={10}
-          mode="outlined"
-          value={result}
-        />
+        <FlatList data={files} renderItem={({item}) => <FileInfo item={item} />} />
       </View>
 
       <View style={styles.actions}>
@@ -43,7 +41,11 @@ export const DatabaseScreen = () => {
           Archive
         </Button>
 
-        <Button mode="contained" onPress={unarchiveDemo}>
+        <Button
+          mode="contained"
+          onPress={unarchiveDemo}
+          disabled={!archiveName}
+        >
           Unarchive
         </Button>
       </View>
@@ -59,12 +61,20 @@ export const DatabaseScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-});
+const useStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    root: {
+      flex: 1,
+      borderColor: theme.colors.primary,
+      borderRadius: theme.roundness,
+      borderWidth: 2,
+      marginVertical: spacing(2),
+    },
+    actions: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+  });
+};

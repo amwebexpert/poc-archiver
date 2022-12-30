@@ -21,10 +21,7 @@ export const archiveDataDemo = async () => {
 
 export const unarchiveDataDemo = async (archiveName = "") => {
   const archiveFiles = await archiveService.unarchiveFiles(archiveName);
-  for (let i = 0; i < archiveFiles.length; i++) {
-    const archiveFile = archiveFiles[i];
-    await fileService.shareFile(archiveFile.fileUri);
-  }
+  return archiveFiles;
 };
 
 export const copyAssetsPicturesToDocumentFolder = async () => {

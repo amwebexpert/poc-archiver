@@ -121,13 +121,20 @@ const getArchiveFiles = async (db, archiveFolderUri) => {
   const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
 
   for (let i = 0; i < filesResultset.rows.length; i++) {
-    const { ID: id, NAME } = filesResultset.rows.item(i);
+    const { ID, NAME, MODIFICATION_TIME, SIZE } = filesResultset.rows.item(i);
     const fileUri = `${archiveFolderUri}/${NAME}`;
     const folderUri = fileService.getDirectoryOnly(fileUri);
-    archiveFiles.push({ id, fileUri, folderUri });
+
+    archiveFiles.push({
+      id: ID,
+      size: SIZE,
+      name: NAME,
+      modifiedAt: new Date(MODIFICATION_TIME),
+      fileUri,
+      folderUri,
+    });
   }
 
-  console.log("__________ getFiles __________");
   archiveFiles.forEach(({ fileUri }) => {
     const startIndex = fileUri.indexOf("/Documents/");
     console.log(fileUri.substring(startIndex));
