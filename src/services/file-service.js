@@ -1,4 +1,6 @@
 import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import { MimeTypes } from "./mimetype-utils";
 
 const DEFAULT_ENCODING = FileSystem.EncodingType.UTF8;
 const DEFAULT_OPTIONS = { encoding: DEFAULT_ENCODING };
@@ -10,7 +12,8 @@ export const isFileExists = async (fileUri = "") => {
 
 export const getFilenameOnly = (fileUri = "/") => fileUri.split("/").pop();
 
-export const getFileExtensionOnly = (fileUri = "/") => fileUri.split(".").pop().toLowerCase();
+export const getFileExtensionOnly = (fileUri = "/") =>
+  fileUri.split(".").pop().toLowerCase();
 
 export const getDirectoryOnly = (fileUri = "/") =>
   fileUri.substring(0, fileUri.lastIndexOf("/"));
@@ -95,4 +98,31 @@ export const nowAsIsoFilename = () => {
 
   // '2022-12-28T20:21:40.862Z' ==> '2022-12-28T20_21_40.862Z'
   return isoString.replace(new RegExp(":", "g"), "_");
+};
+
+export const shareFile = async (fileUri = "") => {
+  const filename = getFilenameOnly(fileUri);
+  const extension = getFileExtensionOnly(fileUri);
+  const mimeType = MimeTypes.get(extension);
+
+  const canOpen = await Sharing.isAvailableAsync();
+  if (!canOpen) {
+    return {
+      error: {
+        message: `File can't be opened:\n ➡ ${filename}`,
+      },
+    };
+  }
+
+  try {
+    await Sharing.shareAsync(fileUri, {
+      dialogTitle: filename,
+      UTI: mimeType,
+      mimeType,
+    });
+  } catch (error) {
+    return { error };
+  }
+
+  return {};
 };

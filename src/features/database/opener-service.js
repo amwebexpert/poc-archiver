@@ -1,45 +1,15 @@
-import * as Sharing from "expo-sharing";
-
 import * as fileService from "~/services/file-service";
-import { MimeTypes } from "~/services/mimetype-utils";
 
 import { HTML_SAMPLE, LONG_TEXT } from "./data";
 
 export const openHtmlFileDemo = async () => {
   const fileUri = await createHtmlFile();
-  return openFileDemo(fileUri);
+  return fileService.shareFile(fileUri);
 };
 
 export const openTextFileDemo = async () => {
   const fileUri = await createTextFile();
-  return openFileDemo(fileUri);
-};
-
-export const openFileDemo = async (fileUri) => {
-  const filename = fileService.getFilenameOnly(fileUri);
-  const extension = fileService.getFileExtensionOnly(fileUri);
-  const mimeType = MimeTypes.get(extension);
-
-  const canOpen = await Sharing.isAvailableAsync();
-  if (!canOpen) {
-    return {
-      error: {
-        message: `File can't be opened:\n ➡ ${filename}`,
-      },
-    };
-  }
-
-  try {
-    await Sharing.shareAsync(fileUri, {
-      dialogTitle: filename,
-      UTI: mimeType,
-      mimeType,
-    });
-  } catch (error) {
-    return { error };
-  }
-
-  return {};
+  return fileService.shareFile(fileUri);
 };
 
 export const createHtmlFile = async () => {

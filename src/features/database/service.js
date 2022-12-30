@@ -20,8 +20,11 @@ export const archiveDataDemo = async () => {
 };
 
 export const unarchiveDataDemo = async (archiveName = "") => {
-  const result = await archiveService.unarchiveFiles(archiveName);
-  console.log("Unarchive result", result);
+  const archiveFiles = await archiveService.unarchiveFiles(archiveName);
+  for (let i = 0; i < archiveFiles.length; i++) {
+    const archiveFile = archiveFiles[i];
+    await fileService.shareFile(archiveFile.fileUri);
+  }
 };
 
 export const copyAssetsToDocumentFolder = async () => {
