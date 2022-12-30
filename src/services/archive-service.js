@@ -81,16 +81,41 @@ export const unarchiveFiles = async (archiveName = "") => {
     throw Error("Invalid archiveName argument");
   }
 
-  const { db } = await setupDbTables(archiveName);
+  const archiveFolderUri = await createArchiveFolder(archiveName);
 
+  const { db } = await setupDbTables(archiveName);
+  const fileURIs = await getFileURIs(db, archiveFolderUri);
+
+  console.log("__________ FILES __________");
+  fileURIs.forEach((f) => console.log(f.fileUriRelative));
+  // await FileSystem.writeAsStringAsync(fileUri, text, DEFAULT_OPTIONS);
+};
+
+const createArchiveFolder = async (archiveName) => {
+  const archiveFolderUri = fileService.getDocumentFullFilename(
+    archiveName.replace(".db", "")
+  );
+  await fileService.createDirectoryStructure(archiveFolderUri);
+  return archiveFolderUri;
+};
+
+const getFileURIs = async (db, archiveFolderUri) => {
+  const fileURIs = [];
   const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
-  const files = [];
+
   for (let i = 0; i < filesResultset.rows.length; i++) {
     const { ID: id, NAME: filename } = filesResultset.rows.item(i);
-    files.push({ id, filename });
+
+    const fileUri = `${archiveFolderUri}/${filename}`;
+    fileURIs.push({
+      id,
+      filename,
+      fileUri,
+      fileUriRelative: fileUri.substring(fileUri.indexOf("/Documents/")),
+    });
   }
 
-  //console.log("Files", files);
+  return fileURIs;
 };
 
 export const archiveFiles = async ({ archiveName = "", fileURIs = [] }) => {
@@ -106,23 +131,27 @@ export const archiveFiles = async ({ archiveName = "", fileURIs = [] }) => {
     await storeFileContent({ db, fileId: insertId, fileUri });
   }
 
-  let result = await sqlService.executeSql(db, "SELECT * FROM FILE");
-  for (let i = 0; i < result.rows.length; i++) {
-    const item = result.rows.item(i);
+  await logDebuggingInfo(db);
+
+  return {
+    archiveName: dbFilename,
+  };
+};
+
+const logDebuggingInfo = async (db) => {
+  const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
+  for (let i = 0; i < filesResultset.rows.length; i++) {
+    const item = filesResultset.rows.item(i);
     console.log(`*** FILE table row ${i}`, item);
   }
 
-  result = await sqlService.executeSql(db, "SELECT * FROM CHUNK");
-  for (let i = 0; i < result.rows.length; i++) {
-    const { ID, FILE_ID, DATA } = result.rows.item(i);
+  const chucksResulset = await sqlService.executeSql(db, "SELECT * FROM CHUNK");
+  for (let i = 0; i < chucksResulset.rows.length; i++) {
+    const { ID, FILE_ID, DATA } = chucksResulset.rows.item(i);
     console.log(`*** CHUNK table row ${i}`, {
       data: DATA.substring(0, 20) + "…",
       id: ID,
       fileId: FILE_ID,
     });
   }
-
-  return {
-    archiveName: dbFilename,
-  };
 };

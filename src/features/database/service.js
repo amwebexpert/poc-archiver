@@ -34,7 +34,7 @@ export const copyAssetsToDocumentFolder = async () => {
 
   for (let i = 0; i < pictures.length; i++) {
     const picture = pictures[i];
-    const target = `${picturesFolder}/${picture.name}`;
+    const target = `${picturesFolder}/${picture.name}.${picture.type}`;
     await FileSystem.downloadAsync(picture.uri, target);
     documentPictures.push(target);
   }
