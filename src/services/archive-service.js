@@ -92,6 +92,8 @@ export const unarchiveFiles = async (archiveName = "") => {
     await fileService.createDirectoryStructure(folderUri);
     await FileSystem.writeAsStringAsync(fileUri, data, OPTIONS);
   }
+
+  return archiveFiles;
 };
 
 const getFileContent = async (db, fileId) => {
@@ -115,23 +117,23 @@ const createArchiveFolder = async (archiveName) => {
 };
 
 const getArchiveFiles = async (db, archiveFolderUri) => {
-  const files = [];
+  const archiveFiles = [];
   const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
 
   for (let i = 0; i < filesResultset.rows.length; i++) {
     const { ID: id, NAME } = filesResultset.rows.item(i);
     const fileUri = `${archiveFolderUri}/${NAME}`;
     const folderUri = fileService.getDirectoryOnly(fileUri);
-    files.push({ id, fileUri, folderUri });
+    archiveFiles.push({ id, fileUri, folderUri });
   }
 
   console.log("__________ getFiles __________");
-  files.forEach(({ fileUri }) => {
+  archiveFiles.forEach(({ fileUri }) => {
     const startIndex = fileUri.indexOf("/Documents/");
     console.log(fileUri.substring(startIndex));
   });
 
-  return files;
+  return archiveFiles;
 };
 
 export const archiveFiles = async ({ archiveName = "", fileURIs = [] }) => {
