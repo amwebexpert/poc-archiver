@@ -14,8 +14,8 @@ export const FileInfo = ({ item }) => {
     <List.Item
       title={
         <View>
-          <Text variant="bodyLarge">{item.name}</Text>
-          <Text variant="bodySmall">{formattedDate}</Text>
+          <Text>{item.name}</Text>
+          <Text>{formattedDate}</Text>
         </View>
       }
       left={(props) => <List.Icon {...props} icon={IconNames.get(extension)} />}
