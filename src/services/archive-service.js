@@ -1,5 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
+import CryptoES from "crypto-es";
+
 import * as fileService from "./file-service";
 import * as sqlService from "./sql-service";
 
@@ -71,10 +73,21 @@ const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
       length: CHUNK_SIZE,
     });
 
-    await sqlService.executeSql(db, sql, [fileId, chunk]);
+    await sqlService.executeSql(db, sql, [fileId, encrypt(chunk)]);
 
     bytesCount += chunk.length;
   } while (bytesCount < size);
+};
+
+const encrypt = (chunk) => {
+  const chunkAsString = CryptoES.enc.Base64.parse(chunk);
+  return CryptoES.AES.encrypt(chunkAsString, "my-passphrase").toString();
+};
+
+const decrypt = (chunk) => {
+  return CryptoES.AES.decrypt(chunk, "my-passphrase").toString(
+    CryptoES.enc.Base64
+  );
 };
 
 export const unarchiveFiles = async (archiveName = "") => {
@@ -105,7 +118,7 @@ const getFileContent = async (db, fileId) => {
 
   for (let i = 0; i < rows.length; i++) {
     const chunk = rows.item(i).BASE64_DATA;
-    buffers.push(Buffer.from(chunk, "base64"));
+    buffers.push(Buffer.from(decrypt(chunk), "base64"));
   }
 
   return Buffer.concat(buffers).toString("base64");
