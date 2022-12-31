@@ -1,5 +1,5 @@
 import * as FileSystem from "expo-file-system";
-import * as Base64 from "base-64";
+import { Buffer } from "buffer";
 import * as fileService from "./file-service";
 import * as sqlService from "./sql-service";
 
@@ -99,17 +99,16 @@ export const unarchiveFiles = async (archiveName = "") => {
 };
 
 const getFileContent = async (db, fileId) => {
-  let data = "";
+  const buffers = [];
   const sql = "SELECT BASE64_DATA FROM CHUNK WHERE FILE_ID = ?";
   const { rows } = await sqlService.executeSql(db, sql, [fileId]);
 
   for (let i = 0; i < rows.length; i++) {
     const chunk = rows.item(i).BASE64_DATA;
-    // converts base64 into plain old (binary) strings, which can be concatenated as usual
-    data += Base64.decode(chunk);
+    buffers.push(Buffer.from(chunk, "base64"));
   }
 
-  return Base64.encode(data);
+  return Buffer.concat(buffers).toString("base64");
 };
 
 const createArchiveFolder = async (archiveName) => {
