@@ -90,7 +90,7 @@ const decrypt = (chunk) => {
   );
 };
 
-export const unarchiveFiles = async (archiveName = "", passphrase = "") => {
+export const unarchiveFiles = async ({ archiveName = "", passphrase = "" }) => {
   if (!archiveName || archiveName.trim().length === 0) {
     throw Error("Invalid archiveName argument");
   }
@@ -159,7 +159,11 @@ const getArchiveFiles = async (db, archiveFolderUri) => {
   return archiveFiles;
 };
 
-export const archiveFiles = async ({ archiveName = "", passphrase = "", fileURIs = [] }) => {
+export const archiveFiles = async ({
+  archiveName = "",
+  passphrase = "",
+  fileURIs = [],
+}) => {
   if (!fileURIs || fileURIs.length === 0) {
     throw Error("Invalid fileURIs argument");
   }

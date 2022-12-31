@@ -24,7 +24,10 @@ export const unarchiveDataDemo = async ({
   archiveName = "",
   passphrase = "",
 }) => {
-  const archiveFiles = await archiveService.unarchiveFiles(archiveName);
+  const archiveFiles = await archiveService.unarchiveFiles({
+    archiveName,
+    passphrase,
+  });
   return archiveFiles;
 };
 
