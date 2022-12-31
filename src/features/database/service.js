@@ -5,7 +5,7 @@ import * as archiveService from "~/services/archive-service";
 import { AppAssets } from "~/assets";
 import { LONG_TEXT } from "./data";
 
-export const archiveDataDemo = async () => {
+export const archiveDataDemo = async ({ archivePassphrase = "" }) => {
   const textFileUri = await createTextFileInDocumentFolder();
   const documentPictures = await copyAssetsPicturesToDocumentFolder();
   const fileURIs = [textFileUri, ...documentPictures];
@@ -13,13 +13,17 @@ export const archiveDataDemo = async () => {
   const archiveName = archiveService.getUniqueArchiveFilename();
   await archiveService.archiveFiles({
     archiveName,
+    archivePassphrase,
     fileURIs,
   });
 
   return archiveName;
 };
 
-export const unarchiveDataDemo = async (archiveName = "") => {
+export const unarchiveDataDemo = async ({
+  archiveName = "",
+  archivePassphrase = "",
+}) => {
   const archiveFiles = await archiveService.unarchiveFiles(archiveName);
   return archiveFiles;
 };

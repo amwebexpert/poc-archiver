@@ -9,23 +9,34 @@ import { FileInfo } from "./FileInfo";
 
 export const DatabaseScreen = () => {
   const styles = useStyles();
+  const [archivePassphrase, setArchivePassphrase] =
+    React.useState("my-passphrase");
   const [archiveName, setArchiveName] = React.useState("");
   const [files, setFiles] = React.useState([]);
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const archiveDemo = async () => {
-    const name = await service.archiveDataDemo();
+    const name = await service.archiveDataDemo({ archivePassphrase });
     setArchiveName(name);
     setFiles([]);
   };
 
   const unarchiveDemo = async () => {
-    const archiveFiles = await service.unarchiveDataDemo(archiveName);
+    const archiveFiles = await service.unarchiveDataDemo({
+      archiveName,
+      archivePassphrase,
+    });
     setFiles(archiveFiles);
   };
 
   return (
     <AppLayout title="Database screen">
+      <TextInput
+        label="Archive passphrase"
+        mode="outlined"
+        value={archivePassphrase}
+        onChangeText={setArchivePassphrase}
+      />
       <TextInput
         label="Archive name"
         mode="outlined"
@@ -33,11 +44,18 @@ export const DatabaseScreen = () => {
         onChangeText={setArchiveName}
       />
       <View style={styles.root}>
-        <FlatList data={files} renderItem={({item}) => <FileInfo item={item} />} />
+        <FlatList
+          data={files}
+          renderItem={({ item }) => <FileInfo item={item} />}
+        />
       </View>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={archiveDemo}>
+        <Button
+          mode="contained"
+          onPress={archiveDemo}
+          disabled={!archivePassphrase}
+        >
           Archive
         </Button>
 
