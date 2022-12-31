@@ -3,7 +3,6 @@ import * as fileService from "./file-service";
 import * as sqlService from "./sql-service";
 
 const CHUNK_SIZE = 100 * 1024; // 100kB
-const OPTIONS = { encoding: FileSystem.EncodingType.Base64 };
 
 const SQL_TABLE_FILE = `CREATE TABLE IF NOT EXISTS 
   FILE (
@@ -18,7 +17,7 @@ const SQL_TABLE_CHUNK = `CREATE TABLE IF NOT EXISTS
   CHUNK (
     ID                 INTEGER PRIMARY KEY AUTOINCREMENT,
     FILE_ID            INTEGER NOT NULL,
-    DATA               BLOB NOT NULL
+    BASE64_DATA        TEXT NOT NULL
   );`;
 
 export const getUniqueArchiveFilename = () =>
@@ -60,13 +59,13 @@ const storeFileInfo = async ({ db, fileUri = "" }) => {
 
 const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
   const { size } = await buildArchiveFileInfo(fileUri);
-  const sql = "INSERT INTO CHUNK (FILE_ID, DATA) VALUES (?, ?);";
+  const sql = "INSERT INTO CHUNK (FILE_ID, BASE64_DATA) VALUES (?, ?);";
   let bytesCount = 0;
   let chunk;
 
   do {
     chunk = await FileSystem.readAsStringAsync(fileUri, {
-      ...OPTIONS,
+      encoding: FileSystem.EncodingType.Base64,
       position: bytesCount,
       length: CHUNK_SIZE,
     });
@@ -90,22 +89,24 @@ export const unarchiveFiles = async (archiveName = "") => {
     const { id, fileUri, folderUri } = archiveFiles[i];
     const data = await getFileContent(db, id);
     await fileService.createDirectoryStructure(folderUri);
-    await FileSystem.writeAsStringAsync(fileUri, data, OPTIONS);
+    await FileSystem.writeAsStringAsync(fileUri, data, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
   }
 
   return archiveFiles;
 };
 
 const getFileContent = async (db, fileId) => {
-  let data = "";
-  const sql = "SELECT DATA FROM CHUNK WHERE FILE_ID = ?";
-  const chucksResulset = await sqlService.executeSql(db, sql, [fileId]);
+  const chunks = [];
+  const sql = "SELECT BASE64_DATA FROM CHUNK WHERE FILE_ID = ?";
+  const { rows } = await sqlService.executeSql(db, sql, [fileId]);
 
-  for (let i = 0; i < chucksResulset.rows.length; i++) {
-    data += chucksResulset.rows.item(i).DATA;
+  for (let i = 0; i < rows.length; i++) {
+    chunks.push(rows.item(i).BASE64_DATA);
   }
 
-  return data;
+  return chunks.join("");
 };
 
 const createArchiveFolder = async (archiveName) => {
@@ -172,9 +173,9 @@ const logDebuggingInfo = async (db) => {
 
   const chucksResulset = await sqlService.executeSql(db, "SELECT * FROM CHUNK");
   for (let i = 0; i < chucksResulset.rows.length; i++) {
-    const { ID, FILE_ID, DATA } = chucksResulset.rows.item(i);
+    const { ID, FILE_ID, BASE64_DATA } = chucksResulset.rows.item(i);
     console.log(`*** CHUNK table row ${i}`, {
-      data: DATA.substring(0, 20) + "…",
+      chunk: BASE64_DATA.substring(0, 20) + "…",
       id: ID,
       fileId: FILE_ID,
     });
