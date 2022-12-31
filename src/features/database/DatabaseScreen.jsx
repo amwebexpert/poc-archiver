@@ -9,14 +9,13 @@ import { FileInfo } from "./FileInfo";
 
 export const DatabaseScreen = () => {
   const styles = useStyles();
-  const [archivePassphrase, setArchivePassphrase] =
-    React.useState("my-passphrase");
+  const [passphrase, setPassphrase] = React.useState("my-passphrase");
   const [archiveName, setArchiveName] = React.useState("");
   const [files, setFiles] = React.useState([]);
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const archiveDemo = async () => {
-    const name = await service.archiveDataDemo({ archivePassphrase });
+    const name = await service.archiveDataDemo({ passphrase });
     setArchiveName(name);
     setFiles([]);
   };
@@ -24,7 +23,7 @@ export const DatabaseScreen = () => {
   const unarchiveDemo = async () => {
     const archiveFiles = await service.unarchiveDataDemo({
       archiveName,
-      archivePassphrase,
+      passphrase,
     });
     setFiles(archiveFiles);
   };
@@ -34,8 +33,8 @@ export const DatabaseScreen = () => {
       <TextInput
         label="Archive passphrase"
         mode="outlined"
-        value={archivePassphrase}
-        onChangeText={setArchivePassphrase}
+        value={passphrase}
+        onChangeText={setPassphrase}
       />
       <TextInput
         label="Archive name"
@@ -51,11 +50,7 @@ export const DatabaseScreen = () => {
       </View>
 
       <View style={styles.actions}>
-        <Button
-          mode="contained"
-          onPress={archiveDemo}
-          disabled={!archivePassphrase}
-        >
+        <Button mode="contained" onPress={archiveDemo} disabled={!passphrase}>
           Archive
         </Button>
 
