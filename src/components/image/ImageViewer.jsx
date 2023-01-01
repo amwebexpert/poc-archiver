@@ -1,10 +1,13 @@
 import { StyleSheet, Image } from "react-native";
 import { useTheme } from "react-native-paper";
 
-export const ImageViewer = ({ placeholderImageSource }) => {
+export const ImageViewer = ({ placeholderImageSource, selectedImage }) => {
   const styles = useStyles();
+  const imageSource = selectedImage
+    ? { uri: selectedImage }
+    : placeholderImageSource;
 
-  return <Image source={placeholderImageSource} style={styles.image} />;
+  return <Image source={imageSource} style={styles.image} />;
 };
 
 const useStyles = () => {
