@@ -29,6 +29,18 @@ export const StickerSmashScreen = () => {
     setShowAppOptions(true);
   };
 
+  const onReset = () => {
+    setShowAppOptions(false);
+  };
+
+  const onAddSticker = () => {
+    // we will implement this later
+  };
+
+  const onSaveImage = async () => {
+    // we will implement this later
+  };
+
   return (
     <AppLayout title="StickerSmash screen">
       <View style={styles.container}>
@@ -47,19 +59,19 @@ export const StickerSmashScreen = () => {
             label="Reset"
             variant="secondary"
             style={styles.fab}
-            onPress={() => console.log("Pressed")}
+            onPress={onReset}
           />
           <FAB
             icon="plus"
             style={styles.fab}
-            onPress={() => console.log("Pressed")}
+            onPress={onAddSticker}
           />
           <FAB
             icon="content-save"
             label="Save"
             variant="secondary"
             style={styles.fab}
-            onPress={() => console.log("Pressed")}
+            onPress={onSaveImage}
           />
         </View>
       ) : (

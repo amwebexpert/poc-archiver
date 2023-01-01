@@ -12,7 +12,7 @@ export const AppLayout = ({ title, children }) => {
     <SafeAreaView style={styles.root} edges={["bottom", "left", "right"]}>
       <NavBar title={title} />
       <View style={styles.content}>{children}</View>
-      <StatusBar style="auto" />
+      <StatusBar style="inverted" />
     </SafeAreaView>
   );
 };
