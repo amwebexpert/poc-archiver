@@ -49,7 +49,7 @@ const buildArchiveFileInfo = async (fileUri = "") => {
   return { name, size, modifiedAtISO };
 };
 
-const storeFileInfo = async ({ db, fileUri = "", passphrase = "" }) => {
+const writeFileInfo = async ({ db, fileUri = "", passphrase = "" }) => {
   const { name, size, modifiedAtISO } = await buildArchiveFileInfo(fileUri);
   const archivedAtISO = new Date().toISOString();
 
@@ -60,7 +60,12 @@ const storeFileInfo = async ({ db, fileUri = "", passphrase = "" }) => {
   );
 };
 
-const storeFileContent = async ({ db, fileId = -1, fileUri = "", passphrase = "" }) => {
+const writeFileContent = async ({
+  db,
+  fileId = -1,
+  fileUri = "",
+  passphrase = "",
+}) => {
   const { size } = await buildArchiveFileInfo(fileUri);
   const sql = "INSERT INTO CHUNK (FILE_ID, BASE64_DATA) VALUES (?, ?);";
   let bytesCount = 0;
@@ -73,10 +78,26 @@ const storeFileContent = async ({ db, fileId = -1, fileUri = "", passphrase = ""
       length: CHUNK_SIZE,
     });
 
-    await sqlService.executeSql(db, sql, [fileId, encrypt({ chunk, passphrase })]);
+    await sqlService.executeSql(db, sql, [
+      fileId,
+      encrypt({ chunk, passphrase }),
+    ]);
 
     bytesCount += chunk.length;
   } while (bytesCount < size);
+};
+
+const readFileContent = async ({ db, fileId, passphrase = "" }) => {
+  const buffers = [];
+  const sql = "SELECT BASE64_DATA FROM CHUNK WHERE FILE_ID = ?";
+  const { rows } = await sqlService.executeSql(db, sql, [fileId]);
+
+  for (let i = 0; i < rows.length; i++) {
+    const chunk = rows.item(i).BASE64_DATA;
+    buffers.push(Buffer.from(decrypt({ chunk, passphrase }), "base64"));
+  }
+
+  return Buffer.concat(buffers).toString("base64");
 };
 
 const encrypt = ({ chunk, passphrase = "" }) => {
@@ -93,11 +114,18 @@ const decrypt = ({ chunk, passphrase = "" }) => {
     return chunk;
   }
 
-  return CryptoES.AES.decrypt(chunk, passphrase).toString(
-    CryptoES.enc.Base64
-  );
+  return CryptoES.AES.decrypt(chunk, passphrase).toString(CryptoES.enc.Base64);
 };
 
+/**
+ * Extracts files included in the provided archive name
+ *
+ * @param {string} archiveName - The name of the archive
+ * @param {string} [passphrase] - The encryption passphrase
+ * @param {string[]} fileURIs - The file URIs to archive
+ *
+ * @returns {string[]} The extracted file URIs
+ */
 export const unarchiveFiles = async ({ archiveName = "", passphrase = "" }) => {
   if (!archiveName || archiveName.trim().length === 0) {
     throw Error("Invalid archiveName argument");
@@ -105,11 +133,11 @@ export const unarchiveFiles = async ({ archiveName = "", passphrase = "" }) => {
 
   const archiveFolderUri = await createArchiveFolder(archiveName);
   const { db } = await setupDbTables(archiveName);
-  const archiveFiles = await getArchiveFiles(db, archiveFolderUri);
+  const archiveFiles = await readArchiveFiles(db, archiveFolderUri);
 
   for (let i = 0; i < archiveFiles.length; i++) {
     const { id: fileId, fileUri, folderUri } = archiveFiles[i];
-    const data = await getFileContent({ db, fileId, passphrase });
+    const data = await readFileContent({ db, fileId, passphrase });
     await fileService.createDirectoryStructure(folderUri);
     await FileSystem.writeAsStringAsync(fileUri, data, {
       encoding: FileSystem.EncodingType.Base64,
@@ -117,19 +145,6 @@ export const unarchiveFiles = async ({ archiveName = "", passphrase = "" }) => {
   }
 
   return archiveFiles;
-};
-
-const getFileContent = async ({ db, fileId, passphrase = "" }) => {
-  const buffers = [];
-  const sql = "SELECT BASE64_DATA FROM CHUNK WHERE FILE_ID = ?";
-  const { rows } = await sqlService.executeSql(db, sql, [fileId]);
-
-  for (let i = 0; i < rows.length; i++) {
-    const chunk = rows.item(i).BASE64_DATA;
-    buffers.push(Buffer.from(decrypt({ chunk, passphrase }), "base64"));
-  }
-
-  return Buffer.concat(buffers).toString("base64");
 };
 
 const createArchiveFolder = async (archiveName) => {
@@ -140,7 +155,7 @@ const createArchiveFolder = async (archiveName) => {
   return archiveFolderUri;
 };
 
-const getArchiveFiles = async (db, archiveFolderUri) => {
+const readArchiveFiles = async (db, archiveFolderUri) => {
   const archiveFiles = [];
   const filesResultset = await sqlService.executeSql(db, "SELECT * FROM FILE");
 
@@ -167,6 +182,15 @@ const getArchiveFiles = async (db, archiveFolderUri) => {
   return archiveFiles;
 };
 
+/**
+ * Archive (and optionaly encrypt) the provided files
+ *
+ * @param {string} [archiveName] - The name of the archive (a default unique archive name will be generated if no archive name is provided)
+ * @param {string} [passphrase] - The encryption passphrase (data will only be encrypted if the passphrase is defined)
+ * @param {string[]} fileURIs - The file URIs to archive
+ *
+ * @returns {object} - the final archive
+ */
 export const archiveFiles = async ({
   archiveName = "",
   passphrase = "",
@@ -180,8 +204,8 @@ export const archiveFiles = async ({
 
   for (let i = 0; i < fileURIs.length; i++) {
     const fileUri = fileURIs[i];
-    const { insertId } = await storeFileInfo({ db, fileUri, passphrase });
-    await storeFileContent({ db, fileId: insertId, fileUri, passphrase });
+    const { insertId } = await writeFileInfo({ db, fileUri, passphrase });
+    await writeFileContent({ db, fileId: insertId, fileUri, passphrase });
   }
 
   await logDebuggingInfo(db);
