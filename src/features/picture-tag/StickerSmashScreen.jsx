@@ -27,7 +27,7 @@ export const StickerSmashScreen = () => {
       </View>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={choosePicture}>
+        <Button mode="contained" onPress={choosePicture} icon="image">
           Choose a photo
         </Button>
 
