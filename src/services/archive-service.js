@@ -100,8 +100,8 @@ export const unarchiveFiles = async ({ archiveName = "", passphrase = "" }) => {
   const archiveFiles = await getArchiveFiles(db, archiveFolderUri);
 
   for (let i = 0; i < archiveFiles.length; i++) {
-    const { id, fileUri, folderUri } = archiveFiles[i];
-    const data = await getFileContent(db, id);
+    const { id: fileId, fileUri, folderUri } = archiveFiles[i];
+    const data = await getFileContent({ db, fileId, passphrase });
     await fileService.createDirectoryStructure(folderUri);
     await FileSystem.writeAsStringAsync(fileUri, data, {
       encoding: FileSystem.EncodingType.Base64,
@@ -111,7 +111,7 @@ export const unarchiveFiles = async ({ archiveName = "", passphrase = "" }) => {
   return archiveFiles;
 };
 
-const getFileContent = async (db, fileId) => {
+const getFileContent = async ({ db, fileId, passphrase = "" }) => {
   const buffers = [];
   const sql = "SELECT BASE64_DATA FROM CHUNK WHERE FILE_ID = ?";
   const { rows } = await sqlService.executeSql(db, sql, [fileId]);
