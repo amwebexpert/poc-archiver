@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
 import { EmojiListDialog } from "./EmojiListDialog";
+import { EmojiSticker } from "./EmojiSticker";
 
 const PlaceholderImage = require("../../../assets/images/backgrounds/background-dark.jpg");
 
@@ -57,6 +58,7 @@ export const StickerSmashScreen = () => {
             placeholderImageSource={PlaceholderImage}
             selectedImage={selectedImage}
           />
+          {!!pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
         </View>
       </View>
 
@@ -93,7 +95,7 @@ export const StickerSmashScreen = () => {
       <EmojiListDialog
         isVisible={isModalVisible}
         onDismiss={onModalClose}
-        onSelect={onAddSticker}
+        onSelect={setPickedEmoji}
       />
     </AppLayout>
   );

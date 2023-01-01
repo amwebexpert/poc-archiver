@@ -36,7 +36,7 @@ export const EmojiListDialog = ({
             contentContainerStyle={styles.listContainer}
             renderItem={({ item, index }) => {
               return (
-                <Pressable onPress={onEmojiPress}>
+                <Pressable onPress={() => onEmojiPress(item)}>
                   <Image source={item} key={index} style={styles.image} />
                 </Pressable>
               );
