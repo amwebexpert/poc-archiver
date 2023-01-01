@@ -6,6 +6,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import { appTheme } from "~/theme";
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
@@ -15,6 +16,7 @@ import { FilesScreen } from "~/features/files/FilesScreen";
 import { DatabaseScreen } from "~/features/database/DatabaseScreen";
 import { ShareScreen } from "~/features/share/ShareScreen";
 import { NavScreen } from "~/features/navigation/NavScreen";
+import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -34,6 +36,21 @@ const App = () => (
             drawerIcon: ({ size }) => (
               <Ionicons
                 name="md-home"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="StickerSmash"
+          component={StickerSmashScreen}
+          initialParams={{}}
+          options={{
+            title: "StickerSmash screen",
+            drawerIcon: ({ size }) => (
+              <FontAwesome
+                name="file-picture-o"
                 size={size}
                 color={appTheme.colors.secondary}
               />
