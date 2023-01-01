@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, useTheme } from "react-native-paper";
+import { Button, FAB, useTheme } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 
 import { AppLayout } from "~/components/layout/AppLayout";
@@ -11,6 +11,7 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 export const StickerSmashScreen = () => {
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
+  const [showAppOptions, setShowAppOptions] = useState(false);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -20,11 +21,12 @@ export const StickerSmashScreen = () => {
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      setShowAppOptions(true);
     }
   };
 
   const useThisPicture = () => {
-    console.log("useThisPicture");
+    setShowAppOptions(true);
   };
 
   return (
@@ -38,15 +40,39 @@ export const StickerSmashScreen = () => {
         </View>
       </View>
 
-      <View style={styles.actions}>
-        <Button mode="contained" onPress={pickImage} icon="image">
-          Choose a photo
-        </Button>
+      {showAppOptions ? (
+        <View style={styles.optionActions}>
+          <FAB
+            icon="undo"
+            label="Reset"
+            variant="secondary"
+            style={styles.fab}
+            onPress={() => console.log("Pressed")}
+          />
+          <FAB
+            icon="plus"
+            style={styles.fab}
+            onPress={() => console.log("Pressed")}
+          />
+          <FAB
+            icon="content-save"
+            label="Save"
+            variant="secondary"
+            style={styles.fab}
+            onPress={() => console.log("Pressed")}
+          />
+        </View>
+      ) : (
+        <View style={styles.actions}>
+          <Button mode="contained" onPress={pickImage} icon="image">
+            Choose a photo
+          </Button>
 
-        <Button mode="outlined" onPress={useThisPicture}>
-          Use this photo
-        </Button>
-      </View>
+          <Button mode="outlined" onPress={useThisPicture}>
+            Use this photo
+          </Button>
+        </View>
+      )}
     </AppLayout>
   );
 };
@@ -66,6 +92,15 @@ const useStyles = () => {
     actions: {
       flex: 1,
       alignItems: "center",
+    },
+    optionActions: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "space-around",
+      alignItems: "center",
+    },
+    fab: {
+      borderRadius: theme.spacing(4),
     },
   });
 };
