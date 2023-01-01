@@ -24,7 +24,7 @@ const App = () => (
   <NavigationContainer theme={appTheme}>
     <PaperProvider theme={appTheme}>
       <Drawer.Navigator
-        initialRouteName="Home"
+        initialRouteName="StickerSmash"
         screenOptions={{ headerShown: false }}
       >
         <Drawer.Screen
