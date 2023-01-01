@@ -49,7 +49,7 @@ const buildArchiveFileInfo = async (fileUri = "") => {
   return { name, size, modifiedAtISO };
 };
 
-const storeFileInfo = async ({ db, fileUri = "" }) => {
+const storeFileInfo = async ({ db, fileUri = "", passphrase = "" }) => {
   const { name, size, modifiedAtISO } = await buildArchiveFileInfo(fileUri);
   const archivedAtISO = new Date().toISOString();
 
@@ -73,18 +73,18 @@ const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
       length: CHUNK_SIZE,
     });
 
-    await sqlService.executeSql(db, sql, [fileId, encrypt(chunk)]);
+    await sqlService.executeSql(db, sql, [fileId, encrypt({ chunk })]);
 
     bytesCount += chunk.length;
   } while (bytesCount < size);
 };
 
-const encrypt = (chunk) => {
+const encrypt = ({ chunk }) => {
   const chunkAsString = CryptoES.enc.Base64.parse(chunk);
   return CryptoES.AES.encrypt(chunkAsString, "my-passphrase").toString();
 };
 
-const decrypt = (chunk) => {
+const decrypt = ({ chunk, passphrase = "" }) => {
   return CryptoES.AES.decrypt(chunk, "my-passphrase").toString(
     CryptoES.enc.Base64
   );
@@ -118,7 +118,7 @@ const getFileContent = async ({ db, fileId, passphrase = "" }) => {
 
   for (let i = 0; i < rows.length; i++) {
     const chunk = rows.item(i).BASE64_DATA;
-    buffers.push(Buffer.from(decrypt(chunk), "base64"));
+    buffers.push(Buffer.from(decrypt({ chunk }), "base64"));
   }
 
   return Buffer.concat(buffers).toString("base64");
@@ -172,7 +172,7 @@ export const archiveFiles = async ({
 
   for (let i = 0; i < fileURIs.length; i++) {
     const fileUri = fileURIs[i];
-    const { insertId } = await storeFileInfo({ db, fileUri });
+    const { insertId } = await storeFileInfo({ db, fileUri, passphrase });
     await storeFileContent({ db, fileId: insertId, fileUri });
   }
 
