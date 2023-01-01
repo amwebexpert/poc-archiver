@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
@@ -9,21 +9,31 @@ export const HomeScreen = () => {
 
   return (
     <AppLayout title="Home screen">
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Home Screen</Text>
-        <Button
-          mode="outlined"
-          title="Go to Settings..."
-          onPress={() => {
-            navigation.navigate("Settings", {
-              itemId: 86,
-              otherParam: "anything you want here",
-            });
-          }}
-        >
-          Go to details
+      <View style={styles.root}>
+      <Button mode="outlined" onPress={() => navigation.navigate("Database")}>
+          Archiver screen
+        </Button>
+        <Button mode="outlined" onPress={() => navigation.navigate("NavScreen")}>
+          Navigation screen
+        </Button>
+        <Button mode="outlined" onPress={() => navigation.navigate("Cypher")}>
+          Cypher screen
+        </Button>
+        <Button mode="outlined" onPress={() => navigation.navigate("Files")}>
+          Files screen
+        </Button>
+        <Button mode="outlined" onPress={() => navigation.navigate("Share")}>
+          Share screen
         </Button>
       </View>
     </AppLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

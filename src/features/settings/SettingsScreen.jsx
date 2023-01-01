@@ -1,29 +1,47 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
 import * as React from "react";
-import { View } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { Text, Button, useTheme } from "react-native-paper";
+import { useNavigation, useRoute } from "@react-navigation/native";
+
+import { spacing } from "~/theme";
 import { AppLayout } from "../../components/layout/AppLayout";
 
 export const SettingsScreen = () => {
-  const route = useRoute();
-  const { itemId, otherParam } = route.params;
+  const { params } = useRoute();
+  const styles = useStyles();
   const navigation = useNavigation();
 
   return (
     <AppLayout title="Settings screen">
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Settings Screen</Text>
-        <Text>itemId: {JSON.stringify(itemId)}</Text>
-        <Text>otherParam: {JSON.stringify(otherParam)}</Text>
+      <View style={styles.root}>
+        <View style={styles.params}>
+          <Text>{JSON.stringify(params, null, 4)}</Text>
+        </View>
 
-        <Button
-          mode="outlined"
-          title="Go back"
-          onPress={() => navigation.goBack()}
-        >
-          Go back
+        <Button mode="outlined" onPress={() => navigation.goBack()}>
+          Go Home
         </Button>
       </View>
     </AppLayout>
   );
+};
+
+const useStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    root: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    params: {
+      flex: 1,
+      width: "100%",
+      padding: spacing(2),
+      marginBottom: spacing(2),
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+    },
+  });
 };

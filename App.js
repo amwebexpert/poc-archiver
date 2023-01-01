@@ -5,6 +5,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 import { appTheme } from "~/theme";
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
@@ -13,6 +14,7 @@ import { CypherScreen } from "~/features/cypher/CypherScreen";
 import { FilesScreen } from "~/features/files/FilesScreen";
 import { DatabaseScreen } from "~/features/database/DatabaseScreen";
 import { ShareScreen } from "~/features/share/ShareScreen";
+import { NavScreen } from "~/features/navigation/NavScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -20,7 +22,7 @@ const App = () => (
   <NavigationContainer theme={appTheme}>
     <PaperProvider theme={appTheme}>
       <Drawer.Navigator
-        initialRouteName="Database"
+        initialRouteName="Home"
         screenOptions={{ headerShown: false }}
       >
         <Drawer.Screen
@@ -32,6 +34,21 @@ const App = () => (
             drawerIcon: ({ size }) => (
               <Ionicons
                 name="md-home"
+                size={size}
+                color={appTheme.colors.secondary}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="NavScreen"
+          component={NavScreen}
+          initialParams={{}}
+          options={{
+            title: "Navigation screen",
+            drawerIcon: ({ size }) => (
+              <FontAwesome5
+                name="directions"
                 size={size}
                 color={appTheme.colors.secondary}
               />
