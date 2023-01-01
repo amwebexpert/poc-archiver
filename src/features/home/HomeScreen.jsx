@@ -11,7 +11,7 @@ export const HomeScreen = () => {
     <AppLayout title="Home screen">
       <View style={styles.root}>
       <Button mode="outlined" onPress={() => navigation.navigate("Database")}>
-          Archiver screen
+          Database screen
         </Button>
         <Button mode="outlined" onPress={() => navigation.navigate("NavScreen")}>
           Navigation screen
