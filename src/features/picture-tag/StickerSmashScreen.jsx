@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
+import { EmojiListDialog } from "./EmojiListDialog";
 
 const PlaceholderImage = require("../../../assets/images/backgrounds/background-dark.jpg");
 
@@ -12,6 +13,9 @@ export const StickerSmashScreen = () => {
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
   const [showAppOptions, setShowAppOptions] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pickedEmoji, setPickedEmoji] = useState();
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -34,7 +38,11 @@ export const StickerSmashScreen = () => {
   };
 
   const onAddSticker = () => {
-    // we will implement this later
+    setIsModalVisible(true);
+  };
+
+  const onModalClose = () => {
+    setIsModalVisible(false);
   };
 
   const onSaveImage = async () => {
@@ -61,11 +69,7 @@ export const StickerSmashScreen = () => {
             style={styles.fab}
             onPress={onReset}
           />
-          <FAB
-            icon="plus"
-            style={styles.fab}
-            onPress={onAddSticker}
-          />
+          <FAB icon="plus" style={styles.fab} onPress={onAddSticker} />
           <FAB
             icon="content-save"
             label="Save"
@@ -85,6 +89,12 @@ export const StickerSmashScreen = () => {
           </Button>
         </View>
       )}
+
+      <EmojiListDialog
+        isVisible={isModalVisible}
+        onDismiss={onModalClose}
+        onSelect={onAddSticker}
+      />
     </AppLayout>
   );
 };
