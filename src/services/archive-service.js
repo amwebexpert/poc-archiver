@@ -60,7 +60,7 @@ const storeFileInfo = async ({ db, fileUri = "", passphrase = "" }) => {
   );
 };
 
-const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
+const storeFileContent = async ({ db, fileId = -1, fileUri = "", passphrase = "" }) => {
   const { size } = await buildArchiveFileInfo(fileUri);
   const sql = "INSERT INTO CHUNK (FILE_ID, BASE64_DATA) VALUES (?, ?);";
   let bytesCount = 0;
@@ -73,19 +73,27 @@ const storeFileContent = async ({ db, fileId = -1, fileUri = "" }) => {
       length: CHUNK_SIZE,
     });
 
-    await sqlService.executeSql(db, sql, [fileId, encrypt({ chunk })]);
+    await sqlService.executeSql(db, sql, [fileId, encrypt({ chunk, passphrase })]);
 
     bytesCount += chunk.length;
   } while (bytesCount < size);
 };
 
-const encrypt = ({ chunk }) => {
+const encrypt = ({ chunk, passphrase = "" }) => {
+  if (!passphrase) {
+    return chunk;
+  }
+
   const chunkAsString = CryptoES.enc.Base64.parse(chunk);
-  return CryptoES.AES.encrypt(chunkAsString, "my-passphrase").toString();
+  return CryptoES.AES.encrypt(chunkAsString, passphrase).toString();
 };
 
 const decrypt = ({ chunk, passphrase = "" }) => {
-  return CryptoES.AES.decrypt(chunk, "my-passphrase").toString(
+  if (!passphrase) {
+    return chunk;
+  }
+
+  return CryptoES.AES.decrypt(chunk, passphrase).toString(
     CryptoES.enc.Base64
   );
 };
@@ -118,7 +126,7 @@ const getFileContent = async ({ db, fileId, passphrase = "" }) => {
 
   for (let i = 0; i < rows.length; i++) {
     const chunk = rows.item(i).BASE64_DATA;
-    buffers.push(Buffer.from(decrypt({ chunk }), "base64"));
+    buffers.push(Buffer.from(decrypt({ chunk, passphrase }), "base64"));
   }
 
   return Buffer.concat(buffers).toString("base64");
@@ -173,7 +181,7 @@ export const archiveFiles = async ({
   for (let i = 0; i < fileURIs.length; i++) {
     const fileUri = fileURIs[i];
     const { insertId } = await storeFileInfo({ db, fileUri, passphrase });
-    await storeFileContent({ db, fileId: insertId, fileUri });
+    await storeFileContent({ db, fileId: insertId, fileUri, passphrase });
   }
 
   await logDebuggingInfo(db);
