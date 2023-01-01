@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, FAB, useTheme } from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 
 import { AppLayout } from "~/components/layout/AppLayout";
@@ -52,7 +53,7 @@ export const StickerSmashScreen = () => {
 
   return (
     <AppLayout title="StickerSmash screen">
-      <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
         <View style={styles.imageContainer}>
           <ImageViewer
             placeholderImageSource={PlaceholderImage}
@@ -60,7 +61,7 @@ export const StickerSmashScreen = () => {
           />
           {!!pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
         </View>
-      </View>
+      </GestureHandlerRootView>
 
       {showAppOptions ? (
         <View style={styles.optionActions}>

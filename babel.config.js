@@ -3,7 +3,8 @@ module.exports = function (api) {
 
   const presets = ["babel-preset-expo"];
   const plugins = [
-    'react-native-reanimated/plugin',
+    "@babel/plugin-proposal-export-namespace-from",
+    "react-native-reanimated/plugin",
     [
       "babel-plugin-root-import",
       {
