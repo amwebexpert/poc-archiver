@@ -13,7 +13,11 @@ const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationDark: NavigationDarkTheme,
 });
 
+const DEFAULT_SPACING = 8;
+const spacing = (units = 1) => units * DEFAULT_SPACING;
+
 export const CombinedDefaultTheme = {
+  spacing,
   ...MD3LightTheme,
   ...LightTheme,
   colors: {
@@ -63,6 +67,7 @@ export const CombinedDefaultTheme = {
 };
 
 export const CombinedDarkTheme = {
+  spacing,
   ...MD3DarkTheme,
   ...DarkTheme,
   colors: {
@@ -113,7 +118,3 @@ export const CombinedDarkTheme = {
 
 // default theme until we provide a user preference and a theme toggle context
 export const appTheme = CombinedDarkTheme;
-
-const DEFAULT_SPACING = 8;
-
-export const spacing = (units = 1) => units * DEFAULT_SPACING;

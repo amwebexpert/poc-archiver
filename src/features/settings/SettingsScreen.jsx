@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import { Text, Button, useTheme } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { spacing } from "~/theme";
 import { AppLayout } from "../../components/layout/AppLayout";
 
 export const SettingsScreen = () => {
@@ -38,8 +37,8 @@ const useStyles = () => {
     params: {
       flex: 1,
       width: "100%",
-      padding: spacing(2),
-      marginBottom: spacing(2),
+      padding: theme.spacing(2),
+      marginBottom: theme.spacing(2),
       borderWidth: 2,
       borderColor: theme.colors.primary,
     },

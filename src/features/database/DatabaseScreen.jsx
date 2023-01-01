@@ -3,7 +3,6 @@ import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Button, Snackbar, TextInput, useTheme } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
-import { spacing } from "~/theme";
 import * as service from "./service";
 import { FileInfo } from "./FileInfo";
 
@@ -83,7 +82,7 @@ const useStyles = () => {
       borderColor: theme.colors.primary,
       borderRadius: theme.roundness,
       borderWidth: 2,
-      marginVertical: spacing(2),
+      marginVertical: theme.spacing(2),
     },
     actions: {
       flexDirection: "row",

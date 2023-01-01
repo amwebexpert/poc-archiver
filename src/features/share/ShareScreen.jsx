@@ -1,13 +1,13 @@
 import React from "react";
 
 import { View, StyleSheet } from "react-native";
-import { Button, Snackbar, Text } from "react-native-paper";
+import { Button, Snackbar, Text, useTheme } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
-import { spacing } from "~/theme";
 
 import * as openerService from "./opener-service";
 
 export const ShareScreen = () => {
+  const styles = useStyles();
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const openHtmlFileDemo = async () => {
@@ -57,16 +57,20 @@ export const ShareScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: "center",
-  },
-  heading: {
-    marginBottom: spacing(2),
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-});
+const useStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    root: {
+      flex: 1,
+      alignItems: "center",
+    },
+    heading: {
+      marginBottom: theme.spacing(2),
+    },
+    actions: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+    });
+};

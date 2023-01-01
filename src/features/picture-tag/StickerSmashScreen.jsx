@@ -1,26 +1,37 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import { ImageViewer } from "~/components/image/ImageViewer";
+
+const PlaceholderImage = require("../../../assets/images/backgrounds/background-dark.jpg");
 
 export const StickerSmashScreen = () => {
-  const navigation = useNavigation();
+  const styles = useStyles();
 
   return (
     <AppLayout title="StickerSmash screen">
-      <View style={styles.root}>
-        <Text>StickerSmashScreen</Text>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <ImageViewer placeholderImageSource={PlaceholderImage} />
+        </View>
       </View>
     </AppLayout>
   );
 };
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+const useStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+    },
+    imageContainer: {
+      flex: 1,
+      paddingTop: theme.spacing(7),
+    },
+  });
+};
