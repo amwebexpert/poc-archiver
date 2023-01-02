@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, FAB, useTheme } from "react-native-paper";
+import { Button, FAB, Snackbar, useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
+import { captureRef } from "react-native-view-shot";
+import * as MediaLibrary from 'expo-media-library';
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
@@ -12,6 +14,9 @@ import { EmojiSticker } from "./EmojiSticker";
 const PlaceholderImage = require("../../../assets/images/backgrounds/background-dark.jpg");
 
 export const StickerSmashScreen = () => {
+  const imageRef = useRef();
+  const [snackbarText, setSnackbarText] = React.useState("");
+
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
   const [showAppOptions, setShowAppOptions] = useState(false);
@@ -48,21 +53,36 @@ export const StickerSmashScreen = () => {
   };
 
   const onSaveImage = async () => {
-    // we will implement this later
+    try {
+      const localUri = await captureRef(imageRef, {
+        height: 440,
+        quality: 1,
+      });
+
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
+        setSnackbarText("Saved into media library!");
+      }
+    } catch (e) {
+      setSnackbarText(e.message);
+    }
   };
 
   return (
     <AppLayout title="StickerSmash screen">
       <GestureHandlerRootView style={styles.container}>
         <View style={styles.imageContainer}>
-          <ImageViewer
-            placeholderImageSource={PlaceholderImage}
-            selectedImage={selectedImage}
-          />
-          {!!pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
+          <View ref={imageRef} collapsable={false}>
+            <ImageViewer
+              placeholderImageSource={PlaceholderImage}
+              selectedImage={selectedImage}
+            />
+            {!!pickedEmoji && (
+              <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
+            )}
+          </View>
         </View>
       </GestureHandlerRootView>
-
       {showAppOptions ? (
         <View style={styles.optionActions}>
           <FAB
@@ -92,12 +112,14 @@ export const StickerSmashScreen = () => {
           </Button>
         </View>
       )}
-
       <EmojiListDialog
         isVisible={isModalVisible}
         onDismiss={onModalClose}
         onSelect={setPickedEmoji}
       />
+      <Snackbar visible={!!snackbarText} onDismiss={() => setSnackbarText("")}>
+        {snackbarText}
+      </Snackbar>
     </AppLayout>
   );
 };
