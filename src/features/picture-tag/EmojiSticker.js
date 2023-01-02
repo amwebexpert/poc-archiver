@@ -19,7 +19,7 @@ export const EmojiSticker = ({ imageSize, stickerSource }) => {
   const onDoubleTap = useAnimatedGestureHandler({
     onActive: () => {
       if (scaleImage.value && scaleImage.value < imageSize * 4) {
-        scaleImage.value = scaleImage.value * 2;
+        scaleImage.value = scaleImage.value * 1.25;
       }
     },
   });
