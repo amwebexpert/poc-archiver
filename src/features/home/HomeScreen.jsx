@@ -25,6 +25,9 @@ export const HomeScreen = () => {
         <Button mode="outlined" onPress={() => navigation.navigate("Share")}>
           Share screen
         </Button>
+        <Button mode="outlined" onPress={() => navigation.navigate("StickerSmash")}>
+          StickerSmash screen
+        </Button>
       </View>
     </AppLayout>
   );
