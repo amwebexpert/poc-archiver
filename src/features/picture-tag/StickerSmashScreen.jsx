@@ -42,6 +42,7 @@ export const StickerSmashScreen = () => {
 
   const onReset = () => {
     setShowAppOptions(false);
+    setPickedEmoji(undefined);
   };
 
   const onAddSticker = () => {
