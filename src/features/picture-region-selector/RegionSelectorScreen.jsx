@@ -5,19 +5,16 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
-import { MovableCircleHandle } from "./MovableCircleHandle";
+import { RegionSelector } from "./RegionSelector";
 
 const PlaceholderImage = require("../../../assets/images/backgrounds/background-dark.jpg");
 
 export const RegionSelectorScreen = () => {
   const styles = useStyles();
   const [imageLayout, setImageLayout] = useState({});
-  const isLayoutReady = !!imageLayout.width && !!imageLayout.height;
 
-  const onImageLayout = (event) => {
-    const { x, y, height, width } = event.nativeEvent.layout;
-    setImageLayout({ x, y, height, width });
-  };
+  const onImageLayout = (event) =>
+    setImageLayout(event?.nativeEvent?.layout ?? {});
 
   return (
     <AppLayout title="Region selection screen">
@@ -25,12 +22,7 @@ export const RegionSelectorScreen = () => {
         <View style={styles.imageContainer}>
           <View collapsable={false} onLayout={onImageLayout}>
             <ImageViewer placeholderImageSource={PlaceholderImage} />
-            {isLayoutReady && (
-              <>
-                <MovableCircleHandle imageLayout={imageLayout} />
-                <MovableCircleHandle imageLayout={imageLayout} />
-              </>
-            )}
+            <RegionSelector imageLayout={imageLayout} />
           </View>
         </View>
       </GestureHandlerRootView>
