@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
@@ -6,9 +7,16 @@ import Animated, {
   useAnimatedGestureHandler,
 } from "react-native-reanimated";
 
+const CIRCLE_SIZE = 30;
+const HALF_CIRCLE_SIZE = CIRCLE_SIZE / 2;
+
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export const MovableCircleHandle = () => {
+export const MovableCircleHandle = ({ imageLayout }) => {
+  // state for drag movement boundaries
+  const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
+  const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
+
   // state for drag behavior
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -19,8 +27,15 @@ export const MovableCircleHandle = () => {
       context.translateY = translateY.value;
     },
     onActive: (event, context) => {
-      translateX.value = event.translationX + context.translateX;
-      translateY.value = event.translationY + context.translateY;
+      const x = event.translationX + context.translateX;
+      if (x >= -HALF_CIRCLE_SIZE && x <= maxX.value) {
+        translateX.value = x;
+      }
+
+      const y = event.translationY + context.translateY;
+      if (y >= -HALF_CIRCLE_SIZE && y <= maxY.value) {
+        translateY.value = y;
+      }
     },
   });
 
@@ -33,21 +48,28 @@ export const MovableCircleHandle = () => {
 
   return (
     <PanGestureHandler onGestureEvent={onDrag}>
-      <AnimatedView style={[containerStyle, { top: -350 }]}>
+      <AnimatedView style={[containerStyle, styles.container]}>
         <View style={styles.circle} />
       </AnimatedView>
     </PanGestureHandler>
   );
 };
 
-const CIRCLE_SIZE = 30;
 const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+    top: 0,
+    left: 0,
+    zIndex: 1,
+  },
   circle: {
     width: CIRCLE_SIZE,
     height: CIRCLE_SIZE,
     borderColor: "black",
     borderWidth: 1,
-    borderRadius: CIRCLE_SIZE / 2,
+    borderRadius: HALF_CIRCLE_SIZE,
     backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
   rectangleRegion: {
