@@ -18,6 +18,7 @@ import { DatabaseScreen } from "~/features/database/DatabaseScreen";
 import { ShareScreen } from "~/features/share/ShareScreen";
 import { NavScreen } from "~/features/navigation/NavScreen";
 import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
+import { RegionSelectorScreen } from "./src/features/picture-region-selector/RegionSelectorScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -32,7 +33,7 @@ const App = () => {
     <NavigationContainer theme={appTheme}>
       <PaperProvider theme={appTheme}>
         <Drawer.Navigator
-          initialRouteName="Home"
+          initialRouteName="RegionSelector"
           screenOptions={{ headerShown: false }}
         >
           <Drawer.Screen
@@ -44,6 +45,21 @@ const App = () => {
               drawerIcon: ({ size }) => (
                 <Ionicons
                   name="md-home"
+                  size={size}
+                  color={appTheme.colors.secondary}
+                />
+              ),
+            }}
+          />
+          <Drawer.Screen
+            name="RegionSelector"
+            component={RegionSelectorScreen}
+            initialParams={{}}
+            options={{
+              title: "RegionSelector screen",
+              drawerIcon: ({ size }) => (
+                <MaterialCommunityIcons
+                  name="picture-in-picture-bottom-right-outline"
                   size={size}
                   color={appTheme.colors.secondary}
                 />
