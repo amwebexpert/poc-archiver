@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
@@ -7,19 +6,18 @@ import Animated, {
   useAnimatedGestureHandler,
 } from "react-native-reanimated";
 
-const CIRCLE_SIZE = 30;
-const HALF_CIRCLE_SIZE = CIRCLE_SIZE / 2;
+import { HALF_CIRCLE_SIZE, CIRCLE_SIZE } from "./constants";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export const MovableCircleHandle = ({ imageLayout }) => {
+export const MovableCircleHandle = ({ imageLayout, initialPosition }) => {
   // state for drag movement boundaries
   const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
   const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
 
   // state for drag behavior
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
+  const translateX = useSharedValue(initialPosition.value.x);
+  const translateY = useSharedValue(initialPosition.value.y);
 
   const onDrag = useAnimatedGestureHandler({
     onStart: (_event, context) => {

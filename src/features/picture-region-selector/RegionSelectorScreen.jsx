@@ -12,6 +12,7 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 export const RegionSelectorScreen = () => {
   const styles = useStyles();
   const [imageLayout, setImageLayout] = useState({});
+  const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
 
   const onImageLayout = (event) =>
     setImageLayout(event?.nativeEvent?.layout ?? {});
@@ -22,7 +23,7 @@ export const RegionSelectorScreen = () => {
         <View style={styles.imageContainer}>
           <View collapsable={false} onLayout={onImageLayout}>
             <ImageViewer placeholderImageSource={PlaceholderImage} />
-            <RegionSelector imageLayout={imageLayout} />
+            {isLayoutReady && <RegionSelector imageLayout={imageLayout} />}
           </View>
         </View>
       </GestureHandlerRootView>
