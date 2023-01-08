@@ -15,32 +15,34 @@ export const MovableCircleHandle = ({ imageLayout, position }) => {
   const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
   const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
 
-  // state for drag behavior
-  const translateX = useSharedValue(position.value.x);
-  const translateY = useSharedValue(position.value.y);
-
   const onDrag = useAnimatedGestureHandler({
     onStart: (_event, context) => {
-      context.translateX = translateX.value;
-      context.translateY = translateY.value;
+      context.translateX = position.value.x;
+      context.translateY = position.value.y;
     },
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
       if (x >= -HALF_CIRCLE_SIZE && x <= maxX.value) {
-        translateX.value = x;
+        position.value = {
+          x,
+          y: position.value.y,
+        };
       }
 
       const y = event.translationY + context.translateY;
       if (y >= -HALF_CIRCLE_SIZE && y <= maxY.value) {
-        translateY.value = y;
+        position.value = {
+          x: position.value.x,
+          y,
+        };
       }
     },
   });
 
   const containerStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
+      { translateX: position.value.x },
+      { translateY: position.value.y },
     ],
   }));
 
@@ -56,10 +58,6 @@ export const MovableCircleHandle = ({ imageLayout, position }) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    height: "100%",
-    width: "100%",
-    top: 0,
-    left: 0,
     zIndex: 1,
   },
   circle: {
