@@ -10,14 +10,14 @@ import { HALF_CIRCLE_SIZE, CIRCLE_SIZE } from "./constants";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export const MovableCircleHandle = ({ imageLayout, initialPosition }) => {
+export const MovableCircleHandle = ({ imageLayout, position }) => {
   // state for drag movement boundaries
   const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
   const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
 
   // state for drag behavior
-  const translateX = useSharedValue(initialPosition.value.x);
-  const translateY = useSharedValue(initialPosition.value.y);
+  const translateX = useSharedValue(position.value.x);
+  const translateY = useSharedValue(position.value.y);
 
   const onDrag = useAnimatedGestureHandler({
     onStart: (_event, context) => {

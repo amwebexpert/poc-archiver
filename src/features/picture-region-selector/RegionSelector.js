@@ -18,12 +18,12 @@ export const RegionSelector = ({ imageLayout }) => {
     <>
       <MovableCircleHandle
         imageLayout={imageLayout}
-        initialPosition={handleTopLeft}
+        position={handleTopLeft}
       />
 
       <MovableCircleHandle
         imageLayout={imageLayout}
-        initialPosition={handleBottomRight}
+        position={handleBottomRight}
       />
     </>
   );
