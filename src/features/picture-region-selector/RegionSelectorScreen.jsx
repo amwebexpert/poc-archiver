@@ -18,7 +18,7 @@ export const RegionSelectorScreen = () => {
     setImageLayout(event?.nativeEvent?.layout ?? {});
 
   return (
-    <AppLayout title="Region selection screen">
+    <AppLayout title="Region selector (work in progress)">
       <GestureHandlerRootView style={styles.container}>
         <View style={styles.imageContainer}>
           <View collapsable={false} onLayout={onImageLayout}>

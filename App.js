@@ -33,7 +33,7 @@ const App = () => {
     <NavigationContainer theme={appTheme}>
       <PaperProvider theme={appTheme}>
         <Drawer.Navigator
-          initialRouteName="RegionSelector"
+          initialRouteName="Database"
           screenOptions={{ headerShown: false }}
         >
           <Drawer.Screen
@@ -45,21 +45,6 @@ const App = () => {
               drawerIcon: ({ size }) => (
                 <Ionicons
                   name="md-home"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="RegionSelector"
-            component={RegionSelectorScreen}
-            initialParams={{}}
-            options={{
-              title: "RegionSelector screen",
-              drawerIcon: ({ size }) => (
-                <MaterialCommunityIcons
-                  name="picture-in-picture-bottom-right-outline"
                   size={size}
                   color={appTheme.colors.secondary}
                 />
@@ -170,6 +155,21 @@ const App = () => {
               ),
             }}
             initialParams={{}}
+          />
+          <Drawer.Screen
+            name="RegionSelector"
+            component={RegionSelectorScreen}
+            initialParams={{}}
+            options={{
+              title: "RegionSelector (work in progress)",
+              drawerIcon: ({ size }) => (
+                <MaterialCommunityIcons
+                  name="picture-in-picture-bottom-right-outline"
+                  size={size}
+                  color={appTheme.colors.secondary}
+                />
+              ),
+            }}
           />
         </Drawer.Navigator>
       </PaperProvider>
