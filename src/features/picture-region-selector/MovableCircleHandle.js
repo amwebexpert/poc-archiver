@@ -39,7 +39,7 @@ export const MovableCircleHandle = ({ imageLayout, position }) => {
     },
   });
 
-  const containerStyle = useAnimatedStyle(() => ({
+  const circleAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: position.value.x },
       { translateY: position.value.y },
@@ -48,7 +48,7 @@ export const MovableCircleHandle = ({ imageLayout, position }) => {
 
   return (
     <PanGestureHandler onGestureEvent={onDrag}>
-      <AnimatedView style={[containerStyle, styles.container]}>
+      <AnimatedView style={[styles.container, circleAnimatedStyle]}>
         <View style={styles.circle} />
       </AnimatedView>
     </PanGestureHandler>
