@@ -5,7 +5,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { MovableCircleHandle } from "./MovableCircleHandle";
-import { INITIAL_PADDING, CIRCLE_SIZE } from "./constants";
+import { INITIAL_PADDING, CIRCLE_SIZE, HALF_CIRCLE_SIZE } from "./constants";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -21,8 +21,8 @@ export const RegionSelector = ({ imageLayout }) => {
 
   const containerStyle = useAnimatedStyle(() => {
     return {
-      top: topLeft.value.y,
-      left: topLeft.value.x,
+      top: topLeft.value.y + HALF_CIRCLE_SIZE,
+      left: topLeft.value.x + HALF_CIRCLE_SIZE,
       width: bottomRight.value.x - topLeft.value.x,
       height: bottomRight.value.y - topLeft.value.y,
     };
@@ -34,6 +34,7 @@ export const RegionSelector = ({ imageLayout }) => {
       <MovableCircleHandle imageLayout={imageLayout} position={bottomRight} />
 
       <AnimatedView style={[styles.rectangleRegion, containerStyle]} />
+      <AnimatedView style={[styles.rectangleRegion2, containerStyle]} />
     </>
   );
 };
@@ -41,8 +42,14 @@ export const RegionSelector = ({ imageLayout }) => {
 const styles = StyleSheet.create({
   rectangleRegion: {
     position: "absolute",
-    borderColor: "red",
+    borderColor: "black",
     borderWidth: 2,
+    backgroundColor: "transparent",
+  },
+  rectangleRegion2: {
+    position: "absolute",
+    borderColor: "white",
+    borderWidth: 1,
     backgroundColor: "transparent",
   },
 });
