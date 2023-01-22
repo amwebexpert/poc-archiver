@@ -1,8 +1,9 @@
 import React from "react";
-
 import { View, StyleSheet, FlatList } from "react-native";
-import { Button, Snackbar, TextInput, useTheme } from "react-native-paper";
+import { Button, TextInput, useTheme } from "react-native-paper";
+
 import { AppLayout } from "~/components/layout/AppLayout";
+
 import * as service from "./service";
 import { FileInfo } from "./FileInfo";
 
@@ -11,7 +12,6 @@ export const DatabaseScreen = () => {
   const [passphrase, setPassphrase] = React.useState("my-passphrase");
   const [archiveName, setArchiveName] = React.useState("");
   const [files, setFiles] = React.useState([]);
-  const [snackbarText, setSnackbarText] = React.useState("");
 
   const archiveDemo = async () => {
     const name = await service.archiveDataDemo({ passphrase });
@@ -61,14 +61,6 @@ export const DatabaseScreen = () => {
           Unarchive
         </Button>
       </View>
-
-      <Snackbar
-        duration={3000}
-        visible={!!snackbarText}
-        onDismiss={() => setSnackbarText("")}
-      >
-        {snackbarText}
-      </Snackbar>
     </AppLayout>
   );
 };

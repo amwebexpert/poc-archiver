@@ -19,6 +19,7 @@ import { ShareScreen } from "~/features/share/ShareScreen";
 import { NavScreen } from "~/features/navigation/NavScreen";
 import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
 import { RegionSelectorScreen } from "./src/features/picture-region-selector/RegionSelectorScreen";
+import SnackbarProvider from "./src/components/snack-bar/SnackbarContext";
 
 const Drawer = createDrawerNavigator();
 
@@ -32,146 +33,148 @@ const App = () => {
   return (
     <NavigationContainer theme={appTheme}>
       <PaperProvider theme={appTheme}>
-        <Drawer.Navigator
-          initialRouteName="Database"
-          screenOptions={{ headerShown: false }}
-        >
-          <Drawer.Screen
-            name="Home"
-            component={HomeScreen}
-            initialParams={{}}
-            options={{
-              title: "Home screen",
-              drawerIcon: ({ size }) => (
-                <Ionicons
-                  name="md-home"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="StickerSmash"
-            component={StickerSmashScreen}
-            initialParams={{}}
-            options={{
-              title: "StickerSmash screen",
-              drawerIcon: ({ size }) => (
-                <FontAwesome
-                  name="file-picture-o"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="NavScreen"
-            component={NavScreen}
-            initialParams={{}}
-            options={{
-              title: "Navigation screen",
-              drawerIcon: ({ size }) => (
-                <FontAwesome5
-                  name="directions"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="Database"
-            component={DatabaseScreen}
-            options={{
-              title: "Database screen",
-              drawerIcon: ({ size }) => (
-                <MaterialCommunityIcons
-                  name="database"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-            initialParams={{}}
-          />
-          <Drawer.Screen
-            name="Share"
-            component={ShareScreen}
-            options={{
-              title: "Share screen",
-              drawerIcon: ({ size }) => (
-                <MaterialCommunityIcons
-                  name="share"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-            initialParams={{}}
-          />
-          <Drawer.Screen
-            name="Cypher"
-            component={CypherScreen}
-            options={{
-              title: "Cypher screen",
-              drawerIcon: ({ size }) => (
-                <MaterialIcons
-                  name="enhanced-encryption"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-            initialParams={{}}
-          />
-          <Drawer.Screen
-            name="Files"
-            component={FilesScreen}
-            options={{
-              title: "Files screen",
-              drawerIcon: ({ size }) => (
-                <MaterialIcons
-                  name="save"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-            initialParams={{}}
-          />
-          <Drawer.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{
-              title: "Settings screen",
-              drawerIcon: ({ size }) => (
-                <Ionicons
-                  name="settings"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-            initialParams={{}}
-          />
-          <Drawer.Screen
-            name="RegionSelector"
-            component={RegionSelectorScreen}
-            initialParams={{}}
-            options={{
-              title: "RegionSelector (work in progress)",
-              drawerIcon: ({ size }) => (
-                <MaterialCommunityIcons
-                  name="picture-in-picture-bottom-right-outline"
-                  size={size}
-                  color={appTheme.colors.secondary}
-                />
-              ),
-            }}
-          />
-        </Drawer.Navigator>
+        <SnackbarProvider>
+          <Drawer.Navigator
+            initialRouteName="RegionSelector"
+            screenOptions={{ headerShown: false }}
+          >
+            <Drawer.Screen
+              name="Home"
+              component={HomeScreen}
+              initialParams={{}}
+              options={{
+                title: "Home screen",
+                drawerIcon: ({ size }) => (
+                  <Ionicons
+                    name="md-home"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="StickerSmash"
+              component={StickerSmashScreen}
+              initialParams={{}}
+              options={{
+                title: "StickerSmash screen",
+                drawerIcon: ({ size }) => (
+                  <FontAwesome
+                    name="file-picture-o"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="NavScreen"
+              component={NavScreen}
+              initialParams={{}}
+              options={{
+                title: "Navigation screen",
+                drawerIcon: ({ size }) => (
+                  <FontAwesome5
+                    name="directions"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="Database"
+              component={DatabaseScreen}
+              options={{
+                title: "Database screen",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="database"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="Share"
+              component={ShareScreen}
+              options={{
+                title: "Share screen",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="share"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="Cypher"
+              component={CypherScreen}
+              options={{
+                title: "Cypher screen",
+                drawerIcon: ({ size }) => (
+                  <MaterialIcons
+                    name="enhanced-encryption"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="Files"
+              component={FilesScreen}
+              options={{
+                title: "Files screen",
+                drawerIcon: ({ size }) => (
+                  <MaterialIcons
+                    name="save"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                title: "Settings screen",
+                drawerIcon: ({ size }) => (
+                  <Ionicons
+                    name="settings"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="RegionSelector"
+              component={RegionSelectorScreen}
+              initialParams={{}}
+              options={{
+                title: "RegionSelector (work in progress)",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="picture-in-picture-bottom-right-outline"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+          </Drawer.Navigator>
+        </SnackbarProvider>
       </PaperProvider>
     </NavigationContainer>
   );

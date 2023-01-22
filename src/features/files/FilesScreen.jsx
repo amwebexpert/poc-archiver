@@ -1,8 +1,11 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Snackbar, TextInput } from "react-native-paper";
 import * as FileSystem from "expo-file-system";
+
 import { AppLayout } from "~/components/layout/AppLayout";
+import { SnackbarContext } from "~/components/snack-bar/SnackbarContext";
+
 import { LONG_TEXT } from "./data";
 import * as fileService from "~/services/file-service";
 
@@ -10,7 +13,7 @@ export const FilesScreen = () => {
   const filename = "device-data.txt";
   const fileUri = FileSystem.documentDirectory + filename;
   const [text, setText] = React.useState(LONG_TEXT);
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const showSnackbarMessage = useContext(SnackbarContext);
 
   const saveData = async () => {
     const { exists, error } = await fileService.saveTextContent({
@@ -19,14 +22,14 @@ export const FilesScreen = () => {
     });
 
     if (error) {
-      setSnackbarText(`Error while storing data:\n ➡ ${error.message}`);
+      showSnackbarMessage(`Error while storing data:\n ➡ ${error.message}`);
       return;
     }
 
     if (exists) {
-      setSnackbarText(`File replaced:\n ➡ ${filename}`);
+      showSnackbarMessage(`File replaced:\n ➡ ${filename}`);
     } else {
-      setSnackbarText(`File created:\n ➡ ${filename}`);
+      showSnackbarMessage(`File created:\n ➡ ${filename}`);
     }
   };
 
@@ -36,12 +39,12 @@ export const FilesScreen = () => {
     );
 
     if (!exists) {
-      setSnackbarText(`File not found:\n ➡ ${filename}`);
+      showSnackbarMessage(`File not found:\n ➡ ${filename}`);
       return;
     }
 
     if (error) {
-      setSnackbarText(`Error while loading:\n ➡ ${error.message}`);
+      showSnackbarMessage(`Error while loading:\n ➡ ${error.message}`);
     } else {
       setText(content);
     }
@@ -55,14 +58,14 @@ export const FilesScreen = () => {
     const { exists, error } = await fileService.deleteFile(fileUri);
 
     if (!exists) {
-      setSnackbarText(`File not found:\n ➡ ${filename}`);
+      showSnackbarMessage(`File not found:\n ➡ ${filename}`);
       return;
     }
 
     if (error) {
-      setSnackbarText(`Error while deleting:\n ➡ ${error.message}`);
+      showSnackbarMessage(`Error while deleting:\n ➡ ${error.message}`);
     } else {
-      setSnackbarText(`File deleted:\n ➡ ${filename}`);
+      showSnackbarMessage(`File deleted:\n ➡ ${filename}`);
     }
   };
 
@@ -96,10 +99,6 @@ export const FilesScreen = () => {
           Delete file
         </Button>
       </View>
-
-      <Snackbar visible={!!snackbarText} onDismiss={() => setSnackbarText("")}>
-        {snackbarText}
-      </Snackbar>
     </AppLayout>
   );
 };

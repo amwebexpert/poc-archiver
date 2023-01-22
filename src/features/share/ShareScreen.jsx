@@ -1,26 +1,27 @@
-import React from "react";
-
+import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Snackbar, Text, useTheme } from "react-native-paper";
+import { Button, Text, useTheme } from "react-native-paper";
+
+import { SnackbarContext } from "~/components/snack-bar/SnackbarContext";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import * as openerService from "./opener-service";
 
 export const ShareScreen = () => {
   const styles = useStyles();
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const showSnackbarMessage = useContext(SnackbarContext);
 
   const openHtmlFileDemo = async () => {
     const { error } = await openerService.openHtmlFileDemo();
     if (error) {
-      setSnackbarText(error.message);
+      showSnackbarMessage(error.message);
     }
   };
 
   const openTextFileDemo = async () => {
     const { error } = await openerService.openTextFileDemo();
     if (error) {
-      setSnackbarText(error.message);
+      showSnackbarMessage(error.message);
     }
   };
 
@@ -45,14 +46,6 @@ export const ShareScreen = () => {
           Share html doc
         </Button>
       </View>
-
-      <Snackbar
-        duration={3000}
-        visible={!!snackbarText}
-        onDismiss={() => setSnackbarText("")}
-      >
-        {snackbarText}
-      </Snackbar>
     </AppLayout>
   );
 };

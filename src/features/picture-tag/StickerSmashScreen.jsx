@@ -1,13 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, FAB, Snackbar, useTheme } from "react-native-paper";
+import { Button, FAB, useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from 'expo-media-library';
 
+import { SnackbarContext } from "~/components/snack-bar/SnackbarContext";
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
+
 import { EmojiListDialog } from "./EmojiListDialog";
 import { EmojiSticker } from "./EmojiSticker";
 
@@ -15,7 +17,7 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 
 export const StickerSmashScreen = () => {
   const imageRef = useRef();
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const showSnackbarMessage = useContext(SnackbarContext);
 
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
@@ -62,10 +64,10 @@ export const StickerSmashScreen = () => {
 
       await MediaLibrary.saveToLibraryAsync(localUri);
       if (localUri) {
-        setSnackbarText("Saved into media library!");
+        showSnackbarMessage("Saved into media library!");
       }
     } catch (e) {
-      setSnackbarText(e.message);
+      showSnackbarMessage(e.message);
     }
   };
 
@@ -118,9 +120,6 @@ export const StickerSmashScreen = () => {
         onDismiss={onModalClose}
         onSelect={setPickedEmoji}
       />
-      <Snackbar visible={!!snackbarText} onDismiss={() => setSnackbarText("")}>
-        {snackbarText}
-      </Snackbar>
     </AppLayout>
   );
 };
