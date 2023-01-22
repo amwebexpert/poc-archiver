@@ -18,10 +18,7 @@ export const RegionSelector = ({
   const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
   const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
 
-  const topLeft = useSharedValue({
-    x: INITIAL_PADDING,
-    y: INITIAL_PADDING,
-  });
+  const topLeft = useSharedValue({ x: INITIAL_PADDING, y: INITIAL_PADDING });
   const bottomRight = useSharedValue({
     x: imageLayout.width - INITIAL_PADDING - CIRCLE_SIZE,
     y: imageLayout.height - INITIAL_PADDING - CIRCLE_SIZE,
@@ -42,18 +39,12 @@ export const RegionSelector = ({
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
       if (x >= -HALF_CIRCLE_SIZE && x <= bottomRight.value.x) {
-        topLeft.value = {
-          x,
-          y: topLeft.value.y,
-        };
+        topLeft.value = { x, y: topLeft.value.y };
       }
 
       const y = event.translationY + context.translateY;
       if (y >= -HALF_CIRCLE_SIZE && y <= bottomRight.value.y) {
-        topLeft.value = {
-          x: topLeft.value.x,
-          y,
-        };
+        topLeft.value = { x: topLeft.value.x, y };
       }
     },
   });
@@ -66,18 +57,12 @@ export const RegionSelector = ({
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
       if (x >= topLeft.value.x && x <= maxX.value) {
-        bottomRight.value = {
-          x,
-          y: bottomRight.value.y,
-        };
+        bottomRight.value = { x, y: bottomRight.value.y };
       }
 
       const y = event.translationY + context.translateY;
       if (y >= topLeft.value.y && y <= maxY.value) {
-        bottomRight.value = {
-          x: bottomRight.value.x,
-          y,
-        };
+        bottomRight.value = { x: bottomRight.value.x, y };
       }
     },
   });
