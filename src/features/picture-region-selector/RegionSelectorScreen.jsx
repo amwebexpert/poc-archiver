@@ -15,6 +15,7 @@ export const RegionSelectorScreen = () => {
   const [selectedImage, setSelectedImage] = useState();
   const [snackbarText, setSnackbarText] = React.useState("");
   const [imageLayout, setImageLayout] = useState({});
+  const [showHandles, setShowHandles] = useState(true);
   const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
 
   const onImageLayout = (event) =>
@@ -40,7 +41,13 @@ export const RegionSelectorScreen = () => {
               placeholderImageSource={PlaceholderImage}
               selectedImage={selectedImage}
             />
-            {isLayoutReady && <RegionSelector imageLayout={imageLayout} />}
+
+            {isLayoutReady && (
+              <RegionSelector
+                imageLayout={imageLayout}
+                showHandles={showHandles}
+              />
+            )}
           </View>
         </View>
       </GestureHandlerRootView>
@@ -50,12 +57,19 @@ export const RegionSelectorScreen = () => {
           Choose a photo
         </Button>
 
-        <Button mode="outlined" onPress={() => setSnackbarText("Toggle handles")}>
+        <Button
+          mode="outlined"
+          onPress={() => setShowHandles((isVisible) => !isVisible)}
+        >
           Toggle handles
         </Button>
       </View>
 
-      <Snackbar duration={1000} visible={!!snackbarText} onDismiss={() => setSnackbarText("")}>
+      <Snackbar
+        duration={1000}
+        visible={!!snackbarText}
+        onDismiss={() => setSnackbarText("")}
+      >
         {snackbarText}
       </Snackbar>
     </AppLayout>
@@ -76,7 +90,7 @@ const useStyles = () => {
     },
     actions: {
       flexDirection: "row",
-      justifyContent: "center"
+      justifyContent: "center",
     },
   });
 };
