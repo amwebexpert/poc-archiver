@@ -3,6 +3,7 @@ import Animated, {
   useAnimatedStyle,
   useAnimatedGestureHandler,
   useSharedValue,
+  useDerivedValue,
 } from "react-native-reanimated";
 
 import { MovableHandle } from "./MovableHandle";
@@ -13,6 +14,7 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 export const RegionSelector = ({
   imageLayout = { width: 0, height: 0 },
   showHandles = true,
+  selection,
 }) => {
   // state for drag movement boundaries
   const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
@@ -24,12 +26,18 @@ export const RegionSelector = ({
     y: imageLayout.height - INITIAL_PADDING - CIRCLE_SIZE,
   });
 
-  const containerStyle = useAnimatedStyle(() => ({
-    top: topLeft.value.y + HALF_CIRCLE_SIZE,
-    left: topLeft.value.x + HALF_CIRCLE_SIZE,
-    width: bottomRight.value.x - topLeft.value.x,
-    height: bottomRight.value.y - topLeft.value.y,
-  }));
+  useDerivedValue(() => {
+    const value = {
+      top: topLeft.value.y + HALF_CIRCLE_SIZE,
+      left: topLeft.value.x + HALF_CIRCLE_SIZE,
+      width: bottomRight.value.x - topLeft.value.x,
+      height: bottomRight.value.y - topLeft.value.y,
+    };
+    selection.value = value; // update parent selection property
+    return selection.value;
+  });
+
+  const containerStyle = useAnimatedStyle(() => selection.value);
 
   const onDragTopLeft = useAnimatedGestureHandler({
     onStart: (_event, context) => {
@@ -66,6 +74,8 @@ export const RegionSelector = ({
       }
     },
   });
+
+  const onSelectionSnapshot = () => selection.value;
 
   return (
     <>

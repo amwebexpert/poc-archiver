@@ -5,8 +5,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import { ImageViewer } from "~/components/image/ImageViewer";
+
 import { RegionSelector } from "./RegionSelector";
+import { useSharedValue } from "react-native-reanimated";
 
 const PlaceholderImage = require("../../../assets/images/backgrounds/background-dark.jpg");
 
@@ -16,6 +19,8 @@ export const RegionSelectorScreen = () => {
   const [imageLayout, setImageLayout] = useState({});
   const [showHandles, setShowHandles] = useState(true);
   const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
+  const selection = useSharedValue({ top: 0, left: 0, width: 0, height: 0 });
+  const showSnackbarMessage = useSnackbar();
 
   const onImageLayout = (event) =>
     setImageLayout(event?.nativeEvent?.layout ?? {});
@@ -31,8 +36,13 @@ export const RegionSelectorScreen = () => {
     }
   };
 
+  const onCaptureRegion = () =>
+    showSnackbarMessage(JSON.stringify(selection.value));
+
+  const onToggleHandles = () => setShowHandles((isVisible) => !isVisible);
+
   return (
-    <AppLayout title="Region selector (work in progress)">
+    <AppLayout title="Picture region selector">
       <GestureHandlerRootView style={styles.container}>
         <View style={styles.imageContainer}>
           <View collapsable={false} onLayout={onImageLayout}>
@@ -44,6 +54,7 @@ export const RegionSelectorScreen = () => {
             {isLayoutReady && (
               <RegionSelector
                 imageLayout={imageLayout}
+                selection={selection}
                 showHandles={showHandles}
               />
             )}
@@ -53,14 +64,15 @@ export const RegionSelectorScreen = () => {
 
       <View style={styles.actions}>
         <Button mode="contained" onPress={pickImage} icon="image">
-          Choose a photo
+          Pick photo
         </Button>
 
-        <Button
-          mode="outlined"
-          onPress={() => setShowHandles((isVisible) => !isVisible)}
-        >
-          Toggle handles
+        <Button mode="outlined" onPress={onToggleHandles}>
+          Handles
+        </Button>
+
+        <Button mode="outlined" onPress={onCaptureRegion}>
+          Capture
         </Button>
       </View>
     </AppLayout>

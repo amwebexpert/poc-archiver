@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Snackbar, TextInput } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import * as FileSystem from "expo-file-system";
 
 import { AppLayout } from "~/components/layout/AppLayout";

@@ -164,7 +164,7 @@ const App = () => {
               component={RegionSelectorScreen}
               initialParams={{}}
               options={{
-                title: "RegionSelector (work in progress)",
+                title: "Picture region selector",
                 drawerIcon: ({ size }) => (
                   <MaterialCommunityIcons
                     name="picture-in-picture-bottom-right-outline"
