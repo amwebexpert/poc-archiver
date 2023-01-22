@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Snackbar, useTheme } from "react-native-paper";
+import { Button, useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 
@@ -13,7 +13,6 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 export const RegionSelectorScreen = () => {
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
-  const [snackbarText, setSnackbarText] = React.useState("");
   const [imageLayout, setImageLayout] = useState({});
   const [showHandles, setShowHandles] = useState(true);
   const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
@@ -64,14 +63,6 @@ export const RegionSelectorScreen = () => {
           Toggle handles
         </Button>
       </View>
-
-      <Snackbar
-        duration={1000}
-        visible={!!snackbarText}
-        onDismiss={() => setSnackbarText("")}
-      >
-        {snackbarText}
-      </Snackbar>
     </AppLayout>
   );
 };
