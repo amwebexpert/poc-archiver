@@ -1,10 +1,11 @@
 import { View, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
+  useAnimatedGestureHandler,
   useSharedValue,
 } from "react-native-reanimated";
 
-import { MovableCircleHandle } from "./MovableCircleHandle";
+import { MovableHandle } from "./MovableHandle";
 import { INITIAL_PADDING, CIRCLE_SIZE, HALF_CIRCLE_SIZE } from "./constants";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -13,6 +14,10 @@ export const RegionSelector = ({
   imageLayout = { width: 0, height: 0 },
   showHandles = true,
 }) => {
+  // state for drag movement boundaries
+  const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
+  const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
+
   const topLeft = useSharedValue({
     x: INITIAL_PADDING,
     y: INITIAL_PADDING,
@@ -29,15 +34,60 @@ export const RegionSelector = ({
     height: bottomRight.value.y - topLeft.value.y,
   }));
 
+  const onDragTopLeft = useAnimatedGestureHandler({
+    onStart: (_event, context) => {
+      context.translateX = topLeft.value.x;
+      context.translateY = topLeft.value.y;
+    },
+    onActive: (event, context) => {
+      const x = event.translationX + context.translateX;
+      if (x >= -HALF_CIRCLE_SIZE && x <= bottomRight.value.x) {
+        topLeft.value = {
+          x,
+          y: topLeft.value.y,
+        };
+      }
+
+      const y = event.translationY + context.translateY;
+      if (y >= -HALF_CIRCLE_SIZE && y <= bottomRight.value.y) {
+        topLeft.value = {
+          x: topLeft.value.x,
+          y,
+        };
+      }
+    },
+  });
+
+  const onDragBottomRight = useAnimatedGestureHandler({
+    onStart: (_event, context) => {
+      context.translateX = bottomRight.value.x;
+      context.translateY = bottomRight.value.y;
+    },
+    onActive: (event, context) => {
+      const x = event.translationX + context.translateX;
+      if (x >= topLeft.value.x && x <= maxX.value) {
+        bottomRight.value = {
+          x,
+          y: bottomRight.value.y,
+        };
+      }
+
+      const y = event.translationY + context.translateY;
+      if (y >= topLeft.value.y && y <= maxY.value) {
+        bottomRight.value = {
+          x: bottomRight.value.x,
+          y,
+        };
+      }
+    },
+  });
+
   return (
     <>
       {showHandles && (
         <>
-          <MovableCircleHandle imageLayout={imageLayout} position={topLeft} />
-          <MovableCircleHandle
-            imageLayout={imageLayout}
-            position={bottomRight}
-          />
+          <MovableHandle position={topLeft} onDrag={onDragTopLeft} />
+          <MovableHandle position={bottomRight} onDrag={onDragBottomRight} />
         </>
       )}
 
