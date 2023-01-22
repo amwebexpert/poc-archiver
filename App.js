@@ -10,6 +10,8 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import { appTheme } from "~/theme";
+import { SnackbarProvider } from "~/components/snack-bar/SnackbarProvider";
+
 import { SettingsScreen } from "~/features/settings/SettingsScreen";
 import { HomeScreen } from "~/features/home/HomeScreen";
 import { CypherScreen } from "~/features/cypher/CypherScreen";
@@ -18,8 +20,7 @@ import { DatabaseScreen } from "~/features/database/DatabaseScreen";
 import { ShareScreen } from "~/features/share/ShareScreen";
 import { NavScreen } from "~/features/navigation/NavScreen";
 import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
-import { RegionSelectorScreen } from "./src/features/picture-region-selector/RegionSelectorScreen";
-import SnackbarProvider from "./src/components/snack-bar/SnackbarContext";
+import { RegionSelectorScreen } from "~/features/picture-region-selector/RegionSelectorScreen";
 
 const Drawer = createDrawerNavigator();
 

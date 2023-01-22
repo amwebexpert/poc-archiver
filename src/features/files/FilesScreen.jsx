@@ -4,7 +4,7 @@ import { Button, Snackbar, TextInput } from "react-native-paper";
 import * as FileSystem from "expo-file-system";
 
 import { AppLayout } from "~/components/layout/AppLayout";
-import { SnackbarContext } from "~/components/snack-bar/SnackbarContext";
+import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 
 import { LONG_TEXT } from "./data";
 import * as fileService from "~/services/file-service";
@@ -13,7 +13,7 @@ export const FilesScreen = () => {
   const filename = "device-data.txt";
   const fileUri = FileSystem.documentDirectory + filename;
   const [text, setText] = React.useState(LONG_TEXT);
-  const showSnackbarMessage = useContext(SnackbarContext);
+  const showSnackbarMessage = useSnackbar();
 
   const saveData = async () => {
     const { exists, error } = await fileService.saveTextContent({

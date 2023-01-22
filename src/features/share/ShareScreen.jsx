@@ -2,14 +2,14 @@ import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 
-import { SnackbarContext } from "~/components/snack-bar/SnackbarContext";
+import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import * as openerService from "./opener-service";
 
 export const ShareScreen = () => {
   const styles = useStyles();
-  const showSnackbarMessage = useContext(SnackbarContext);
+  const showSnackbarMessage = useSnackbar();
 
   const openHtmlFileDemo = async () => {
     const { error } = await openerService.openHtmlFileDemo();

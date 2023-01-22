@@ -6,7 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from 'expo-media-library';
 
-import { SnackbarContext } from "~/components/snack-bar/SnackbarContext";
+import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
 
@@ -17,7 +17,7 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 
 export const StickerSmashScreen = () => {
   const imageRef = useRef();
-  const showSnackbarMessage = useContext(SnackbarContext);
+  const showSnackbarMessage = useSnackbar();
 
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
