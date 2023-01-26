@@ -36,11 +36,4 @@ const styles = StyleSheet.create({
     borderRadius: HALF_CIRCLE_SIZE,
     backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
-  rectangleRegion: {
-    width: 100,
-    height: 100,
-    borderColor: "red",
-    borderWidth: 2,
-    backgroundColor: "transparent",
-  },
 });
