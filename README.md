@@ -1,6 +1,6 @@
 # poc-archiver
 
-ReactNative Expo archiver app
+ReactNative Expo proof of concepts app
 
 ## This app includes the following screen demos
 
@@ -10,7 +10,5 @@ ReactNative Expo archiver app
 - files read/write/delete/update
 - file sharing
 - archiving and encrypting multiple files into a single file archive
+- picture region selector using reanimated and gesture handler
 
-## Next steps
-
-- expo picture tagger tutorial implementation
