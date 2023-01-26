@@ -36,8 +36,16 @@ export const RegionSelectorScreen = () => {
     }
   };
 
-  const onCaptureRegion = () =>
-    showSnackbarMessage(JSON.stringify(selection.value));
+  const onCaptureRegion = () => {
+    const { top, left, width, height } = selection.value;
+    const rectangle = {
+      top: Math.round(top),
+      left: Math.round(left),
+      width: Math.round(width),
+      height: Math.round(height),
+    };
+    showSnackbarMessage(JSON.stringify(rectangle));
+  };
 
   const onToggleHandles = () => setShowHandles((isVisible) => !isVisible);
 

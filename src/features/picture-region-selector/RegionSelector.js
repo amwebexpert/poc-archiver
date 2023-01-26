@@ -75,8 +75,6 @@ export const RegionSelector = ({
     },
   });
 
-  const onSelectionSnapshot = () => selection.value;
-
   return (
     <>
       {showHandles && (
