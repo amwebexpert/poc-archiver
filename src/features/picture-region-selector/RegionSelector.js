@@ -45,15 +45,17 @@ export const RegionSelector = ({
       context.translateY = topLeft.value.y;
     },
     onActive: (event, context) => {
-      const x = event.translationX + context.translateX;
-      if (x >= -HALF_CIRCLE_SIZE && x <= bottomRight.value.x) {
-        topLeft.value = { x, y: topLeft.value.y };
-      }
+      const newX = event.translationX + context.translateX;
+      const newY = event.translationY + context.translateY;
 
-      const y = event.translationY + context.translateY;
-      if (y >= -HALF_CIRCLE_SIZE && y <= bottomRight.value.y) {
-        topLeft.value = { x: topLeft.value.x, y };
-      }
+      topLeft.value = {
+        x: event.dx < 0 // moving left
+          ? Math.max(-HALF_CIRCLE_SIZE, newX)
+          : Math.min(bottomRight.value.x, newX),
+        y: event.dy < 0 // moving up
+          ? Math.max(-HALF_CIRCLE_SIZE, newY)
+          : Math.min(bottomRight.value.y, newY),
+      };
     },
   });
 
@@ -63,15 +65,17 @@ export const RegionSelector = ({
       context.translateY = bottomRight.value.y;
     },
     onActive: (event, context) => {
-      const x = event.translationX + context.translateX;
-      if (x >= topLeft.value.x && x <= maxX.value) {
-        bottomRight.value = { x, y: bottomRight.value.y };
-      }
+      const newX = event.translationX + context.translateX;
+      const newY = event.translationY + context.translateY;
 
-      const y = event.translationY + context.translateY;
-      if (y >= topLeft.value.y && y <= maxY.value) {
-        bottomRight.value = { x: bottomRight.value.x, y };
-      }
+      bottomRight.value = {
+        x: event.dx > 0 // moving right
+          ? Math.max(maxX.value, newX)
+          : Math.min(topLeft.value.x, newX),
+        y: event.dy > 0 // moving down
+          ? Math.max(maxY.value, newY)
+          : Math.min(topLeft.value.y, newY),
+      };
     },
   });
 
