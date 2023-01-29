@@ -2,43 +2,17 @@ import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
 
-import {
-  CIRCLE_SIZE,
-  HALF_CIRCLE_SIZE,
-  INITIAL_PADDING,
-  SNAP_DELTA,
-} from "./constants";
+import { CIRCLE_SIZE, HALF_CIRCLE_SIZE, INITIAL_PADDING } from "./constants";
 import { MovableHandle } from "./MovableHandle";
+import {
+  applyBottomRightSnap,
+  applyTopLeftSnap,
+} from "./region-selector-utils";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
-
-const onGestureStart = (context, position) => {
-  context.translateX = position.value.x;
-  context.translateY = position.value.y;
-};
-
-const applyBottomRightSnap = (position, maxX, maxY) => {
-  const newX = position.value.x;
-  const newY = position.value.y;
-
-  position.value = {
-    x: maxX - newX < SNAP_DELTA ? maxX : newX,
-    y: maxY - newY < SNAP_DELTA ? maxY : newY,
-  };
-};
-
-const applyTopLeftSnap = (position) => {
-  const newX = position.value.x;
-  const newY = position.value.y;
-  position.value = {
-    x: newX + HALF_CIRCLE_SIZE < SNAP_DELTA ? -HALF_CIRCLE_SIZE : newX,
-    y: newY + HALF_CIRCLE_SIZE < SNAP_DELTA ? -HALF_CIRCLE_SIZE : newY,
-  };
-};
 
 export const RegionSelector = ({
   imageLayout = { width: 0, height: 0 },
@@ -55,21 +29,18 @@ export const RegionSelector = ({
     y: imageLayout.height - INITIAL_PADDING - CIRCLE_SIZE,
   });
 
-  useDerivedValue(() => {
-    const value = {
-      top: topLeft.value.y + HALF_CIRCLE_SIZE,
-      left: topLeft.value.x + HALF_CIRCLE_SIZE,
-      width: bottomRight.value.x - topLeft.value.x,
-      height: bottomRight.value.y - topLeft.value.y,
-    };
-    selection.value = value; // update parent selection property
-    return selection.value;
-  });
-
-  const containerStyle = useAnimatedStyle(() => selection.value);
+  const containerStyle = useAnimatedStyle(() => ({
+    top: topLeft.value.y + HALF_CIRCLE_SIZE,
+    left: topLeft.value.x + HALF_CIRCLE_SIZE,
+    width: bottomRight.value.x - topLeft.value.x,
+    height: bottomRight.value.y - topLeft.value.y,
+  }));
 
   const onDragTopLeft = useAnimatedGestureHandler({
-    onStart: (_event, context) => onGestureStart(context, topLeft),
+    onStart: (_event, context) => {
+      context.translateX = topLeft.value.x;
+      context.translateY = topLeft.value.y;
+    },
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
       if (x >= -HALF_CIRCLE_SIZE && x <= bottomRight.value.x) {
@@ -85,7 +56,10 @@ export const RegionSelector = ({
   });
 
   const onDragBottomRight = useAnimatedGestureHandler({
-    onStart: (_event, context) => onGestureStart(context, bottomRight),
+    onStart: (_event, context) => {
+      context.translateX = bottomRight.value.x;
+      context.translateY = bottomRight.value.y;
+    },
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
       if (x >= topLeft.value.x && x <= MAX_X) {
