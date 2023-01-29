@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
 
@@ -23,23 +24,36 @@ export const RegionSelector = ({
   const MAX_X = imageLayout.width - HALF_CIRCLE_SIZE;
   const MAX_Y = imageLayout.height - HALF_CIRCLE_SIZE;
 
+  const isMoving = useSharedValue(false);
   const topLeft = useSharedValue({ x: INITIAL_PADDING, y: INITIAL_PADDING });
   const bottomRight = useSharedValue({
     x: imageLayout.width - INITIAL_PADDING - CIRCLE_SIZE,
     y: imageLayout.height - INITIAL_PADDING - CIRCLE_SIZE,
   });
 
-  const containerStyle = useAnimatedStyle(() => ({
-    top: topLeft.value.y + HALF_CIRCLE_SIZE,
-    left: topLeft.value.x + HALF_CIRCLE_SIZE,
-    width: bottomRight.value.x - topLeft.value.x,
-    height: bottomRight.value.y - topLeft.value.y,
-  }));
+  const top = useDerivedValue(() => topLeft.value.y + HALF_CIRCLE_SIZE);
+  const left = useDerivedValue(() => topLeft.value.x + HALF_CIRCLE_SIZE);
+  const width = useDerivedValue(() => bottomRight.value.x - topLeft.value.x);
+  const height = useDerivedValue(() => bottomRight.value.y - topLeft.value.y);
+  const derivedRectangle = useDerivedValue(() => {
+    const value = {
+      top: top.value,
+      left: left.value,
+      width: width.value,
+      height: height.value,
+      borderStyle: isMoving.value ? "dashed" : "solid",
+    };
+    selection.value = value; // update parent selection property
+    return value;
+  });
+
+  const containerStyle = useAnimatedStyle(() => derivedRectangle.value);
 
   const onDragTopLeft = useAnimatedGestureHandler({
     onStart: (_event, context) => {
       context.translateX = topLeft.value.x;
       context.translateY = topLeft.value.y;
+      isMoving.value = true;
     },
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
@@ -52,13 +66,17 @@ export const RegionSelector = ({
         topLeft.value = { x: topLeft.value.x, y };
       }
     },
-    onEnd: () => applyTopLeftSnap(topLeft),
+    onEnd: () => {
+      applyTopLeftSnap(topLeft);
+      isMoving.value = false;
+    },
   });
 
   const onDragBottomRight = useAnimatedGestureHandler({
     onStart: (_event, context) => {
       context.translateX = bottomRight.value.x;
       context.translateY = bottomRight.value.y;
+      isMoving.value = true;
     },
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
@@ -71,7 +89,10 @@ export const RegionSelector = ({
         bottomRight.value = { x: bottomRight.value.x, y };
       }
     },
-    onEnd: () => applyBottomRightSnap(bottomRight, MAX_X, MAX_Y),
+    onEnd: () => {
+      applyBottomRightSnap(bottomRight, MAX_X, MAX_Y);
+      isMoving.value = false;
+    },
   });
 
   return (
@@ -93,7 +114,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderColor: "white",
     borderWidth: 2,
-    borderStyle: "dashed",
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     shadowColor: "black",
     shadowOffset: {
