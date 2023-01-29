@@ -6,7 +6,12 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
-import { CIRCLE_SIZE, HALF_CIRCLE_SIZE, INITIAL_PADDING } from "./constants";
+import {
+  CIRCLE_SIZE,
+  HALF_CIRCLE_SIZE,
+  INITIAL_PADDING,
+  SNAP_DELTA,
+} from "./constants";
 import { MovableHandle } from "./MovableHandle";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -21,8 +26,8 @@ const applyBottomRightSnap = (position, maxX, maxY) => {
   const newY = position.value.y;
 
   position.value = {
-    x: maxX - newX < 8 ? maxX : newX,
-    y: maxY - newY < 8 ? maxY : newY,
+    x: maxX - newX < SNAP_DELTA ? maxX : newX,
+    y: maxY - newY < SNAP_DELTA ? maxY : newY,
   };
 };
 
@@ -30,8 +35,8 @@ const applyTopLeftSnap = (position) => {
   const newX = position.value.x;
   const newY = position.value.y;
   position.value = {
-    x: newX + HALF_CIRCLE_SIZE < 8 ? -HALF_CIRCLE_SIZE : newX,
-    y: newY + HALF_CIRCLE_SIZE < 8 ? -HALF_CIRCLE_SIZE : newY,
+    x: newX + HALF_CIRCLE_SIZE < SNAP_DELTA ? -HALF_CIRCLE_SIZE : newX,
+    y: newY + HALF_CIRCLE_SIZE < SNAP_DELTA ? -HALF_CIRCLE_SIZE : newY,
   };
 };
 
