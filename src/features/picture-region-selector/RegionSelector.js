@@ -55,6 +55,14 @@ export const RegionSelector = ({
         topLeft.value = { x: topLeft.value.x, y };
       }
     },
+    onEnd: (_event, _context) => {
+      const newX = topLeft.value.x + HALF_CIRCLE_SIZE;
+      const newY = topLeft.value.y + HALF_CIRCLE_SIZE;
+      topLeft.value = {
+        x: newX < 8 ? -HALF_CIRCLE_SIZE : topLeft.value.x,
+        y: newY < 8 ? -HALF_CIRCLE_SIZE : topLeft.value.y,
+      };
+    },
   });
 
   const onDragBottomRight = useAnimatedGestureHandler({
@@ -72,6 +80,15 @@ export const RegionSelector = ({
       if (y >= topLeft.value.y && y <= maxY.value) {
         bottomRight.value = { x: bottomRight.value.x, y };
       }
+    },
+    onEnd: (_event, _context) => {
+      const newX = bottomRight.value.x;
+      const newY = bottomRight.value.y;
+
+      bottomRight.value = {
+        x: maxX.value - newX < 8 ? maxX.value : newX,
+        y: maxY.value - newY < 8 ? maxY.value : newY,
+      };
     },
   });
 
