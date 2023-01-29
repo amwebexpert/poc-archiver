@@ -1,15 +1,39 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
-  useAnimatedStyle,
   useAnimatedGestureHandler,
-  useSharedValue,
+  useAnimatedStyle,
   useDerivedValue,
+  useSharedValue,
 } from "react-native-reanimated";
 
+import { CIRCLE_SIZE, HALF_CIRCLE_SIZE, INITIAL_PADDING } from "./constants";
 import { MovableHandle } from "./MovableHandle";
-import { INITIAL_PADDING, CIRCLE_SIZE, HALF_CIRCLE_SIZE } from "./constants";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
+
+const onGestureStart = (context, position) => {
+  context.translateX = position.value.x;
+  context.translateY = position.value.y;
+};
+
+const applyBottomRightSnap = (position, maxX, maxY) => {
+  const newX = position.value.x;
+  const newY = position.value.y;
+
+  position.value = {
+    x: maxX - newX < 8 ? maxX : newX,
+    y: maxY - newY < 8 ? maxY : newY,
+  };
+};
+
+const applyTopLeftSnap = (position) => {
+  const newX = position.value.x;
+  const newY = position.value.y;
+  position.value = {
+    x: newX + HALF_CIRCLE_SIZE < 8 ? -HALF_CIRCLE_SIZE : newX,
+    y: newY + HALF_CIRCLE_SIZE < 8 ? -HALF_CIRCLE_SIZE : newY,
+  };
+};
 
 export const RegionSelector = ({
   imageLayout = { width: 0, height: 0 },
@@ -17,8 +41,8 @@ export const RegionSelector = ({
   selection,
 }) => {
   // state for drag movement boundaries
-  const maxX = useSharedValue(imageLayout.width - HALF_CIRCLE_SIZE);
-  const maxY = useSharedValue(imageLayout.height - HALF_CIRCLE_SIZE);
+  const MAX_X = imageLayout.width - HALF_CIRCLE_SIZE;
+  const MAX_Y = imageLayout.height - HALF_CIRCLE_SIZE;
 
   const topLeft = useSharedValue({ x: INITIAL_PADDING, y: INITIAL_PADDING });
   const bottomRight = useSharedValue({
@@ -40,10 +64,7 @@ export const RegionSelector = ({
   const containerStyle = useAnimatedStyle(() => selection.value);
 
   const onDragTopLeft = useAnimatedGestureHandler({
-    onStart: (_event, context) => {
-      context.translateX = topLeft.value.x;
-      context.translateY = topLeft.value.y;
-    },
+    onStart: (_event, context) => onGestureStart(context, topLeft),
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
       if (x >= -HALF_CIRCLE_SIZE && x <= bottomRight.value.x) {
@@ -55,41 +76,23 @@ export const RegionSelector = ({
         topLeft.value = { x: topLeft.value.x, y };
       }
     },
-    onEnd: (_event, _context) => {
-      const newX = topLeft.value.x + HALF_CIRCLE_SIZE;
-      const newY = topLeft.value.y + HALF_CIRCLE_SIZE;
-      topLeft.value = {
-        x: newX < 8 ? -HALF_CIRCLE_SIZE : topLeft.value.x,
-        y: newY < 8 ? -HALF_CIRCLE_SIZE : topLeft.value.y,
-      };
-    },
+    onEnd: () => applyTopLeftSnap(topLeft),
   });
 
   const onDragBottomRight = useAnimatedGestureHandler({
-    onStart: (_event, context) => {
-      context.translateX = bottomRight.value.x;
-      context.translateY = bottomRight.value.y;
-    },
+    onStart: (_event, context) => onGestureStart(context, bottomRight),
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
-      if (x >= topLeft.value.x && x <= maxX.value) {
+      if (x >= topLeft.value.x && x <= MAX_X) {
         bottomRight.value = { x, y: bottomRight.value.y };
       }
 
       const y = event.translationY + context.translateY;
-      if (y >= topLeft.value.y && y <= maxY.value) {
+      if (y >= topLeft.value.y && y <= MAX_Y) {
         bottomRight.value = { x: bottomRight.value.x, y };
       }
     },
-    onEnd: (_event, _context) => {
-      const newX = bottomRight.value.x;
-      const newY = bottomRight.value.y;
-
-      bottomRight.value = {
-        x: maxX.value - newX < 8 ? maxX.value : newX,
-        y: maxY.value - newY < 8 ? maxY.value : newY,
-      };
-    },
+    onEnd: () => applyBottomRightSnap(bottomRight, MAX_X, MAX_Y),
   });
 
   return (
@@ -102,7 +105,6 @@ export const RegionSelector = ({
       )}
 
       <AnimatedView style={[styles.rectangleRegion, containerStyle]} />
-      <AnimatedView style={[styles.rectangleRegion2, containerStyle]} />
     </>
   );
 };
@@ -110,14 +112,16 @@ export const RegionSelector = ({
 const styles = StyleSheet.create({
   rectangleRegion: {
     position: "absolute",
-    borderColor: "black",
-    borderWidth: 2,
-    backgroundColor: "transparent",
-  },
-  rectangleRegion2: {
-    position: "absolute",
     borderColor: "white",
-    borderWidth: 1,
-    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderStyle: "dashed",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 1,
+    elevation: 1,
   },
 });
