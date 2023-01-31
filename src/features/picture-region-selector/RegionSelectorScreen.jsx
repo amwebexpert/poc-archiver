@@ -17,7 +17,6 @@ export const RegionSelectorScreen = () => {
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
   const [imageLayout, setImageLayout] = useState({});
-  const [showHandles, setShowHandles] = useState(true);
   const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
   const selection = useSharedValue({ top: 0, left: 0, width: 0, height: 0 });
   const showSnackbarMessage = useSnackbar();
@@ -44,10 +43,8 @@ export const RegionSelectorScreen = () => {
       width: Math.round(width),
       height: Math.round(height),
     };
-    showSnackbarMessage(JSON.stringify(rectangle));
+    showSnackbarMessage(JSON.stringify(rectangle, null, 2));
   };
-
-  const onToggleHandles = () => setShowHandles((isVisible) => !isVisible);
 
   return (
     <AppLayout title="Picture region selector">
@@ -60,11 +57,7 @@ export const RegionSelectorScreen = () => {
             />
 
             {isLayoutReady && (
-              <RegionSelector
-                imageLayout={imageLayout}
-                selection={selection}
-                showHandles={showHandles}
-              />
+              <RegionSelector imageLayout={imageLayout} selection={selection} />
             )}
           </View>
         </View>
@@ -73,10 +66,6 @@ export const RegionSelectorScreen = () => {
       <View style={styles.actions}>
         <Button mode="contained" onPress={pickImage} icon="image">
           Pick photo
-        </Button>
-
-        <Button mode="outlined" onPress={onToggleHandles}>
-          Handles
         </Button>
 
         <Button mode="outlined" onPress={onCaptureRegion}>

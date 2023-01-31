@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
@@ -17,8 +19,7 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const RegionSelector = ({
   imageLayout = { width: 0, height: 0 },
-  showHandles = true,
-  selection,
+  selection = {},
 }) => {
   // state for drag movement boundaries
   const MAX_X = imageLayout.width - HALF_CIRCLE_SIZE;
@@ -35,7 +36,7 @@ export const RegionSelector = ({
   const left = useDerivedValue(() => topLeft.value.x + HALF_CIRCLE_SIZE);
   const width = useDerivedValue(() => bottomRight.value.x - topLeft.value.x);
   const height = useDerivedValue(() => bottomRight.value.y - topLeft.value.y);
-  const derivedRectangle = useDerivedValue(() => {
+  useDerivedValue(() => {
     const value = {
       top: top.value,
       left: left.value,
@@ -47,7 +48,7 @@ export const RegionSelector = ({
     return value;
   });
 
-  const containerStyle = useAnimatedStyle(() => derivedRectangle.value);
+  const containerStyle = useAnimatedStyle(() => selection.value ?? {});
 
   const onDragTopLeft = useAnimatedGestureHandler({
     onStart: (_event, context) => {
@@ -95,16 +96,38 @@ export const RegionSelector = ({
     },
   });
 
+  const onDragRectangle = useAnimatedGestureHandler({
+    onStart: (_event, context) => {
+      "worklet";
+      context.topLeft = topLeft.value;
+      context.bottomRight = bottomRight.value;
+      isMoving.value = true;
+    },
+    onActive: (event, context) => {
+      "worklet";
+      topLeft.value = {
+        x: event.translationX + context.topLeft.x,
+        y: event.translationY + context.topLeft.y,
+      };
+
+      bottomRight.value = {
+        x: event.translationX + context.bottomRight.x,
+        y: event.translationY + context.bottomRight.y,
+      };
+    },
+    onEnd: () => {
+      isMoving.value = false;
+    },
+  });
+
   return (
     <>
-      {showHandles && (
-        <>
-          <MovableHandle position={topLeft} onDrag={onDragTopLeft} />
-          <MovableHandle position={bottomRight} onDrag={onDragBottomRight} />
-        </>
-      )}
+      <MovableHandle position={topLeft} onDrag={onDragTopLeft} />
+      <MovableHandle position={bottomRight} onDrag={onDragBottomRight} />
 
-      <AnimatedView style={[styles.rectangleRegion, containerStyle]} />
+      <PanGestureHandler onGestureEvent={onDragRectangle}>
+        <AnimatedView style={[styles.rectangleRegion, containerStyle]} />
+      </PanGestureHandler>
     </>
   );
 };
