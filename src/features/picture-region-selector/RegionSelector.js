@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
@@ -8,7 +7,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
-import { CIRCLE_SIZE, HALF_CIRCLE_SIZE, INITIAL_PADDING } from "./constants";
+import { INITIAL_PADDING } from "./constants";
 import { MovableHandle } from "./MovableHandle";
 import {
   applyBottomRightSnap,
@@ -22,18 +21,18 @@ export const RegionSelector = ({
   selection = {},
 }) => {
   // state for drag movement boundaries
-  const MAX_X = imageLayout.width - HALF_CIRCLE_SIZE;
-  const MAX_Y = imageLayout.height - HALF_CIRCLE_SIZE;
+  const MAX_X = imageLayout.width;
+  const MAX_Y = imageLayout.height;
 
   const isMoving = useSharedValue(false);
   const topLeft = useSharedValue({ x: INITIAL_PADDING, y: INITIAL_PADDING });
   const bottomRight = useSharedValue({
-    x: imageLayout.width - INITIAL_PADDING - CIRCLE_SIZE,
-    y: imageLayout.height - INITIAL_PADDING - CIRCLE_SIZE,
+    x: imageLayout.width - INITIAL_PADDING,
+    y: imageLayout.height - INITIAL_PADDING,
   });
 
-  const top = useDerivedValue(() => topLeft.value.y + HALF_CIRCLE_SIZE);
-  const left = useDerivedValue(() => topLeft.value.x + HALF_CIRCLE_SIZE);
+  const top = useDerivedValue(() => topLeft.value.y);
+  const left = useDerivedValue(() => topLeft.value.x);
   const width = useDerivedValue(() => bottomRight.value.x - topLeft.value.x);
   const height = useDerivedValue(() => bottomRight.value.y - topLeft.value.y);
   useDerivedValue(() => {
@@ -58,12 +57,12 @@ export const RegionSelector = ({
     },
     onActive: (event, context) => {
       const x = event.translationX + context.translateX;
-      if (x >= -HALF_CIRCLE_SIZE && x <= bottomRight.value.x) {
+      if (x >= 0 && x <= bottomRight.value.x) {
         topLeft.value = { x, y: topLeft.value.y };
       }
 
       const y = event.translationY + context.translateY;
-      if (y >= -HALF_CIRCLE_SIZE && y <= bottomRight.value.y) {
+      if (y >= 0 && y <= bottomRight.value.y) {
         topLeft.value = { x: topLeft.value.x, y };
       }
     },

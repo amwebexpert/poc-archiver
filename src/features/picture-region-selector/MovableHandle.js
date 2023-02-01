@@ -1,16 +1,26 @@
 import { View, StyleSheet } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from "react-native-reanimated";
 
 import { HALF_CIRCLE_SIZE, CIRCLE_SIZE } from "./constants";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 export const MovableHandle = ({ position, onDrag }) => {
+  const circlePositionX = useDerivedValue(
+    () => position.value.x - HALF_CIRCLE_SIZE
+  );
+  const circlePositionY = useDerivedValue(
+    () => position.value.y - HALF_CIRCLE_SIZE
+  );
+
   const circleAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateX: position.value.x },
-      { translateY: position.value.y },
+      { translateX: circlePositionX.value },
+      { translateY: circlePositionY.value },
     ],
   }));
 
