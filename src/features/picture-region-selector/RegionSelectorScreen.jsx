@@ -16,6 +16,7 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 export const RegionSelectorScreen = () => {
   const styles = useStyles();
   const [selectedImage, setSelectedImage] = useState();
+  const [showRegionInfo, setShowRegionInfo] = useState(false);
   const [imageLayout, setImageLayout] = useState({});
   const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
   const selection = useSharedValue({ top: 0, left: 0, width: 0, height: 0 });
@@ -23,6 +24,9 @@ export const RegionSelectorScreen = () => {
 
   const onImageLayout = (event) =>
     setImageLayout(event?.nativeEvent?.layout ?? {});
+
+  const toggleRegionInfoVisibility = () =>
+    setShowRegionInfo((visible) => !visible);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -57,7 +61,11 @@ export const RegionSelectorScreen = () => {
             />
 
             {isLayoutReady && (
-              <RegionSelector imageLayout={imageLayout} selection={selection} />
+              <RegionSelector
+                imageLayout={imageLayout}
+                selection={selection}
+                showRegionInfo={showRegionInfo}
+              />
             )}
           </View>
         </View>
@@ -70,6 +78,10 @@ export const RegionSelectorScreen = () => {
 
         <Button mode="outlined" onPress={onCaptureRegion}>
           Capture
+        </Button>
+
+        <Button mode="outlined" onPress={toggleRegionInfoVisibility}>
+          (x, y)
         </Button>
       </View>
     </AppLayout>

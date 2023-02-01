@@ -19,6 +19,7 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 export const RegionSelector = ({
   imageLayout = { width: 0, height: 0 },
   selection = {},
+  showRegionInfo = false,
 }) => {
   // state for drag movement boundaries
   const MAX_X = imageLayout.width;
@@ -121,8 +122,16 @@ export const RegionSelector = ({
 
   return (
     <>
-      <MovableHandle position={topLeft} onDrag={onDragTopLeft} />
-      <MovableHandle position={bottomRight} onDrag={onDragBottomRight} />
+      <MovableHandle
+        position={topLeft}
+        onDrag={onDragTopLeft}
+        showCoordinates={showRegionInfo}
+      />
+      <MovableHandle
+        position={bottomRight}
+        onDrag={onDragBottomRight}
+        showCoordinates={showRegionInfo}
+      />
 
       <PanGestureHandler onGestureEvent={onDragRectangle}>
         <AnimatedView style={[styles.rectangleRegion, containerStyle]} />

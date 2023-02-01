@@ -6,10 +6,15 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { HALF_CIRCLE_SIZE, CIRCLE_SIZE } from "./constants";
+import { CoordinatesInfo } from "./CoordinatesInfo";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export const MovableHandle = ({ position, onDrag }) => {
+export const MovableHandle = ({
+  position,
+  onDrag,
+  showCoordinates = false,
+}) => {
   const circlePositionX = useDerivedValue(
     () => position.value.x - HALF_CIRCLE_SIZE
   );
@@ -28,6 +33,7 @@ export const MovableHandle = ({ position, onDrag }) => {
     <PanGestureHandler onGestureEvent={onDrag}>
       <AnimatedView style={[styles.container, circleAnimatedStyle]}>
         <View style={styles.circle} />
+        {showCoordinates && <CoordinatesInfo position={position} />}
       </AnimatedView>
     </PanGestureHandler>
   );
