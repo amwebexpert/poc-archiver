@@ -99,23 +99,37 @@ export const RegionSelector = ({
   const onDragRectangle = useAnimatedGestureHandler({
     onStart: (_event, context) => {
       "worklet";
+
       context.topLeft = topLeft.value;
       context.bottomRight = bottomRight.value;
+      context.rectangleWidth = bottomRight.value.x - topLeft.value.x;
+      context.rectangleHeight = bottomRight.value.y - topLeft.value.y;
       isMoving.value = true;
     },
     onActive: (event, context) => {
       "worklet";
-      topLeft.value = {
-        x: event.translationX + context.topLeft.x,
-        y: event.translationY + context.topLeft.y,
-      };
 
+      const unboundedX = event.translationX + context.topLeft.x;
+      let newX = unboundedX < 0 ? 0 : unboundedX;
+      if (newX + context.rectangleWidth > MAX_X) {
+        newX = MAX_X - context.rectangleWidth;
+      }
+
+      const unboundedY = event.translationY + context.topLeft.y;
+      let newY = unboundedY < 0 ? 0 : unboundedY;
+      if (newY + context.rectangleHeight > MAX_Y) {
+        newY = MAX_Y - context.rectangleHeight;
+      }
+
+      topLeft.value = { x: newX, y: newY };
       bottomRight.value = {
-        x: event.translationX + context.bottomRight.x,
-        y: event.translationY + context.bottomRight.y,
+        x: newX + context.rectangleWidth,
+        y: newY + context.rectangleHeight,
       };
     },
     onEnd: () => {
+      "worklet";
+
       isMoving.value = false;
     },
   });
