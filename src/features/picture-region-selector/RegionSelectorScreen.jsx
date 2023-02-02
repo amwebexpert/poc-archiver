@@ -72,7 +72,7 @@ export const RegionSelectorScreen = () => {
       </GestureHandlerRootView>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={pickImage} icon="image">
+        <Button mode="outlined" onPress={pickImage} icon="image">
           Pick photo
         </Button>
 
@@ -80,7 +80,7 @@ export const RegionSelectorScreen = () => {
           Capture
         </Button>
 
-        <Button mode="outlined" onPress={toggleRegionInfoVisibility}>
+        <Button mode={showRegionInfo ? "contained" : "outlined"} onPress={toggleRegionInfoVisibility}>
           (x, y)
         </Button>
       </View>
