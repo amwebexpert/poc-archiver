@@ -24,11 +24,13 @@ export const CoordinatesInfo = ({ position }) => {
 const styles = StyleSheet.create({
   coord: {
     position: "absolute",
-    color: "red",
+    color: "white",
+    paddingLeft: 2,
+    backgroundColor: "black",
     left: 4,
   },
   coordX: {
-    top: HALF_CIRCLE_SIZE - 16,
+    top: HALF_CIRCLE_SIZE - 24,
   },
   coordY: {
     top: HALF_CIRCLE_SIZE - 4,
