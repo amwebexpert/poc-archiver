@@ -57,17 +57,22 @@ export const RegionSelector = ({
       isMoving.value = true;
     },
     onActive: (event, context) => {
-      const x = event.translationX + context.translateX;
-      if (x >= 0 && x <= bottomRight.value.x) {
-        topLeft.value = { x, y: topLeft.value.y };
+      const unboundedX = event.translationX + context.translateX;
+      let newX = unboundedX < 0 ? 0 : unboundedX;
+      if (newX > bottomRight.value.x) {
+        newX = bottomRight.value.x - 1;
       }
 
-      const y = event.translationY + context.translateY;
-      if (y >= 0 && y <= bottomRight.value.y) {
-        topLeft.value = { x: topLeft.value.x, y };
+      const unboundedY = event.translationY + context.translateY;
+      let newY = unboundedY < 0 ? 0 : unboundedY;
+      if (newY > bottomRight.value.y) {
+        newY = bottomRight.value.y - 1;
       }
+
+      topLeft.value = { x: newX, y: newY };
     },
     onEnd: () => {
+      // optional (remvoe if you don't want a "snap 2 the edge" behavior)
       applyTopLeftSnap(topLeft);
       isMoving.value = false;
     },
@@ -80,17 +85,22 @@ export const RegionSelector = ({
       isMoving.value = true;
     },
     onActive: (event, context) => {
-      const x = event.translationX + context.translateX;
-      if (x >= topLeft.value.x && x <= MAX_X) {
-        bottomRight.value = { x, y: bottomRight.value.y };
+      const unboundedX = event.translationX + context.translateX;
+      let newX = unboundedX > MAX_X ? MAX_X : unboundedX;
+      if (newX < topLeft.value.x) {
+        newX = topLeft.value.x + 1;
       }
 
-      const y = event.translationY + context.translateY;
-      if (y >= topLeft.value.y && y <= MAX_Y) {
-        bottomRight.value = { x: bottomRight.value.x, y };
+      const unboundedY = event.translationY + context.translateY;
+      let newY = unboundedY > MAX_Y ? MAX_Y : unboundedY;
+      if (newY < topLeft.value.y) {
+        newY = topLeft.value.y + 1;
       }
+
+      bottomRight.value = { x: newX, y: newY };
     },
     onEnd: () => {
+      // optional (remvoe if you don't want a "snap 2 the edge" behavior)
       applyBottomRightSnap(bottomRight, MAX_X, MAX_Y);
       isMoving.value = false;
     },
