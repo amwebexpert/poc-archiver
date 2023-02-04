@@ -12,6 +12,8 @@ import { MovableHandle } from "./MovableHandle";
 import {
   applyBottomRightSnap,
   applyTopLeftSnap,
+  onRegionDrag,
+  setupRegionContext,
 } from "./region-selector-utils";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -69,7 +71,9 @@ export const RegionSelector = ({
         newY = bottomRight.value.y - 1;
       }
 
-      topLeft.value = { x: newX, y: newY };
+      if (newX !== topLeft.value.x || newY !== topLeft.value.y) {
+        topLeft.value = { x: newX, y: newY };
+      }
     },
     onEnd: () => {
       // optional (remvoe if you don't want a "snap 2 the edge" behavior)
@@ -97,7 +101,9 @@ export const RegionSelector = ({
         newY = topLeft.value.y + 1;
       }
 
-      bottomRight.value = { x: newX, y: newY };
+      if (newX !== bottomRight.value.x || newY !== bottomRight.value.y) {
+        bottomRight.value = { x: newX, y: newY };
+      }
     },
     onEnd: () => {
       // optional (remvoe if you don't want a "snap 2 the edge" behavior)
@@ -110,32 +116,21 @@ export const RegionSelector = ({
     onStart: (_event, context) => {
       "worklet";
 
-      context.topLeft = topLeft.value;
-      context.bottomRight = bottomRight.value;
-      context.rectangleWidth = bottomRight.value.x - topLeft.value.x;
-      context.rectangleHeight = bottomRight.value.y - topLeft.value.y;
+      setupRegionContext({ context, topLeft, bottomRight, MAX_X, MAX_Y });
       isMoving.value = true;
     },
     onActive: (event, context) => {
       "worklet";
 
-      const unboundedX = event.translationX + context.topLeft.x;
-      let newX = unboundedX < 0 ? 0 : unboundedX;
-      if (newX + context.rectangleWidth > MAX_X) {
-        newX = MAX_X - context.rectangleWidth;
-      }
+      const { hasMoved, newTopLeft, newBottomRight } = onRegionDrag(
+        event,
+        context
+      );
 
-      const unboundedY = event.translationY + context.topLeft.y;
-      let newY = unboundedY < 0 ? 0 : unboundedY;
-      if (newY + context.rectangleHeight > MAX_Y) {
-        newY = MAX_Y - context.rectangleHeight;
+      if (hasMoved) {
+        topLeft.value = newTopLeft;
+        bottomRight.value = newBottomRight;
       }
-
-      topLeft.value = { x: newX, y: newY };
-      bottomRight.value = {
-        x: newX + context.rectangleWidth,
-        y: newY + context.rectangleHeight,
-      };
     },
     onEnd: () => {
       "worklet";
