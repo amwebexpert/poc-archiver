@@ -12,7 +12,9 @@ import { MovableHandle } from "./MovableHandle";
 import {
   applyBottomRightSnap,
   applyTopLeftSnap,
+  onBottomRightDrag,
   onRegionDrag,
+  onTopLeftDrag,
   setupRegionContext,
 } from "./region-selector-utils";
 
@@ -54,29 +56,13 @@ export const RegionSelector = ({
 
   const onDragTopLeft = useAnimatedGestureHandler({
     onStart: (_event, context) => {
-      context.translateX = topLeft.value.x;
-      context.translateY = topLeft.value.y;
+      setupRegionContext({ context, topLeft, bottomRight, MAX_X, MAX_Y });
       isMoving.value = true;
     },
     onActive: (event, context) => {
-      const unboundedX = event.translationX + context.translateX;
-      let newX = unboundedX < 0 ? 0 : unboundedX;
-      if (newX > bottomRight.value.x) {
-        newX = bottomRight.value.x - 1;
-      }
-
-      const unboundedY = event.translationY + context.translateY;
-      let newY = unboundedY < 0 ? 0 : unboundedY;
-      if (newY > bottomRight.value.y) {
-        newY = bottomRight.value.y - 1;
-      }
-
-      if (newX !== topLeft.value.x || newY !== topLeft.value.y) {
-        topLeft.value = { x: newX, y: newY };
-      }
+      topLeft.value = onTopLeftDrag(event, context);
     },
     onEnd: () => {
-      // optional (remvoe if you don't want a "snap 2 the edge" behavior)
       applyTopLeftSnap(topLeft);
       isMoving.value = false;
     },
@@ -84,29 +70,13 @@ export const RegionSelector = ({
 
   const onDragBottomRight = useAnimatedGestureHandler({
     onStart: (_event, context) => {
-      context.translateX = bottomRight.value.x;
-      context.translateY = bottomRight.value.y;
+      setupRegionContext({ context, topLeft, bottomRight, MAX_X, MAX_Y });
       isMoving.value = true;
     },
     onActive: (event, context) => {
-      const unboundedX = event.translationX + context.translateX;
-      let newX = unboundedX > MAX_X ? MAX_X : unboundedX;
-      if (newX < topLeft.value.x) {
-        newX = topLeft.value.x + 1;
-      }
-
-      const unboundedY = event.translationY + context.translateY;
-      let newY = unboundedY > MAX_Y ? MAX_Y : unboundedY;
-      if (newY < topLeft.value.y) {
-        newY = topLeft.value.y + 1;
-      }
-
-      if (newX !== bottomRight.value.x || newY !== bottomRight.value.y) {
-        bottomRight.value = { x: newX, y: newY };
-      }
+      bottomRight.value = onBottomRightDrag(event, context);
     },
     onEnd: () => {
-      // optional (remvoe if you don't want a "snap 2 the edge" behavior)
       applyBottomRightSnap(bottomRight, MAX_X, MAX_Y);
       isMoving.value = false;
     },
@@ -114,27 +84,15 @@ export const RegionSelector = ({
 
   const onDragRectangle = useAnimatedGestureHandler({
     onStart: (_event, context) => {
-      "worklet";
-
       setupRegionContext({ context, topLeft, bottomRight, MAX_X, MAX_Y });
       isMoving.value = true;
     },
     onActive: (event, context) => {
-      "worklet";
-
-      const { hasMoved, newTopLeft, newBottomRight } = onRegionDrag(
-        event,
-        context
-      );
-
-      if (hasMoved) {
-        topLeft.value = newTopLeft;
-        bottomRight.value = newBottomRight;
-      }
+      const { newTopLeft, newBottomRight } = onRegionDrag(event, context);
+      topLeft.value = newTopLeft;
+      bottomRight.value = newBottomRight;
     },
     onEnd: () => {
-      "worklet";
-
       isMoving.value = false;
     },
   });
