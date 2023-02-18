@@ -1,7 +1,7 @@
 import { SNAP_DELTA } from "./constants";
 
-  // optional (dont call it if you don't want a "snap 2 the edge" behavior)
-  export const applyBottomRightSnap = (position, maxX, maxY) => {
+// optional (dont call it if you don't want a "snap 2 the edge" behavior)
+export const applyBottomRightSnap = (position, maxX, maxY) => {
   "worklet";
   const newX = position.value.x;
   const newY = position.value.y;
@@ -102,4 +102,3 @@ export const onBottomRightDrag = (event, context) => {
 
   return { x, y };
 };
-

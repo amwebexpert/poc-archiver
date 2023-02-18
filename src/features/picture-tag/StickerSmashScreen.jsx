@@ -1,14 +1,14 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, FAB, useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from 'expo-media-library';
 
 import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import { AppLayout } from "~/components/layout/AppLayout";
 import { ImageViewer } from "~/components/image/ImageViewer";
+import { useImagePicker } from "~/hooks/useImagePicker";
 
 import { EmojiListDialog } from "./EmojiListDialog";
 import { EmojiSticker } from "./EmojiSticker";
@@ -20,23 +20,17 @@ export const StickerSmashScreen = () => {
   const showSnackbarMessage = useSnackbar();
 
   const styles = useStyles();
-  const [selectedImage, setSelectedImage] = useState();
+  const {selectedImage, pickImage} = useImagePicker();
   const [showAppOptions, setShowAppOptions] = useState(false);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState();
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+  useEffect(() => {
+    if (selectedImage) {
       setShowAppOptions(true);
     }
-  };
+  }, [selectedImage]);
 
   const useThisPicture = () => {
     setShowAppOptions(true);

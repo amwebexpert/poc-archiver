@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import * as ImagePicker from "expo-image-picker";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import { ImageViewer } from "~/components/image/ImageViewer";
+import { useImagePicker } from "~/hooks/useImagePicker";
 
 import { RegionSelector } from "./RegionSelector";
 import { useSharedValue } from "react-native-reanimated";
@@ -15,7 +15,7 @@ const PlaceholderImage = require("../../../assets/images/backgrounds/background-
 
 export const RegionSelectorScreen = () => {
   const styles = useStyles();
-  const [selectedImage, setSelectedImage] = useState();
+  const {selectedImage, pickImage} = useImagePicker();
   const [showRegionInfo, setShowRegionInfo] = useState(false);
   const [imageLayout, setImageLayout] = useState({});
   const isLayoutReady = !!imageLayout?.width && !!imageLayout?.height;
@@ -27,17 +27,6 @@ export const RegionSelectorScreen = () => {
 
   const toggleRegionInfoVisibility = () =>
     setShowRegionInfo((visible) => !visible);
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-    }
-  };
 
   const onCaptureRegion = () => {
     const { top, left, width, height } = selection.value;
