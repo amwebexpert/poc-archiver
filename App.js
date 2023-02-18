@@ -21,6 +21,7 @@ import { ShareScreen } from "~/features/share/ShareScreen";
 import { NavScreen } from "~/features/navigation/NavScreen";
 import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
 import { RegionSelectorScreen } from "~/features/picture-region-selector/RegionSelectorScreen";
+import { PictureZoom } from "~/features/picture-zoom/PictureZoom";
 
 const Drawer = createDrawerNavigator();
 
@@ -36,7 +37,7 @@ const App = () => {
       <PaperProvider theme={appTheme}>
         <SnackbarProvider>
           <Drawer.Navigator
-            initialRouteName="RegionSelector"
+            initialRouteName="Home"
             screenOptions={{ headerShown: false }}
           >
             <Drawer.Screen
@@ -63,6 +64,36 @@ const App = () => {
                 drawerIcon: ({ size }) => (
                   <FontAwesome
                     name="file-picture-o"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="RegionSelector"
+              component={RegionSelectorScreen}
+              initialParams={{}}
+              options={{
+                title: "Picture region selector",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="picture-in-picture-bottom-right-outline"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="PictureZoom"
+              component={PictureZoom}
+              initialParams={{}}
+              options={{
+                title: "Picture zooming",
+                drawerIcon: ({ size }) => (
+                  <MaterialIcons
+                    name="zoom-in"
                     size={size}
                     color={appTheme.colors.secondary}
                   />
@@ -158,21 +189,6 @@ const App = () => {
                 ),
               }}
               initialParams={{}}
-            />
-            <Drawer.Screen
-              name="RegionSelector"
-              component={RegionSelectorScreen}
-              initialParams={{}}
-              options={{
-                title: "Picture region selector",
-                drawerIcon: ({ size }) => (
-                  <MaterialCommunityIcons
-                    name="picture-in-picture-bottom-right-outline"
-                    size={size}
-                    color={appTheme.colors.secondary}
-                  />
-                ),
-              }}
             />
           </Drawer.Navigator>
         </SnackbarProvider>
