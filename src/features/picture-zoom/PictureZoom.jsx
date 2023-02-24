@@ -1,18 +1,22 @@
-import React from "react";
+import React, { createRef } from "react";
 import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
-import { Button, useTheme } from "react-native-paper";
+import { Button, IconButton, useTheme } from "react-native-paper";
 import ReactNativeZoomableView from "@openspacelabs/react-native-zoomable-view/src/ReactNativeZoomableView";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import { useImagePicker } from "~/hooks/useImagePicker";
 
 export const PictureZoom = () => {
+  const zoomableViewRef = createRef();
   const styles = useStyles();
   const { width } = useWindowDimensions();
   const { pickImage, selectedImage, dimensions } = useImagePicker();
 
   const contentWidth = width - 10;
   const contentHeight = contentWidth / dimensions?.aspectRatio ?? 1;
+
+  const onTransform = (zoomableViewEventObject) =>
+    console.log("onTransform", zoomableViewEventObject);
 
   return (
     <AppLayout title="Picture zoom">
@@ -26,8 +30,14 @@ export const PictureZoom = () => {
           }}
         >
           <ReactNativeZoomableView
-            maxZoom={30}
+            ref={zoomableViewRef}
+            initialZoom={1}
             minZoom={1}
+            maxZoom={10}
+            initialOffsetX={0}
+            initialOffsetY={0}
+            bindToBorders={true}
+            onTransform={onTransform}
             contentWidth={contentWidth}
             contentHeight={contentHeight}
           >
@@ -41,8 +51,15 @@ export const PictureZoom = () => {
 
       <View style={styles.actions}>
         <Button mode="outlined" onPress={pickImage} icon="image">
-          Pick photo
+          Galery
         </Button>
+
+        <IconButton
+          mode="outlined"
+          onPress={() => zoomableViewRef.current.zoomTo(1)}
+          icon="undo"
+          style={styles.iconButton}
+        />
       </View>
     </AppLayout>
   );
@@ -62,6 +79,9 @@ const useStyles = () => {
     actions: {
       flexDirection: "row",
       justifyContent: "center",
+    },
+    iconButton: {
+      margin: 0,
     },
   });
 };
