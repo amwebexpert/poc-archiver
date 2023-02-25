@@ -22,6 +22,7 @@ import { NavScreen } from "~/features/navigation/NavScreen";
 import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
 import { RegionSelectorScreen } from "~/features/picture-region-selector/RegionSelectorScreen";
 import { PictureZoomScreen } from "~/features/picture-zoom/PictureZoomScreen";
+import { ManualNotesScreen } from "~/features/manual-notes/ManualNotesScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -94,6 +95,21 @@ const App = () => {
                 drawerIcon: ({ size }) => (
                   <MaterialIcons
                     name="zoom-in"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="ManualNotesScreen"
+              component={ManualNotesScreen}
+              initialParams={{}}
+              options={{
+                title: "Hand written notes",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="notebook-edit-outline"
                     size={size}
                     color={appTheme.colors.secondary}
                   />
