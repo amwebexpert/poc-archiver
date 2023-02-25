@@ -8,7 +8,10 @@ import Animated, {
   useAnimatedGestureHandler,
   runOnJS,
 } from "react-native-reanimated";
-import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+} from "react-native-gesture-handler";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 
@@ -19,6 +22,10 @@ export const ManualNotesScreen = () => {
 
   const gesturePath = useSharedValue([]);
 
+  const addPath = (newPath = "") => {
+    setPaths((paths) => [...paths, newPath]);
+  };
+
   const gestureHandler = useAnimatedGestureHandler({
     onStart: (event, _ctx) => {
       gesturePath.value = [`M ${event.x} ${event.y}`];
@@ -27,8 +34,8 @@ export const ManualNotesScreen = () => {
       gesturePath.value = [...gesturePath.value, `L ${event.x} ${event.y}`];
     },
     onEnd: (_event, _ctx) => {
-      const newPaths = [...paths, gesturePath.value];
-      runOnJS(setPaths, newPaths);
+      const newPath = gesturePath.value.join();
+      runOnJS(addPath)(newPath);
     },
   });
 
@@ -39,23 +46,35 @@ export const ManualNotesScreen = () => {
   return (
     <AppLayout title="Hand written notes">
       <GestureHandlerRootView style={styles.container}>
-          <PanGestureHandler onGestureEvent={gestureHandler}>
-            <Animated.View style={styles.container}>
-              <AnimatedSvg height="100%" width="100%">
-                <AnimatedPath
-                  animatedProps={animatedProps}
-                  fill="none"
-                  stroke="red"
-                  strokeWidth={3}
-                />
-              </AnimatedSvg>
-            </Animated.View>
-          </PanGestureHandler>
+        <PanGestureHandler onGestureEvent={gestureHandler}>
+          <Animated.View style={styles.container}>
+            <AnimatedSvg height="100%" width="100%">
+              <AnimatedPath
+                animatedProps={animatedProps}
+                stroke="red"
+                strokeWidth={3}
+              />
+            </AnimatedSvg>
+          </Animated.View>
+        </PanGestureHandler>
       </GestureHandlerRootView>
 
+      <Svg height="100%" width="100%" style={styles.fixedPaths}>
+        {paths.map((d, i) => {
+          return <Path d={d} key={i} stroke="red" strokeWidth={3} />;
+        })}
+      </Svg>
+
       <View style={styles.actions}>
-        <Button mode="outlined" onPress={() => Alert.alert("Not yet implemented!")} icon="image">
-          Export
+        <Button
+          mode="outlined"
+          onPress={() => {
+            setPaths([]);
+            gesturePath.value = [];
+          }}
+          icon="delete"
+        >
+          Clear
         </Button>
       </View>
     </AppLayout>
@@ -66,6 +85,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
+  },
+  fixedPaths: {
+    position: "absolute",
+    flex: 1,
+    backgroundColor: "transparent",
+    zIndex: -1,
   },
   actions: {
     flexDirection: "row",
