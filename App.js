@@ -21,7 +21,7 @@ import { ShareScreen } from "~/features/share/ShareScreen";
 import { NavScreen } from "~/features/navigation/NavScreen";
 import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
 import { RegionSelectorScreen } from "~/features/picture-region-selector/RegionSelectorScreen";
-import { PictureZoom } from "~/features/picture-zoom/PictureZoom";
+import { PictureZoomScreen } from "~/features/picture-zoom/PictureZoomScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -86,8 +86,8 @@ const App = () => {
               }}
             />
             <Drawer.Screen
-              name="PictureZoom"
-              component={PictureZoom}
+              name="PictureZoomScreen"
+              component={PictureZoomScreen}
               initialParams={{}}
               options={{
                 title: "Picture zooming",

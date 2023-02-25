@@ -6,7 +6,7 @@ import ReactNativeZoomableView from "@openspacelabs/react-native-zoomable-view/s
 import { AppLayout } from "~/components/layout/AppLayout";
 import { useImagePicker } from "~/hooks/useImagePicker";
 
-export const PictureZoom = () => {
+export const PictureZoomScreen = () => {
   const zoomableViewRef = createRef();
   const styles = useStyles();
   const { width } = useWindowDimensions();
