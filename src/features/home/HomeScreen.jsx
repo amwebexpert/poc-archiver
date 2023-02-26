@@ -1,11 +1,13 @@
+import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, useTheme, Paragraph } from "react-native-paper";
+import { Alert, StyleSheet, View } from "react-native";
+import { Text, useTheme, Paragraph, Button } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 
 export const HomeScreen = () => {
   const styles = useStyles();
+  const navigation = useNavigation();
 
   return (
     <AppLayout title="Home screen">
@@ -27,6 +29,16 @@ export const HomeScreen = () => {
 
         <Paragraph>Like it? Do not forget to star the repo!</Paragraph>
       </View>
+
+      <View style={styles.actions}>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.navigate("About")}
+          icon="book-information-variant"
+        >
+          About & licences…
+        </Button>
+      </View>
     </AppLayout>
   );
 };
@@ -43,6 +55,10 @@ const useStyles = () => {
     },
     heading: {
       marginVertical: theme.spacing(2),
+    },
+    actions: {
+      flexDirection: "row",
+      justifyContent: "center",
     },
   });
 };

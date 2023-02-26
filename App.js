@@ -23,6 +23,7 @@ import { StickerSmashScreen } from "~/features/picture-tag/StickerSmashScreen";
 import { RegionSelectorScreen } from "~/features/picture-region-selector/RegionSelectorScreen";
 import { PictureZoomScreen } from "~/features/picture-zoom/PictureZoomScreen";
 import { ManualNotesScreen } from "~/features/manual-notes/ManualNotesScreen";
+import { AboutScreen } from "~/features/about/AboutScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -199,6 +200,21 @@ const App = () => {
                 drawerIcon: ({ size }) => (
                   <Ionicons
                     name="settings"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="About"
+              component={AboutScreen}
+              options={{
+                title: "About this app…",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="book-information-variant"
                     size={size}
                     color={appTheme.colors.secondary}
                   />

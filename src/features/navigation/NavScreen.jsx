@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 export const NavScreen = () => {
