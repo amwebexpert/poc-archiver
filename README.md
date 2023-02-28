@@ -11,6 +11,7 @@ ReactNative Expo proof of concepts app
 - `Expo` file sharing
 - archiving and encrypting multiple files into a single file archive using `expo-sqlite`
 - picture region selector using `react-native-reanimated` and `react-native-gesture-handler`
+- signature pad screen using `reanimated` and `gesture-handler` and `react-native-svg`
 
 
 ## Installation
