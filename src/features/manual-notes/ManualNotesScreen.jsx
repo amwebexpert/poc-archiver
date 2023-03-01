@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
@@ -12,8 +12,12 @@ import {
   GestureHandlerRootView,
   PanGestureHandler,
 } from "react-native-gesture-handler";
+import * as FileSystem from "expo-file-system";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import * as fileService from "~/services/file-service";
+import { SvgExporter } from "./exporter/SvgExporter";
+import { exportElementAsSVG } from "./exporter/svg-exporter-utils";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -34,6 +38,28 @@ export const ManualNotesScreen = () => {
   const undo = () => {
     setPaths((paths) => [...paths.slice(0, paths.length - 1)]);
     gesturePoints.value = [];
+  };
+
+  const exportAsSvg = async () => {
+    const filename = "manual-notes.svg";
+    const fileUri = `${FileSystem.documentDirectory}${filename}`;
+    const xml = exportElementAsSVG(<SvgExporter paths={paths} />);
+
+    const { exists, error } = await fileService.saveTextContent({
+      fileUri,
+      text: xml,
+    });
+
+    if (error) {
+      showSnackbarMessage(`Error while storing SVG:\n ➡ ${error.message}`);
+      return;
+    }
+
+    if (exists) {
+      showSnackbarMessage(`File replaced:\n ➡ ${filename}`);
+    } else {
+      showSnackbarMessage(`File created:\n ➡ ${filename}`);
+    }
   };
 
   const gestureHandler = useAnimatedGestureHandler({
@@ -84,6 +110,15 @@ export const ManualNotesScreen = () => {
 
         <Button mode="outlined" onPress={undo} icon="undo" disabled={!hasPaths}>
           Undo
+        </Button>
+
+        <Button
+          mode="outlined"
+          onPress={exportAsSvg}
+          icon="file-export"
+          disabled={!hasPaths}
+        >
+          Export
         </Button>
       </View>
     </AppLayout>
