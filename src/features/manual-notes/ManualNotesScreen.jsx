@@ -38,10 +38,10 @@ export const ManualNotesScreen = () => {
 
   const gestureHandler = useAnimatedGestureHandler({
     onStart: ({ x, y }, _ctx) => {
-      gesturePoints.value = [`M ${x} ${y}`];
+      gesturePoints.value = [`M ${x},${y}`];
     },
     onActive: ({ x, y }, _ctx) => {
-      gesturePoints.value = [...gesturePoints.value, `L ${x} ${y}`];
+      gesturePoints.value = [...gesturePoints.value, `L ${x},${y}`];
     },
     onEnd: (_event, _ctx) => runOnJS(addPath)(gesturePoints.value.join(" ")),
   });

@@ -6,10 +6,10 @@ export const buildSvgPath = (coordinates = []) => {
   }
 
   const [firstCoord, ...rest] = coordinates;
-  const pathStart = `M ${firstCoord.x} ${firstCoord.y}`;
+  const pathStart = `M ${firstCoord.x},${firstCoord.y}`;
 
   const path = rest.reduce((acc, { x, y }) => {
-    return `${acc} L ${x} ${y}`;
+    return `${acc} L ${x},${y}`;
   }, pathStart);
 
   return path;
