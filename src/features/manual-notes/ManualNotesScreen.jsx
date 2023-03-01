@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
@@ -14,6 +14,7 @@ import {
 } from "react-native-gesture-handler";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import { buildSvgPath } from "./manual-notes-utils";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -24,7 +25,8 @@ export const ManualNotesScreen = () => {
 
   const gesturePoints = useSharedValue([]);
 
-  const addPath = (path = "") => setPaths((paths) => [...paths, path]);
+  const addPath = (coordinates = []) =>
+    setPaths((paths) => [...paths, buildSvgPath(coordinates)]);
 
   const clearAllPaths = () => {
     setPaths([]);
@@ -37,17 +39,19 @@ export const ManualNotesScreen = () => {
   };
 
   const gestureHandler = useAnimatedGestureHandler({
-    onStart: (event, _ctx) => {
-      gesturePoints.value = [`M ${event.x},${event.y}`];
+    onStart: ({ x, y }, _ctx) => {
+      gesturePoints.value = [{ x, y }];
     },
-    onActive: (event, _ctx) => {
-      gesturePoints.value = [...gesturePoints.value, `L ${event.x},${event.y}`];
+    onActive: ({ x, y }, _ctx) => {
+      gesturePoints.value = [...gesturePoints.value, { x, y }];
     },
-    onEnd: (_event, _ctx) => runOnJS(addPath)(gesturePoints.value.join(" ")),
+    onEnd: (_event, _ctx) => {
+      runOnJS(addPath)(gesturePoints.value);
+    },
   });
 
   const animatedProps = useAnimatedProps(() => ({
-    d: gesturePoints.value.join(),
+    d: buildSvgPath(gesturePoints.value),
   }));
 
   return (
