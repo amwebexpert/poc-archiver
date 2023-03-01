@@ -38,7 +38,7 @@
     "react-native-screens": "~3.18.0",
     "react-native-svg": "13.4.0",
     "react-native-view-shot": "3.4.0",
-    "text-encoding": "^0.7.0"
+    "text-encoding-polyfill": "^0.6.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import * as FileSystem from "expo-file-system";
 import { Button } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
@@ -12,9 +13,9 @@ import {
   GestureHandlerRootView,
   PanGestureHandler,
 } from "react-native-gesture-handler";
-import * as FileSystem from "expo-file-system";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import * as fileService from "~/services/file-service";
 import { SvgExporter } from "./exporter/SvgExporter";
 import { exportElementAsSVG } from "./exporter/svg-exporter-utils";
@@ -23,6 +24,7 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
 export const ManualNotesScreen = () => {
+  const showSnackbarMessage = useSnackbar();
   const [paths, setPaths] = useState([]);
   const hasPaths = paths.length > 0;
 
@@ -41,8 +43,8 @@ export const ManualNotesScreen = () => {
   };
 
   const exportAsSvg = async () => {
-    const filename = "manual-notes.svg";
-    const fileUri = `${FileSystem.documentDirectory}${filename}`;
+    const filename = "manual-notes.xml";
+    const fileUri = `${FileSystem.documentDirectory}/${filename}`;
     const xml = exportElementAsSVG(<SvgExporter paths={paths} />);
 
     const { exists, error } = await fileService.saveTextContent({
@@ -55,11 +57,7 @@ export const ManualNotesScreen = () => {
       return;
     }
 
-    if (exists) {
-      showSnackbarMessage(`File replaced:\n ➡ ${filename}`);
-    } else {
-      showSnackbarMessage(`File created:\n ➡ ${filename}`);
-    }
+    fileService.shareFile(fileUri);
   };
 
   const gestureHandler = useAnimatedGestureHandler({

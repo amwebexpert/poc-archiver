@@ -101,6 +101,12 @@
         "licenseUrl": "https://github.com/sindresorhus/pretty-bytes/raw/master/license",
         "parents": "poc-archiver"
     },
+    "react-dom@18.1.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "poc-archiver"
+    },
     "react-native-gesture-handler@2.8.0": {
         "licenses": "MIT",
         "repository": "https://github.com/software-mansion/react-native-gesture-handler",
