@@ -1,3 +1,4 @@
+import "text-encoding-polyfill";
 import * as React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
@@ -24,8 +25,10 @@ import { RegionSelectorScreen } from "~/features/picture-region-selector/RegionS
 import { PictureZoomScreen } from "~/features/picture-zoom/PictureZoomScreen";
 import { ManualNotesScreen } from "~/features/manual-notes/ManualNotesScreen";
 import { AboutScreen } from "~/features/about/AboutScreen";
+import { setupLogBox } from "~/utils/logger";
 
 const Drawer = createDrawerNavigator();
+setupLogBox();
 
 const App = () => {
   const [status, requestPermission] = MediaLibrary.usePermissions();

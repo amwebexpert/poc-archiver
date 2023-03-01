@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import * as FileSystem from "expo-file-system";
 import { Button } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
@@ -14,6 +15,7 @@ import {
 } from "react-native-gesture-handler";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import * as svgUtils from "./svg-utils";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -34,6 +36,16 @@ export const ManualNotesScreen = () => {
   const undo = () => {
     setPaths((paths) => [...paths.slice(0, paths.length - 1)]);
     gesturePoints.value = [];
+  };
+
+  const exportAsSvg = () => {
+    const fileUri = `${FileSystem.documentDirectory}hand-written-notes.svg`;
+    const elements = [
+      ...paths.map((path) =>
+        svgUtils.SVG_ELEMENTS.get("path").mapper({ path })
+      ),
+    ];
+    svgUtils.exportAsSvg({ elements, fileUri });
   };
 
   const gestureHandler = useAnimatedGestureHandler({
@@ -84,6 +96,15 @@ export const ManualNotesScreen = () => {
 
         <Button mode="outlined" onPress={undo} icon="undo" disabled={!hasPaths}>
           Undo
+        </Button>
+
+        <Button
+          mode="outlined"
+          onPress={exportAsSvg}
+          icon="file-export"
+          disabled={!hasPaths}
+        >
+          Export
         </Button>
       </View>
     </AppLayout>
