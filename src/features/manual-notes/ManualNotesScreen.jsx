@@ -48,6 +48,11 @@ export const ManualNotesScreen = () => {
     svgUtils.exportAsSvg({ elements, fileUri });
   };
 
+  const importSvg = async () => {
+    const elements = svgUtils.importSvg();
+    setPaths(elements.map((element) => element.path));
+  };
+
   const gestureHandler = useAnimatedGestureHandler({
     onStart: ({ x, y }, _ctx) => {
       gesturePoints.value = [`M ${x},${y}`];
@@ -98,13 +103,16 @@ export const ManualNotesScreen = () => {
           Undo
         </Button>
 
+        <Button mode="outlined" onPress={importSvg} icon="file-import">
+          Imp
+        </Button>
         <Button
           mode="outlined"
           onPress={exportAsSvg}
           icon="file-export"
           disabled={!hasPaths}
         >
-          Export
+          Exp
         </Button>
       </View>
     </AppLayout>
