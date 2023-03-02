@@ -1,4 +1,6 @@
+import { XMLParser } from "fast-xml-parser";
 import * as fileService from "~/services/file-service";
+import { sample_svg_data } from "./data";
 
 export const buildSvgPath = (coordinates = []) => {
   "worklet";
@@ -51,4 +53,27 @@ export const exportAsSvg = async ({ elements = [], fileUri = "" }) => {
   const xml = toSvgContent({ elements });
   await fileService.saveTextContent({ fileUri, text: xml });
   fileService.shareFile(fileUri);
+};
+
+export const importSvg = () => {
+  const xml = sample_svg_data;
+
+  const options = {
+    ignoreAttributes: false,
+    ignoreDeclaration: true,
+    ignorePiTags: true,
+    removeNSPrefix: true,
+  };
+  const parser = new XMLParser(options);
+  const result = parser.parse(xml);
+
+  const paths = result.svg.path.map((path) => ({
+    type: "path",
+    path: path["@_d"],
+    color: path["@_color"],
+    width: path["@_width"],
+  }));
+  //console.log("SVG paths", paths);
+
+  return paths;
 };
