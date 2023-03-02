@@ -1,9 +1,11 @@
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import * as DocumentPicker from "expo-document-picker";
 import { MimeTypes } from "./mimetype-utils";
 
 const DEFAULT_ENCODING = FileSystem.EncodingType.UTF8;
 const DEFAULT_OPTIONS = { encoding: DEFAULT_ENCODING };
+const DEFAULT_FILE_PICKER_OPTIONS = { type: "*/*", copyToCacheDirectory: true };
 
 export const isFileExists = async (fileUri = "") => {
   const { exists } = await FileSystem.getInfoAsync(fileUri);
@@ -12,17 +14,13 @@ export const isFileExists = async (fileUri = "") => {
 
 export const getFilenameOnly = (fileUri = "/") => fileUri.split("/").pop();
 
-export const getFileExtensionOnly = (fileUri = "/") =>
-  fileUri.split(".").pop().toLowerCase();
+export const getFileExtensionOnly = (fileUri = "/") => fileUri.split(".").pop().toLowerCase();
 
-export const getDirectoryOnly = (fileUri = "/") =>
-  fileUri.substring(0, fileUri.lastIndexOf("/"));
+export const getDirectoryOnly = (fileUri = "/") => fileUri.substring(0, fileUri.lastIndexOf("/"));
 
-export const getDocumentFolderRelativePath = (fileUri = "/") =>
-  fileUri.substring(FileSystem.documentDirectory.length);
+export const getDocumentFolderRelativePath = (fileUri = "/") => fileUri.substring(FileSystem.documentDirectory.length);
 
-export const getDocumentFullFilename = (filename) =>
-  FileSystem.documentDirectory + filename;
+export const getDocumentFullFilename = (filename) => FileSystem.documentDirectory + filename;
 
 export const createDirectoryStructure = async (folderUri) => {
   const exists = await isFileExists(folderUri);
@@ -64,10 +62,7 @@ export const loadTextContent = async (fileUri = "") => {
   }
 
   try {
-    const content = await FileSystem.readAsStringAsync(
-      fileUri,
-      DEFAULT_OPTIONS
-    );
+    const content = await FileSystem.readAsStringAsync(fileUri, DEFAULT_OPTIONS);
 
     return {
       exists,
@@ -125,4 +120,25 @@ export const shareFile = async (fileUri = "") => {
   }
 
   return {};
+};
+
+export const pickSingleFile = async (options = DEFAULT_FILE_PICKER_OPTIONS) => {
+  try {
+    const result = await DocumentPicker.getDocumentAsync(options);
+    if (result.type !== "success") {
+      return { exists: false, error: "unknown" };
+    }
+
+    const { uri, name, size, lastModified, mimeType } = result;
+    return {
+      exists: true,
+      uri,
+      name,
+      size,
+      lastModified,
+      mimeType,
+    };
+  } catch (error) {
+    return { error, exists: false };
+  }
 };

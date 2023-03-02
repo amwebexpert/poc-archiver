@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import * as FileSystem from "expo-file-system";
-import { Button } from "react-native-paper";
+import { Button, IconButton } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
   useSharedValue,
@@ -9,10 +9,7 @@ import Animated, {
   useAnimatedGestureHandler,
   runOnJS,
 } from "react-native-reanimated";
-import {
-  GestureHandlerRootView,
-  PanGestureHandler,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import * as svgUtils from "./svg-utils";
@@ -40,16 +37,12 @@ export const ManualNotesScreen = () => {
 
   const exportAsSvg = () => {
     const fileUri = `${FileSystem.documentDirectory}hand-written-notes.svg`;
-    const elements = [
-      ...paths.map((path) =>
-        svgUtils.SVG_ELEMENTS.get("path").mapper({ path })
-      ),
-    ];
+    const elements = [...paths.map((path) => svgUtils.SVG_ELEMENTS.get("path").serializationMapper({ path }))];
     svgUtils.exportAsSvg({ elements, fileUri });
   };
 
   const importSvg = async () => {
-    const elements = svgUtils.importSvg();
+    const elements = await svgUtils.importSvg();
     setPaths(elements.map((element) => element.path));
   };
 
@@ -73,11 +66,7 @@ export const ManualNotesScreen = () => {
         <PanGestureHandler onGestureEvent={gestureHandler}>
           <Animated.View style={styles.container}>
             <AnimatedSvg height="100%" width="100%">
-              <AnimatedPath
-                animatedProps={animatedProps}
-                stroke="red"
-                strokeWidth={3}
-              />
+              <AnimatedPath animatedProps={animatedProps} stroke="red" strokeWidth={3} />
             </AnimatedSvg>
           </Animated.View>
         </PanGestureHandler>
@@ -90,30 +79,24 @@ export const ManualNotesScreen = () => {
       </Svg>
 
       <View style={styles.actions}>
-        <Button
+        <IconButton
           mode="outlined"
           onPress={clearAllPaths}
           icon="delete"
           disabled={!hasPaths}
-        >
-          Clear
-        </Button>
+          style={styles.iconButton}
+        />
+        <IconButton mode="outlined" onPress={undo} icon="undo" disabled={!hasPaths} style={styles.iconButton} />
 
-        <Button mode="outlined" onPress={undo} icon="undo" disabled={!hasPaths}>
-          Undo
-        </Button>
-
-        <Button mode="outlined" onPress={importSvg} icon="file-import">
-          Imp
-        </Button>
-        <Button
+        <IconButton
           mode="outlined"
-          onPress={exportAsSvg}
-          icon="file-export"
-          disabled={!hasPaths}
-        >
-          Exp
-        </Button>
+          onPress={importSvg}
+          icon="file-import"
+          disabled={hasPaths}
+          style={styles.iconButton}
+        />
+
+        <IconButton mode="outlined" onPress={exportAsSvg} icon="share" disabled={!hasPaths} style={styles.iconButton} />
       </View>
     </AppLayout>
   );
@@ -133,5 +116,8 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: "row",
     justifyContent: "center",
+  },
+  iconButton: {
+    margin: 0,
   },
 });

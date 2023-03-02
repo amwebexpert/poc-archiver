@@ -1,6 +1,12 @@
 import { XMLParser } from "fast-xml-parser";
 import * as fileService from "~/services/file-service";
-import { sample_svg_data } from "./data";
+
+const DEFAULT_XML_PARSER_OPTIONS = {
+  ignoreAttributes: false,
+  ignoreDeclaration: true,
+  ignorePiTags: true,
+  removeNSPrefix: true,
+};
 
 export const buildSvgPath = (coordinates = []) => {
   "worklet";
@@ -28,21 +34,26 @@ const pathElementMapper = ({ path = "", color = "red", width = 3 }) => ({
 
 const pathElementSerializer = ({ path, color, width }) =>
   `<path d="${path}" stroke="${color}" stroke-width="${width}" fill="none" />`;
+const pathXmlElementDeserializer = (path) => ({
+  type: "path",
+  path: path["@_d"],
+  color: path["@_color"],
+  width: path["@_width"],
+});
 
 export const SVG_ELEMENTS = new Map([
   [
     "path",
     {
-      mapper: pathElementMapper,
+      serializationMapper: pathElementMapper,
+      xmlDeserializationMapper: pathXmlElementDeserializer,
       serializer: pathElementSerializer,
     },
   ],
 ]);
 
 export const toSvgContent = ({ elements = [] }) => {
-  const internalElementsContent = elements.map((element) =>
-    SVG_ELEMENTS.get(element.type).serializer(element)
-  );
+  const internalElementsContent = elements.map((element) => SVG_ELEMENTS.get(element.type).serializer(element));
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
     ${internalElementsContent.join("\n")}
@@ -55,25 +66,21 @@ export const exportAsSvg = async ({ elements = [], fileUri = "" }) => {
   fileService.shareFile(fileUri);
 };
 
-export const importSvg = () => {
-  const xml = sample_svg_data;
+export const importSvg = async () => {
+  const { exists, uri } = await fileService.pickSingleFile({
+    type: ["text/xml", "image/svg+xml"],
+    copyToCacheDirectory: true,
+  });
 
-  const options = {
-    ignoreAttributes: false,
-    ignoreDeclaration: true,
-    ignorePiTags: true,
-    removeNSPrefix: true,
-  };
-  const parser = new XMLParser(options);
-  const result = parser.parse(xml);
+  if (!exists) {
+    return;
+  }
 
-  const paths = result.svg.path.map((path) => ({
-    type: "path",
-    path: path["@_d"],
-    color: path["@_color"],
-    width: path["@_width"],
-  }));
-  //console.log("SVG paths", paths);
+  const { content } = await fileService.loadTextContent(uri);
+  const parser = new XMLParser(DEFAULT_XML_PARSER_OPTIONS);
+  const result = parser.parse(content);
 
-  return paths;
+  const paths = result.svg.path.map(SVG_ELEMENTS.get("path").xmlDeserializationMapper);
+
+  return [...paths]; // TODO: other elements ...circles, ...lines, ...texts...
 };
