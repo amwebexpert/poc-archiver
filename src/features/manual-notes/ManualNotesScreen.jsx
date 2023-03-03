@@ -15,6 +15,8 @@ export const ManualNotesScreen = () => {
   const { penStyle } = usePenStyle();
   const gesturePoints = useSharedValue([]);
 
+  const clearGesturePoints = () => (gesturePoints.value = []);
+
   const addPath = (d = "") => {
     const { strokeColor, strokeWidth } = penStyle;
     return addElement({ type: "path", d, strokeColor, strokeWidth, id: Date.now() });
@@ -22,19 +24,19 @@ export const ManualNotesScreen = () => {
 
   const clearCanvas = () => {
     clearElements();
-    gesturePoints.value = [];
+    clearGesturePoints();
   };
 
   const undo = () => {
     removeLastElement();
-    gesturePoints.value = [];
+    clearGesturePoints();
   };
 
   const importSvg = async () => {
     const importedElements = await svgUtils.importSvg();
     if (importedElements?.length > 0) {
       setElements(importedElements);
-      gesturePoints.value = [];
+      clearGesturePoints();
     }
   };
   const exportAsSvg = () => svgUtils.exportAsSvg({ elements, fileUri: DEFAULT_NOTES_URI });

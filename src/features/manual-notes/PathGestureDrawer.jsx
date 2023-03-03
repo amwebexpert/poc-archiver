@@ -1,11 +1,6 @@
 import { StyleSheet } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  useAnimatedGestureHandler,
-  runOnJS,
-} from "react-native-reanimated";
+import Animated, { useAnimatedProps, useAnimatedGestureHandler, runOnJS } from "react-native-reanimated";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
