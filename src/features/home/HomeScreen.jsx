@@ -1,9 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, Linking, StyleSheet, View } from "react-native";
 import { Text, useTheme, Paragraph, Button } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
+import { APP_URL } from "./constants";
 
 export const HomeScreen = () => {
   const styles = useStyles();
@@ -17,26 +18,25 @@ export const HomeScreen = () => {
         </Text>
 
         <Paragraph>
-          Enjoy this "Expo" proof of concepts collection for React Native app
-          development, including: picture region selector, encryption, sqlite,
-          file system, material design user interface, sharing, and more.
+          Enjoy this "Expo" proof of concepts collection for React Native app development, including: picture region
+          selector, encryption, sqlite, file system, material design user interface, sharing, and more.
         </Paragraph>
 
         <Paragraph>
-          Stay tuned because this is also an evolutive app used as a sandbox to
-          learn by implementing real solutions to real problems.
+          Stay tuned because this is also an evolutive app used as a sandbox to learn by implementing real solutions to
+          real problems.
         </Paragraph>
 
         <Paragraph>Like it? Do not forget to star the repo!</Paragraph>
       </View>
 
       <View style={styles.actions}>
-        <Button
-          mode="outlined"
-          onPress={() => navigation.navigate("About")}
-          icon="book-information-variant"
-        >
-          About & licences…
+        <Button mode="outlined" onPress={() => Linking.openURL(APP_URL)} icon="star">
+          Star it!
+        </Button>
+
+        <Button mode="outlined" onPress={() => navigation.navigate("About")} icon="book-information-variant">
+          Licences…
         </Button>
       </View>
     </AppLayout>
@@ -58,7 +58,7 @@ const useStyles = () => {
     },
     actions: {
       flexDirection: "row",
-      justifyContent: "center",
+      justifyContent: "space-around",
     },
   });
 };
