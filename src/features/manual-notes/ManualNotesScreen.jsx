@@ -88,15 +88,12 @@ export const ManualNotesScreen = () => {
         />
         <IconButton mode="outlined" onPress={undo} icon="undo" disabled={!hasPaths} style={styles.iconButton} />
 
-        <IconButton
-          mode="outlined"
-          onPress={importSvg}
-          icon="file-import"
-          disabled={hasPaths}
-          style={styles.iconButton}
-        />
-
-        <IconButton mode="outlined" onPress={exportAsSvg} icon="share" disabled={!hasPaths} style={styles.iconButton} />
+        <Button mode="outlined" onPress={importSvg} icon="file-import">
+          Import
+        </Button>
+        <Button mode="outlined" onPress={exportAsSvg} icon="file-export" disabled={!hasPaths}>
+          Export
+        </Button>
       </View>
     </AppLayout>
   );

@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ImagePicker from "expo-image-picker";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -28,6 +29,9 @@ import { setupLogBox } from "~/utils/logger";
 
 const Drawer = createDrawerNavigator();
 setupLogBox();
+
+ImagePicker.requestCameraPermissionsAsync().then((status) => console.log("camera permissions", status));
+ImagePicker.requestMediaLibraryPermissionsAsync().then((status) => console.log("media library permissions", status));
 
 const App = () => {
   const [status, requestPermission] = MediaLibrary.usePermissions();
