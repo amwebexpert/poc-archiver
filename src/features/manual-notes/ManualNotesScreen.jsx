@@ -14,6 +14,7 @@ import * as svgUtils from "./svg-utils";
 import { useElements } from "./hooks/useElements";
 import { DEFAULT_NOTES_URI } from "./constants";
 import { usePenStyle } from "./hooks/usePenStyle";
+import { SvgViewer } from "./SvgViewer";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -77,11 +78,7 @@ export const ManualNotesScreen = () => {
         </PanGestureHandler>
       </GestureHandlerRootView>
 
-      <Svg height="100%" width="100%" style={styles.fixedPaths}>
-        {elements.map(({ d, strokeColor, strokeWidth }, i) => {
-          return <Path d={d} key={i} stroke={strokeColor} strokeWidth={strokeWidth} />;
-        })}
-      </Svg>
+      <SvgViewer elements={elements} style={styles.svgElements} />
 
       <View style={styles.actions}>
         <IconButton
@@ -108,7 +105,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  fixedPaths: {
+  svgElements: {
     position: "absolute",
     zIndex: -1,
   },
