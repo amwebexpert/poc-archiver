@@ -1,13 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Button, IconButton } from "react-native-paper";
-import Svg, { Path } from "react-native-svg";
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  useAnimatedGestureHandler,
-  runOnJS,
-} from "react-native-reanimated";
-import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import { useSharedValue } from "react-native-reanimated";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import * as svgUtils from "./svg-utils";
@@ -15,9 +8,7 @@ import { useElements } from "./hooks/useElements";
 import { DEFAULT_NOTES_URI } from "./constants";
 import { usePenStyle } from "./hooks/usePenStyle";
 import { SvgViewer } from "./SvgViewer";
-
-const AnimatedPath = Animated.createAnimatedComponent(Path);
-const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+import { PathGestureDrawer } from "./PathGestureDrawer";
 
 export const ManualNotesScreen = () => {
   const { elements, setElements, hasElements, addElement, removeLastElement, clearElements } = useElements();
@@ -48,35 +39,14 @@ export const ManualNotesScreen = () => {
   };
   const exportAsSvg = () => svgUtils.exportAsSvg({ elements, fileUri: DEFAULT_NOTES_URI });
 
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: ({ x, y }, _ctx) => {
-      gesturePoints.value = [`M ${x},${y}`];
-    },
-    onActive: ({ x, y }, _ctx) => {
-      gesturePoints.value = [...gesturePoints.value, `L ${x},${y}`];
-    },
-    onEnd: (_event, _ctx) => runOnJS(addPath)(gesturePoints.value.join(" ")),
-  });
-
-  const animatedProps = useAnimatedProps(() => ({
-    d: gesturePoints.value.join(),
-  }));
-
   return (
     <AppLayout title="Hand written notes">
-      <GestureHandlerRootView style={styles.container}>
-        <PanGestureHandler onGestureEvent={gestureHandler}>
-          <Animated.View style={styles.container}>
-            <AnimatedSvg height="100%" width="100%">
-              <AnimatedPath
-                animatedProps={animatedProps}
-                stroke={penStyle.strokeColor}
-                strokeWidth={penStyle.strokeWidth}
-              />
-            </AnimatedSvg>
-          </Animated.View>
-        </PanGestureHandler>
-      </GestureHandlerRootView>
+      <PathGestureDrawer
+        gesturePoints={gesturePoints}
+        strokeColor={penStyle.strokeColor}
+        strokeWidth={penStyle.strokeWidth}
+        addPath={addPath}
+      />
 
       <SvgViewer elements={elements} style={styles.svgElements} />
 
