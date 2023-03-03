@@ -30,12 +30,10 @@ export const ManualNotesScreen = () => {
 
   const clearAllPaths = () => {
     setPaths([]);
-    gesturePoints.value = [];
   };
 
   const undo = () => {
     setPaths((paths) => [...paths.slice(0, paths.length - 1)]);
-    gesturePoints.value = [];
   };
 
   const exportAsSvg = () => {
