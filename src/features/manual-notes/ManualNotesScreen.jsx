@@ -26,7 +26,7 @@ export const ManualNotesScreen = () => {
 
   const addPath = (d = "") => {
     const { strokeColor, strokeWidth } = penStyle;
-    return addElement({ type: "path", d, strokeColor, strokeWidth });
+    return addElement({ type: "path", d, strokeColor, strokeWidth, id: Date.now() });
   };
 
   const clearCanvas = () => {

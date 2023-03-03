@@ -25,11 +25,12 @@ export const buildSvgPath = (coordinates = []) => {
   return path;
 };
 
-const pathElementSerializer = ({ d = "", strokeColor = "black", strokeWidth = 1 }) =>
-  `<path d="${d}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" />`;
+const pathElementSerializer = ({ d = "", id = 0, strokeColor = "black", strokeWidth = 1 }) =>
+  `<path id="${id}" d="${d}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" />`;
 const pathXmlElementDeserializer = (path = {}) => ({
   type: "path",
   d: path["@_d"],
+  id: path["@_id"],
   strokeColor: path["@_stroke"],
   strokeWidth: path["@_stroke-width"],
 });
@@ -72,9 +73,23 @@ export const importSvg = async () => {
   const parser = new XMLParser(DEFAULT_XML_PARSER_OPTIONS);
   const result = parser.parse(content);
 
-  // TODO preserveOrder: true
-  // c.f. https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/docs/v4/2.XMLparseOptions.md
+  // TODO preserveOrder: true. c.f. https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/docs/v4/2.XMLparseOptions.md
+  // TODO: other elements ...circles, ...lines, ...texts...
   const paths = result.svg.path.map(SVG_ELEMENTS.get("path").xmlDeserializationMapper);
+  const elements = [...paths];
 
-  return [...paths]; // TODO: other elements ...circles, ...lines, ...texts...
+  setupElementsId(elements);
+  return elements;
+};
+
+const setupElementsId = (elements = []) => {
+  let i = 1;
+
+  elements.forEach((element) => {
+    if (!!element.id) {
+      element.id = `${i++}`;
+    }
+  });
+
+  return elements;
 };
