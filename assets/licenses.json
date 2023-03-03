@@ -53,6 +53,12 @@
         "licenseUrl": "https://github.com/expo/expo",
         "parents": "poc-archiver"
     },
+    "expo-document-picker@11.0.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/expo",
+        "licenseUrl": "https://github.com/expo/expo",
+        "parents": "poc-archiver"
+    },
     "expo-file-system@15.1.1": {
         "licenses": "MIT",
         "repository": "https://github.com/expo/expo",
@@ -93,6 +99,12 @@
         "licenses": "MIT",
         "repository": "https://github.com/expo/expo",
         "licenseUrl": "https://github.com/expo/expo",
+        "parents": "poc-archiver"
+    },
+    "fast-xml-parser@4.1.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/NaturalIntelligence/fast-xml-parser",
+        "licenseUrl": "https://github.com/NaturalIntelligence/fast-xml-parser/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
     "pretty-bytes@6.1.0": {
