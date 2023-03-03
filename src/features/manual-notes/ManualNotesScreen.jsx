@@ -23,7 +23,10 @@ export const ManualNotesScreen = () => {
 
   const gesturePoints = useSharedValue([]);
 
-  const addPath = (path = "") => setPaths((paths) => [...paths, path]);
+  const addPath = (path = "") => {
+    setPaths((paths) => [...paths, path]);
+    gesturePoints.value = [];
+  };
 
   const clearAllPaths = () => {
     setPaths([]);
