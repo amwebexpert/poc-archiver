@@ -107,12 +107,9 @@ export const ManualNotesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "transparent",
   },
   fixedPaths: {
     position: "absolute",
-    flex: 1,
-    backgroundColor: "transparent",
     zIndex: -1,
   },
   actions: {
