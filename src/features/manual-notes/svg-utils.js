@@ -25,27 +25,19 @@ export const buildSvgPath = (coordinates = []) => {
   return path;
 };
 
-const pathElementMapper = ({ path = "", color = "red", width = 3 }) => ({
+const pathElementSerializer = ({ d = "", strokeColor = "black", strokeWidth = 1 }) =>
+  `<path d="${d}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" />`;
+const pathXmlElementDeserializer = (path = {}) => ({
   type: "path",
-  path,
-  color,
-  width,
-});
-
-const pathElementSerializer = ({ path, color, width }) =>
-  `<path d="${path}" stroke="${color}" stroke-width="${width}" fill="none" />`;
-const pathXmlElementDeserializer = (path) => ({
-  type: "path",
-  path: path["@_d"],
-  color: path["@_color"],
-  width: path["@_width"],
+  d: path["@_d"],
+  strokeColor: path["@_stroke"],
+  strokeWidth: path["@_stroke-width"],
 });
 
 export const SVG_ELEMENTS = new Map([
   [
     "path",
     {
-      serializationMapper: pathElementMapper,
       xmlDeserializationMapper: pathXmlElementDeserializer,
       serializer: pathElementSerializer,
     },
@@ -80,6 +72,8 @@ export const importSvg = async () => {
   const parser = new XMLParser(DEFAULT_XML_PARSER_OPTIONS);
   const result = parser.parse(content);
 
+  // TODO preserveOrder: true
+  // c.f. https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/docs/v4/2.XMLparseOptions.md
   const paths = result.svg.path.map(SVG_ELEMENTS.get("path").xmlDeserializationMapper);
 
   return [...paths]; // TODO: other elements ...circles, ...lines, ...texts...

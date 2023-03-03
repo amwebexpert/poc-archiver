@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import * as FileSystem from "expo-file-system";
 import { Button, IconButton } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
@@ -13,40 +11,41 @@ import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-
 
 import { AppLayout } from "~/components/layout/AppLayout";
 import * as svgUtils from "./svg-utils";
+import { useElements } from "./hooks/useElements";
+import { DEFAULT_NOTES_URI } from "./constants";
+import { usePenStyle } from "./hooks/usePenStyle";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
 export const ManualNotesScreen = () => {
-  const [paths, setPaths] = useState([]);
-  const hasPaths = paths.length > 0;
-
+  const { elements, setElements, hasElements, addElement, removeLastElement, clearElements } = useElements();
+  const { penStyle } = usePenStyle();
   const gesturePoints = useSharedValue([]);
 
-  const addPath = (path = "") => {
-    setPaths((paths) => [...paths, path]);
+  const addPath = (d = "") => {
+    const { strokeColor, strokeWidth } = penStyle;
+    return addElement({ type: "path", d, strokeColor, strokeWidth });
   };
 
-  const clearAllPaths = () => {
-    setPaths([]);
+  const clearCanvas = () => {
+    clearElements();
     gesturePoints.value = [];
   };
 
   const undo = () => {
-    setPaths((paths) => [...paths.slice(0, paths.length - 1)]);
+    removeLastElement();
     gesturePoints.value = [];
   };
 
-  const exportAsSvg = () => {
-    const fileUri = `${FileSystem.documentDirectory}hand-written-notes.svg`;
-    const elements = [...paths.map((path) => svgUtils.SVG_ELEMENTS.get("path").serializationMapper({ path }))];
-    svgUtils.exportAsSvg({ elements, fileUri });
-  };
-
   const importSvg = async () => {
-    const elements = await svgUtils.importSvg();
-    setPaths(elements.map((element) => element.path));
+    const importedElements = await svgUtils.importSvg();
+    if (importedElements?.length > 0) {
+      setElements(importedElements);
+      gesturePoints.value = [];
+    }
   };
+  const exportAsSvg = () => svgUtils.exportAsSvg({ elements, fileUri: DEFAULT_NOTES_URI });
 
   const gestureHandler = useAnimatedGestureHandler({
     onStart: ({ x, y }, _ctx) => {
@@ -68,32 +67,36 @@ export const ManualNotesScreen = () => {
         <PanGestureHandler onGestureEvent={gestureHandler}>
           <Animated.View style={styles.container}>
             <AnimatedSvg height="100%" width="100%">
-              <AnimatedPath animatedProps={animatedProps} stroke="red" strokeWidth={3} />
+              <AnimatedPath
+                animatedProps={animatedProps}
+                stroke={penStyle.strokeColor}
+                strokeWidth={penStyle.strokeWidth}
+              />
             </AnimatedSvg>
           </Animated.View>
         </PanGestureHandler>
       </GestureHandlerRootView>
 
       <Svg height="100%" width="100%" style={styles.fixedPaths}>
-        {paths.map((d, i) => {
-          return <Path d={d} key={i} stroke="red" strokeWidth={3} />;
+        {elements.map(({ d, strokeColor, strokeWidth }, i) => {
+          return <Path d={d} key={i} stroke={strokeColor} strokeWidth={strokeWidth} />;
         })}
       </Svg>
 
       <View style={styles.actions}>
         <IconButton
           mode="outlined"
-          onPress={clearAllPaths}
+          onPress={clearCanvas}
           icon="delete"
-          disabled={!hasPaths}
+          disabled={!hasElements}
           style={styles.iconButton}
         />
-        <IconButton mode="outlined" onPress={undo} icon="undo" disabled={!hasPaths} style={styles.iconButton} />
+        <IconButton mode="outlined" onPress={undo} icon="undo" disabled={!hasElements} style={styles.iconButton} />
 
         <Button mode="outlined" onPress={importSvg} icon="file-import">
           Import
         </Button>
-        <Button mode="outlined" onPress={exportAsSvg} icon="file-export" disabled={!hasPaths}>
+        <Button mode="outlined" onPress={exportAsSvg} icon="file-export" disabled={!hasElements}>
           Export
         </Button>
       </View>
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-around",
   },
   iconButton: {
     margin: 0,
