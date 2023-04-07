@@ -3,7 +3,7 @@ import Svg, { Path } from "react-native-svg";
 
 const EmptyView = () => null;
 
-const PathView = ({ d, strokeColor, strokeWidth }) => <Path d={d} stroke={strokeColor} strokeWidth={strokeWidth} />;
+const PathView = ({ d, strokeColor, strokeWidth }) => <Path d={d} stroke={strokeColor} strokeWidth={strokeWidth} fill="none" />;
 
 const ELEMENT_VIEWERS = new Map([
   ["path", PathView],

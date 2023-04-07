@@ -26,7 +26,7 @@ export const PathGestureDrawer = ({ strokeColor, strokeWidth, addPath, gesturePo
       <PanGestureHandler onGestureEvent={gestureHandler}>
         <Animated.View style={styles.container}>
           <AnimatedSvg height="100%" width="100%">
-            <AnimatedPath animatedProps={animatedProps} stroke={strokeColor} strokeWidth={strokeWidth} />
+            <AnimatedPath animatedProps={animatedProps} stroke={strokeColor} strokeWidth={strokeWidth} fill="none" />
           </AnimatedSvg>
         </Animated.View>
       </PanGestureHandler>
