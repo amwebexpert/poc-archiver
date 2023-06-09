@@ -1,12 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import * as Linking from "expo-linking";
 import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import { Amplify, Auth, Hub } from "aws-amplify";
+import * as WebBrowser from "expo-web-browser";
+import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth";
+
 import awsconfig from "./aws-exports";
 
+const urlOpener = async (federatedAuthURL, redirectUrl) => {
+  const { type, url } = await WebBrowser.openAuthSessionAsync(
+    federatedAuthURL,
+    redirectUrl
+  );
+
+  if (type === "success" && Platform.OS === "ios") {
+    WebBrowser.dismissBrowser();
+    return Linking.openURL(url);
+  }
+};
+
+// https://docs.amplify.aws/lib/auth/social/q/platform/react-native/#redirect-urls
+awsconfig.oauth.urlOpener = urlOpener;
 Amplify.configure(awsconfig);
 
 export const OAuthScreen = () => {
@@ -19,8 +36,7 @@ export const OAuthScreen = () => {
 
     console.log(
       `Linked to app with hostname: ${hostname}, path: ${path} and data`,
-      {queryParams,
-      url}
+      { queryParams, url }
     );
   }
 
@@ -61,7 +77,14 @@ export const OAuthScreen = () => {
       </View>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={() => Auth.federatedSignIn()}>
+        <Button
+          mode="contained"
+          onPress={() =>
+            Auth.federatedSignIn({
+              provider: CognitoHostedUIIdentityProvider.Cognito,
+            })
+          }
+        >
           Open Hosted UI
         </Button>
         <Button mode="contained" onPress={() => Auth.signOut()}>

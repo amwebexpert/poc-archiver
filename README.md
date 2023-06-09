@@ -12,6 +12,8 @@ ReactNative Expo proof of concepts app
 - archiving and encrypting multiple files into a single file archive using `expo-sqlite`
 - picture region selector using `react-native-reanimated` and `react-native-gesture-handler`
 - signature pad screen using `reanimated` and `gesture-handler` and `react-native-svg`
+- OAuth 2 federatedSignIn authentication using `expo-web-browser`, `aws-amplify` and `expo-linking`
+  - https://docs.amplify.aws/lib/auth/social/q/platform/react-native/#full-samples
 
 
 ## Installation
