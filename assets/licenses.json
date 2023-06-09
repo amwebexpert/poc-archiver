@@ -95,7 +95,7 @@
         "licenseUrl": "https://github.com/expo/expo",
         "parents": "poc-archiver"
     },
-    "expo@48.0.10": {
+    "expo@48.0.19": {
         "licenses": "MIT",
         "repository": "https://github.com/expo/expo",
         "licenseUrl": "https://github.com/expo/expo",
@@ -149,7 +149,7 @@
         "licenseUrl": "https://github.com/software-mansion/react-native-screens/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "react-native-svg@13.9.0": {
+    "react-native-svg@13.4.0": {
         "licenses": "MIT",
         "repository": "https://github.com/react-native-community/react-native-svg",
         "licenseUrl": "https://github.com/react-native-community/react-native-svg/raw/master/LICENSE",
