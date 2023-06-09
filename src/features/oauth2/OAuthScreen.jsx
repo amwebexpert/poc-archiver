@@ -1,21 +1,50 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
+import * as Linking from "expo-linking";
 import { Button, TextInput } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
+import { Amplify, Auth, Hub } from "aws-amplify";
+import awsconfig from "./aws-exports";
+
+Amplify.configure(awsconfig);
+
 export const OAuthScreen = () => {
-  const [result, setResult] = React.useState("");
+  const [user, setUser] = useState({});
+  const [customState, setCustomState] = useState(null);
+  const url = Linking.useURL();
 
-  const onLogin = () => {
-    setResult("Login");
-  };
+  if (url) {
+    const { hostname, path, queryParams } = Linking.parse(url);
 
-  const onLogout = () => {
-    setResult("Logout");
-  };
+    console.log(
+      `Linked to app with hostname: ${hostname}, path: ${path} and data`,
+      {queryParams,
+      url}
+    );
+  }
+
+  useEffect(() => {
+    const unsubscribe = Hub.listen("auth", ({ payload: { event, data } }) => {
+      switch (event) {
+        case "signIn":
+          setUser(data);
+          break;
+        case "signOut":
+          setUser(null);
+          break;
+      }
+    });
+
+    Auth.currentAuthenticatedUser()
+      .then((currentUser) => setUser(currentUser ?? {}))
+      .catch(() => console.error("Not signed in"));
+
+    return unsubscribe;
+  }, []);
 
   const onRefreshToken = () => {
-    setResult("Refresh token");
+    setCustomState("Refresh token");
   };
 
   return (
@@ -27,19 +56,17 @@ export const OAuthScreen = () => {
           numberOfLines={5}
           placeholder="Result will be displayed here"
           mode="outlined"
-          value={result}
+          value={JSON.stringify(user, null, 2)}
         />
       </View>
 
       <View style={styles.actions}>
-        <Button mode="contained" onPress={onLogin}>
-          Login
+        <Button mode="contained" onPress={() => Auth.federatedSignIn()}>
+          Open Hosted UI
         </Button>
-
-        <Button mode="contained" onPress={onLogout}>
-          Logout
+        <Button mode="contained" onPress={() => Auth.signOut()}>
+          Sign Out
         </Button>
-
         <Button mode="contained" onPress={onRefreshToken}>
           Refresh token
         </Button>
