@@ -26,6 +26,7 @@ import { PictureZoomScreen } from "~/features/picture-zoom/PictureZoomScreen";
 import { ManualNotesScreen } from "~/features/manual-notes/ManualNotesScreen";
 import { AboutScreen } from "~/features/about/AboutScreen";
 import { setupLogBox } from "~/utils/logger";
+import { OAuthScreen } from "~/features/oauth2/OAuthScreen";
 
 const Drawer = createDrawerNavigator();
 setupLogBox();
@@ -221,6 +222,21 @@ const App = () => {
                 drawerIcon: ({ size }) => (
                   <MaterialCommunityIcons
                     name="book-information-variant"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="OAuth"
+              component={OAuthScreen}
+              options={{
+                title: "AWS Authentication",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="lock"
                     size={size}
                     color={appTheme.colors.secondary}
                   />
