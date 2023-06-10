@@ -10,7 +10,7 @@ import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth";
 
 import awsconfig from "./aws-exports";
 
-const urlOpener = async (federatedAuthURL, redirectUrl) => {
+const urlOpener = async (federatedAuthURL = "", redirectUrl = "") => {
   const { type, url } = await WebBrowser.openAuthSessionAsync(
     federatedAuthURL,
     redirectUrl
