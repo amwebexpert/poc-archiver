@@ -14,6 +14,7 @@ window.onReactNativeMessage = (message = "{}") => {
   } else if (type === "cameraPosition") {
     const { x, y, z } = data;
     camera.position.set(x, y, z);
+    camera.lookAt( 0, 0, 0 );
   } else if (type === "toggleCameraControl") {
     controls.enabled = !controls.enabled;
   } else {
@@ -23,7 +24,8 @@ window.onReactNativeMessage = (message = "{}") => {
 
 const createCamera = () => {
   const aspectRatio = window.innerWidth / window.innerHeight;
-  const camera = new THREE.PerspectiveCamera(2, aspectRatio, 1, 1000);
+  const camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 1000);
+  // TODO add camera.lookAt( 0, 0, 0 ); ?
 
   return camera;
 };
