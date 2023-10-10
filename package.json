@@ -7,11 +7,11 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "postinstall": "npm-license-crawler -onlyDirectDependencies -json assets/licenses.json"
+    "postinstall": "patch-package && npm-license-crawler -onlyDirectDependencies -json assets/licenses.json"
   },
   "dependencies": {
     "@aws-sdk/client-lex-runtime-service": "^3.427.0",
-        "@openspacelabs/react-native-zoomable-view": "^2.1.1",
+    "@openspacelabs/react-native-zoomable-view": "^2.1.1",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/netinfo": "9.3.10",
     "@react-navigation/drawer": "^6.6.4",
@@ -59,7 +59,8 @@
     "@babel/core": "^7.23.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "babel-plugin-root-import": "^6.6.0",
-    "npm-license-crawler": "^0.2.1"
+    "npm-license-crawler": "^0.2.1",
+    "patch-package": "^8.0.0"
   },
   "private": true
 }

@@ -57,7 +57,7 @@ export const SceneWithR2D2Model = () => {
   useEffect(() => {
     if (assets) {
       loadGLTFAsync({ asset: assets[0] }).then((gltf) => {
-        console.info("gltf.scene", Object.keys(gltf.scene));
+        // console.info("gltf.scene", Object.keys(gltf.scene));
         gltf.scene.scale.set(0.03, 0.03, 0.03);
         setObj(gltf.scene);
       });
