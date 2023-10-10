@@ -27,12 +27,17 @@ import { ManualNotesScreen } from "~/features/manual-notes/ManualNotesScreen";
 import { AboutScreen } from "~/features/about/AboutScreen";
 import { setupLogBox } from "~/utils/logger";
 import { OAuthScreen } from "~/features/oauth2/OAuthScreen";
+import View3D from "~/features/3D/View3D";
 
 const Drawer = createDrawerNavigator();
 setupLogBox();
 
-ImagePicker.requestCameraPermissionsAsync().then((status) => console.log("camera permissions", status));
-ImagePicker.requestMediaLibraryPermissionsAsync().then((status) => console.log("media library permissions", status));
+ImagePicker.requestCameraPermissionsAsync().then((status) =>
+  console.log("camera permissions", status)
+);
+ImagePicker.requestMediaLibraryPermissionsAsync().then((status) =>
+  console.log("media library permissions", status)
+);
 
 const App = () => {
   const [status, requestPermission] = MediaLibrary.usePermissions();
@@ -237,6 +242,21 @@ const App = () => {
                 drawerIcon: ({ size }) => (
                   <MaterialCommunityIcons
                     name="lock"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="3DView"
+              component={View3D}
+              options={{
+                title: "3D File Viewer",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="cube-scan"
                     size={size}
                     color={appTheme.colors.secondary}
                   />

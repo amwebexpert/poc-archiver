@@ -1,0 +1,169 @@
+/* eslint-disable no-undef */
+
+const postMessageRN = (type, log) => {
+  const message = { type: "console", data: { type, log } };
+  const stringMessage = JSON.stringify(message);
+  setTimeout(() => window.ReactNativeWebView.postMessage(stringMessage), 0);
+};
+
+window.onReactNativeMessage = (message = "{}") => {
+  const { type, data } = JSON.parse(message ?? "{}");
+  if (type === "press") {
+    // this works only if the button is not triggering a input[type=file] click event (issue on Android)
+    document.getElementById(data).click();
+  } else if (type === "cameraPosition") {
+    const { x, y, z } = data;
+    camera.position.set(x, y, z);
+  } else if (type === "toggleCameraControl") {
+    controls.enabled = !controls.enabled;
+  } else {
+    postMessageRN("info", `webapp: onReactNativeMessage ${type}: ${data}`);
+  }
+};
+
+const createCamera = () => {
+  const aspectRatio = window.innerWidth / window.innerHeight;
+  const camera = new THREE.PerspectiveCamera(2, aspectRatio, 1, 1000);
+
+  return camera;
+};
+
+const createRenderer = () => {
+  const renderer = new THREE.WebGLRenderer({
+    canvas: document.getElementById("canvas"),
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  return renderer;
+};
+
+const createControls = (camera, renderer) => {
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.25;
+  controls.enableZoom = true;
+
+  return controls;
+};
+
+const createScene = () => {
+  const scene = new THREE.Scene();
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+
+  const keyLight = new THREE.DirectionalLight(
+    new THREE.Color("hsl(30, 100%, 75%)"),
+    1.0
+  );
+  keyLight.position.set(-100, 0, 100);
+
+  const fillLight = new THREE.DirectionalLight(
+    new THREE.Color("hsl(240, 100%, 75%)"),
+    0.75
+  );
+  fillLight.position.set(100, 0, 100);
+
+  const backLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  backLight.position.set(100, 100, 100).normalize();
+
+  scene.add(ambientLight);
+  scene.add(keyLight);
+  scene.add(fillLight);
+  scene.add(backLight);
+
+  return scene;
+};
+
+const initProgressBar = () => {
+  const progressBar = document.getElementById("progressBar");
+  progressBar.style.display = "block";
+  return progressBar;
+};
+
+const loadModelGLTF = (url, scene) => {
+  postMessageRN("info", "loadModelGLTF");
+
+  const progressBar = initProgressBar();
+  const loader = new THREE.GLTFLoader();
+  postMessageRN("info", `3D model loading... ${url}`);
+  loader.load(
+    url,
+    (gltf) => {
+      progressBar.style.display = "none";
+      postMessageRN("info", `3D model file loaded: ${url}`);
+      scene.add(gltf.scene);
+    },
+    (xhr) => {
+      const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
+      progressBar.value = percentComplete === Infinity ? 100 : percentComplete;
+      postMessageRN("info", `${percentComplete}% loaded`);
+    },
+    (error) => postMessageRN("error", JSON.stringify(error))
+  );
+};
+
+const setupFileSelector = (scene) => {
+  const fileSelector = document.getElementById("file-upload");
+
+  fileSelector.onchange = (event) => {
+    const file = event.target.files[0];
+    const name = file.name.toLowerCase();
+    postMessageRN("info", `Loading selected file "${name}"...`);
+    URL.revokeObjectURL(file);
+    const url = URL.createObjectURL(file);
+
+    if (name.endsWith(".glb") || name.endsWith(".gltf")) {
+      loadModelGLTF(url, scene);
+    }
+  };
+};
+
+// =====================================================================================================================
+// =====================================================================================================================
+postMessageRN("info", "Preparing 3D scene...");
+const scene = createScene();
+const camera = createCamera();
+const renderer = createRenderer();
+const controls = createControls(camera, renderer);
+
+// capture mode
+const captureContext = { isCapturing: false, dataURL: "" };
+document.getElementById("captureButton").onclick = () => {
+  captureContext.isCapturing = true;
+  animate();
+};
+
+const animate = () => {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+
+  if (captureContext.isCapturing) {
+    captureContext.isCapturing = false;
+    captureContext.dataURL = renderer.domElement.toDataURL();
+    const cameraPosition = camera.position.clone();
+    const message = {
+      type: "capture",
+      data: {
+        dataUriScheme: captureContext.dataURL,
+        cameraPosition,
+        cartesianCoordinates: { x: 0.5, y: 0.5 },
+      },
+    };
+    setTimeout(
+      () => window.ReactNativeWebView.postMessage(JSON.stringify(message)),
+      0
+    );
+  }
+};
+
+animate();
+setupFileSelector(scene);
+
+const doubleClickHandler = (event) => {
+  const x = event.screenX / window.innerWidth;
+  const y = event.screenY / window.innerHeight;
+  postMessageRN("info", JSON.stringify({ x, y }));
+};
+
+document.body.addEventListener("dblclick", doubleClickHandler);
