@@ -59,24 +59,14 @@ const View3D = () => {
 
   return (
     <AppLayout title="3D File Viewer">
-      <View style={styles.root}>
-        <View style={styles.container}>
-          <WebView
-            ref={webViewRef}
-            style={styles.container}
-            originWhitelist={["*"]}
-            source={{ html }}
-            onMessage={onMessage}
-            injectedJavaScript={injectedJavaScript}
-          />
-        </View>
-      </View>
-
-      <View style={styles.actions}>
-        <Button icon="cube-scan" mode="contained" onPress={() => {}}>
-          File…
-        </Button>
-      </View>
+      <WebView
+        ref={webViewRef}
+        style={styles.webview}
+        originWhitelist={["*"]}
+        source={{ html }}
+        onMessage={onMessage}
+        injectedJavaScript={injectedJavaScript}
+      />
     </AppLayout>
   );
 };
@@ -85,19 +75,9 @@ const useStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
-    root: {
-      flex: 1,
-      alignItems: "center",
-    },
-    container: {
+    webview: {
       flex: 1,
       width: "100%",
-      borderColor: "red",
-      borderWidth: 1,
-    },
-    actions: {
-      flexDirection: "row",
-      justifyContent: "space-around",
     },
   });
 };
