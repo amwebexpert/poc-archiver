@@ -1,13 +1,16 @@
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useRef, useState } from "react";
 
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { Button, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import { useHtmlViewerAssets } from "./useHtmlViewerAssets";
 import { htmlDocumentMessage, logHtmlDocumentEvent } from "./webview-utils";
+import { nowToISOLikeButLocalForFilename } from "~/utils/date.utils";
 
 const View3D = () => {
   const styles = useStyles();
@@ -49,8 +52,16 @@ const View3D = () => {
     dataUriScheme = "",
     cameraPosition = {},
   }) => {
+    // TODO put this into a generic pure js service
     const base64 = dataUriScheme.split("data:image/png;base64,")[1];
-    console.log("base64", { cameraPosition, base64 });
+    console.log("camera position", { cameraPosition });
+    const filename = FileSystem.documentDirectory + `3D-Capture-${nowToISOLikeButLocalForFilename()}.png`;
+    await FileSystem.writeAsStringAsync(filename, base64, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    const mediaResult = await MediaLibrary.saveToLibraryAsync(filename);
+    console.log("mediaResult", mediaResult);
   };
 
   if (isLoading) {

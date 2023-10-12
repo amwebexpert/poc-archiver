@@ -25,6 +25,8 @@ window.onReactNativeMessage = (message = "{}") => {
 const createCamera = () => {
   const aspectRatio = window.innerWidth / window.innerHeight;
   const camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 1000);
+  //const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
+  //const camera = new THREE.PerspectiveCamera(2, aspectRatio, 1, 1000);
   camera.lookAt(0, 0, 0);
 
   return camera;
@@ -129,7 +131,6 @@ const loadModelGLTF = (url, scene) => {
     (gltf) => {
       progressBar.style.display = "none";
       postMessageRN("info", `3D model file loaded: ${url}`);
-      //clearScene(scene);
       scene.add(gltf.scene);
     },
     (xhr) => {
