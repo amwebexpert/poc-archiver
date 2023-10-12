@@ -14,7 +14,7 @@ window.onReactNativeMessage = (message = "{}") => {
   } else if (type === "cameraPosition") {
     const { x, y, z } = data;
     camera.position.set(x, y, z);
-    camera.lookAt( 0, 0, 0 );
+    camera.lookAt(0, 0, 0);
   } else if (type === "toggleCameraControl") {
     controls.enabled = !controls.enabled;
   } else {
@@ -25,7 +25,7 @@ window.onReactNativeMessage = (message = "{}") => {
 const createCamera = () => {
   const aspectRatio = window.innerWidth / window.innerHeight;
   const camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 1000);
-  // TODO add camera.lookAt( 0, 0, 0 ); ?
+  camera.lookAt(0, 0, 0);
 
   return camera;
 };
@@ -50,7 +50,10 @@ const createControls = (camera, renderer) => {
 
 const createScene = () => {
   const scene = new THREE.Scene();
+  return addSceneLights(scene);
+};
 
+const addSceneLights = (scene) => {
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
 
   const keyLight = new THREE.DirectionalLight(
@@ -76,6 +79,39 @@ const createScene = () => {
   return scene;
 };
 
+const removeObject3D = (object3D) => {
+  if (!(object3D instanceof THREE.Object3D)) {
+    return false;
+  }
+
+  if (object3D.geometry) {
+    object3D.geometry.dispose();
+  }
+
+  if (object3D.material) {
+    if (object3D.material instanceof Array) {
+      object3D.material.forEach((material) => material.dispose());
+    } else {
+      object3D.material.dispose();
+    }
+  }
+
+  // the parent might be the scene or another Object3D, but it is sure to be removed this way
+  object3D.removeFromParent();
+
+  return true;
+};
+
+const clearScene = (scene = {}) => {
+  while (scene.children.length > 0) {
+    const child = scene.children[0];
+    removeObject3D(child);
+  }
+
+  addSceneLights(scene);
+  camera.position.set(0, 0, 100);
+};
+
 const initProgressBar = () => {
   const progressBar = document.getElementById("progressBar");
   progressBar.style.display = "block";
@@ -93,6 +129,7 @@ const loadModelGLTF = (url, scene) => {
     (gltf) => {
       progressBar.style.display = "none";
       postMessageRN("info", `3D model file loaded: ${url}`);
+      //clearScene(scene);
       scene.add(gltf.scene);
     },
     (xhr) => {
@@ -134,6 +171,10 @@ document.getElementById("captureButton").onclick = () => {
   captureContext.isCapturing = true;
   animate();
 };
+document.getElementById("clearButton").onclick = () => {
+  clearScene(scene);
+  animate();
+};
 
 const animate = () => {
   requestAnimationFrame(animate);
@@ -141,21 +182,19 @@ const animate = () => {
   renderer.render(scene, camera);
 
   if (captureContext.isCapturing) {
-    captureContext.isCapturing = false;
+    // get data and camera position
     captureContext.dataURL = renderer.domElement.toDataURL();
     const cameraPosition = camera.position.clone();
-    const message = {
+
+    // reset capture mode and send data to RN
+    captureContext.isCapturing = false;
+    const dataUriScheme = captureContext.dataURL;
+    const message = JSON.stringify({
       type: "capture",
-      data: {
-        dataUriScheme: captureContext.dataURL,
-        cameraPosition,
-        cartesianCoordinates: { x: 0.5, y: 0.5 },
-      },
-    };
-    setTimeout(
-      () => window.ReactNativeWebView.postMessage(JSON.stringify(message)),
-      0
-    );
+      data: { dataUriScheme, cameraPosition },
+    });
+
+    setTimeout(() => window.ReactNativeWebView.postMessage(message), 0);
   }
 };
 
