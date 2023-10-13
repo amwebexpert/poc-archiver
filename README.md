@@ -5,7 +5,6 @@ ReactNative Expo proof of concepts app
 ## This app includes the following screen demos
 
 - material design theme using `react-native-paper`
-- drawer menu navigation
 - encryption and decryption
 - files read/write/delete/update using `Expo`
 - `Expo` file sharing
@@ -14,7 +13,7 @@ ReactNative Expo proof of concepts app
 - signature pad screen using `reanimated` and `gesture-handler` and `react-native-svg`
 - OAuth 2 federatedSignIn authentication using `expo-web-browser`, `aws-amplify` and `expo-linking`
   - https://docs.amplify.aws/lib/auth/social/q/platform/react-native/#full-samples
-
+- 3D Viewer with scene and orbit controls by integrating [Three.js](https://threejs.org/) library
 
 ## Installation
 
