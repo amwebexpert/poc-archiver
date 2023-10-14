@@ -12,7 +12,7 @@
 	-->
 <style>
 	body { margin: 0; }
-	canvas { width: 100%; max-height: calc(100% - 42px); }
+	canvas { width: 100%; max-height: calc(100vh - 42px); }
 	progress {
 		display: none;
 		width: 100%;
@@ -37,6 +37,7 @@
 		padding: 0 16px;
 		min-width: 64px;
 		height: 40px;
+		font-family: Helvetica, Arial, sans-serif;
 		vertical-align: middle;
 		text-align: center;
 		text-overflow: ellipsis;
@@ -52,6 +53,8 @@
 <body style="background-color: black;">
 	<progress value="0" max="100" id="progressBar" class="progress"></progress>
 
+	<canvas id="canvas" class="canvas"></canvas>
+
 	<div style="display: flex; justify-content: center; background-color: black;">
 		<label id="fileSelector" for="file-upload" class="button-material">File…</label>
 		<input id="file-upload" type="file" style="display: none;"/>
@@ -59,7 +62,6 @@
 		<div id="captureButton" class="button-material">Capture</div>
 		<div id="clearButton" class="button-material">Clear</div>
 	</div>
-	<canvas id="canvas" class="canvas"></canvas>
 
 </body>
 

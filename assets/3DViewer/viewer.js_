@@ -24,9 +24,7 @@ window.onReactNativeMessage = (message = "{}") => {
 
 const createCamera = () => {
   const aspectRatio = window.innerWidth / window.innerHeight;
-  const camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 1000);
-  //const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
-  //const camera = new THREE.PerspectiveCamera(2, aspectRatio, 1, 1000);
+  const camera = new THREE.PerspectiveCamera(2, aspectRatio, 0.1, 1000);
   camera.lookAt(0, 0, 0);
 
   return camera;
@@ -120,6 +118,18 @@ const initProgressBar = () => {
   return progressBar;
 };
 
+const scaleModelToFitView = (scene) => {
+  const firstChild = scene.children[0];
+
+  // https://discourse.threejs.org/t/how-to-set-camera-as-per-height-of-3d-model/20964/3
+  const boundingBox = new THREE.Box3().setFromObject(firstChild);
+  const { x, y, z } = boundingBox.max;
+  const delta = Math.min(1.0 / x, 1.0 / y, 1.0 / z);
+  firstChild.scale.set(delta, delta, delta);
+
+  postMessageRN("info", JSON.stringify({ boundingBox, delta }));
+};
+
 const loadModelGLTF = (url, scene) => {
   postMessageRN("info", "loadModelGLTF");
 
@@ -131,6 +141,7 @@ const loadModelGLTF = (url, scene) => {
     (gltf) => {
       progressBar.style.display = "none";
       postMessageRN("info", `3D model file loaded: ${url}`);
+      scaleModelToFitView(gltf.scene);
       scene.add(gltf.scene);
     },
     (xhr) => {
@@ -154,6 +165,8 @@ const setupFileSelector = (scene) => {
 
     if (name.endsWith(".glb") || name.endsWith(".gltf")) {
       loadModelGLTF(url, scene);
+    } else {
+      postMessageRN("error", `Unsupported file format: ${name}`);
     }
   };
 };
