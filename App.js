@@ -1,9 +1,8 @@
 import * as React from "react";
-import * as ImagePicker from "expo-image-picker";
+import * as Device from "expo-device";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider as PaperProvider } from "react-native-paper";
-import * as MediaLibrary from "expo-media-library";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -27,19 +26,15 @@ import { ManualNotesScreen } from "~/features/manual-notes/ManualNotesScreen";
 import { AboutScreen } from "~/features/about/AboutScreen";
 import { setupLogBox } from "~/utils/logger";
 import { OAuthScreen } from "~/features/oauth2/OAuthScreen";
+import View3D from "~/features/3D/View3D";
 
 const Drawer = createDrawerNavigator();
 setupLogBox();
 
-ImagePicker.requestCameraPermissionsAsync().then((status) => console.log("camera permissions", status));
-ImagePicker.requestMediaLibraryPermissionsAsync().then((status) => console.log("media library permissions", status));
-
 const App = () => {
-  const [status, requestPermission] = MediaLibrary.usePermissions();
-
-  if (status === null) {
-    requestPermission();
-  }
+  console.info(
+    `Starting App on ${Device.brand} ${Device.modelName} (${Device.osName} ${Device.osVersion})`
+  );
 
   return (
     <NavigationContainer theme={appTheme}>
@@ -237,6 +232,21 @@ const App = () => {
                 drawerIcon: ({ size }) => (
                   <MaterialCommunityIcons
                     name="lock"
+                    size={size}
+                    color={appTheme.colors.secondary}
+                  />
+                ),
+              }}
+              initialParams={{}}
+            />
+            <Drawer.Screen
+              name="3DView"
+              component={View3D}
+              options={{
+                title: "3D File Viewer",
+                drawerIcon: ({ size }) => (
+                  <MaterialCommunityIcons
+                    name="cube-scan"
                     size={size}
                     color={appTheme.colors.secondary}
                   />

@@ -1,0 +1,66 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<!--
+		Dependencies:
+
+		https://cdn.jsdelivr.net/npm/three@0.156.1
+		https://cdn.jsdelivr.net/npm/three@0.156.1/examples/jsm/loaders/GLTFLoader.js
+		https://cdn.jsdelivr.net/npm/three@0.156.1/examples/jsm/controls/OrbitControls.js
+	-->
+<style>
+	body { margin: 0; }
+	canvas { width: 100%; max-height: calc(100% - 42px); }
+	progress {
+		display: none;
+		width: 100%;
+		height: 24px;
+		box-shadow: 1px 1px 4px rgba( 0, 0, 0, 0.2 );
+	}
+	progress::-webkit-progress-bar {
+		background-color: black;
+	}
+	progress::-webkit-progress-value {
+		background-color: black;
+		box-shadow: 1px 1px 4px rgba( 0, 0, 0, 0.2 );
+	}
+	.button-material {
+		position: relative;
+		display: inline-block;
+		background-color: black;
+		box-sizing: border-box;
+		border-radius: 20px;
+		color: rgb(114, 222, 94);
+		border: 1px solid gray;
+		padding: 0 16px;
+		min-width: 64px;
+		height: 40px;
+		vertical-align: middle;
+		text-align: center;
+		text-overflow: ellipsis;
+		font-size: 16px;
+		line-height: 40px;
+		overflow: hidden;
+		margin-left: 4px;
+		margin-right: 4px;
+	}
+</style>
+</head>
+
+<body style="background-color: black;">
+	<progress value="0" max="100" id="progressBar" class="progress"></progress>
+
+	<div style="display: flex; justify-content: center; background-color: black;">
+		<label id="fileSelector" for="file-upload" class="button-material">File…</label>
+		<input id="file-upload" type="file" style="display: none;"/>
+
+		<div id="captureButton" class="button-material">Capture</div>
+		<div id="clearButton" class="button-material">Clear</div>
+	</div>
+	<canvas id="canvas" class="canvas"></canvas>
+
+</body>
+
+</html>
