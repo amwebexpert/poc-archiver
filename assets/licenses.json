@@ -77,6 +77,12 @@
         "licenseUrl": "https://github.com/expo/expo",
         "parents": "poc-archiver"
     },
+    "expo-device@5.4.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/expo",
+        "licenseUrl": "https://github.com/expo/expo",
+        "parents": "poc-archiver"
+    },
     "expo-document-picker@11.5.4": {
         "licenses": "MIT",
         "repository": "https://github.com/expo/expo",
