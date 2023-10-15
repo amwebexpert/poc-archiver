@@ -119,13 +119,13 @@ const initProgressBar = () => {
 };
 
 const scaleModelToFitView = (scene) => {
-  const firstChild = scene.children[0];
+  const lastChild = scene.children[scene.children.length - 1];
 
   // https://discourse.threejs.org/t/how-to-set-camera-as-per-height-of-3d-model/20964/3
-  const boundingBox = new THREE.Box3().setFromObject(firstChild);
+  const boundingBox = new THREE.Box3().setFromObject(lastChild);
   const { x, y, z } = boundingBox.max;
   const delta = Math.min(1.0 / x, 1.0 / y, 1.0 / z);
-  firstChild.scale.set(delta, delta, delta);
+  lastChild.scale.set(delta, delta, delta);
 
   postMessageRN("info", JSON.stringify({ boundingBox, delta }));
 };
