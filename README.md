@@ -30,6 +30,7 @@ Some ideas about next features to explore...
 
 ### 3D Viewer
 - load `Thres.js` source files directly from bundler instead of assets
+- load model from asset and call loader.parse() directly passing base64 model
 
 ### ReactNative Library
 - add a full demo of a RN library
