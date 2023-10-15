@@ -125,11 +125,11 @@ export const shareFile = async (fileUri = "") => {
 export const pickSingleFile = async (options = DEFAULT_FILE_PICKER_OPTIONS) => {
   try {
     const result = await DocumentPicker.getDocumentAsync(options);
-    if (result.type !== "success") {
-      return { exists: false, error: "unknown" };
+    if (result.canceled) {
+      return { exists: false, error: "canceled" };
     }
 
-    const { uri, name, size, lastModified, mimeType } = result;
+    const { uri, name, size, lastModified, mimeType } = result.assets[0];
     return {
       exists: true,
       uri,
