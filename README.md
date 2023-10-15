@@ -2,6 +2,9 @@
 
 ReactNative Expo proof of concepts app
 
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/amwebexpert/poc-archiver) ![GitHub Release Date](https://img.shields.io/github/release-date/amwebexpert/poc-archiver) ![GitHub last commit](https://img.shields.io/github/last-commit/amwebexpert/poc-archiver) ![GitHub](https://img.shields.io/github/license/amwebexpert/poc-archiver)
+
 ## This app includes the following screen demos
 
 - material design theme using `react-native-paper`
@@ -14,6 +17,13 @@ ReactNative Expo proof of concepts app
 - OAuth 2 federatedSignIn authentication using `expo-web-browser`, `aws-amplify` and `expo-linking`
   - https://docs.amplify.aws/lib/auth/social/q/platform/react-native/#full-samples
 - 3D Viewer with scene and orbit controls by integrating [Three.js](https://threejs.org/) library
+
+* Screen recordings of some POCs
+
+Picture Zooming | Drawing surface | Picture Region Selector | Sticker Smash Screen | 3D Viewer
+--------------- | --------------- | ----------------------- | -------------------- | ------------------------
+<img src="docs/captures/demo-picture-zoom.gif" /> | <img src="docs/captures/demo-drawing-surface.gif" /> | <img src="docs/captures/demo-picture-region-selector.gif" /> | <img src="docs/captures/demo-sticker-smash-screen.gif" /> | <img src="docs/captures/demo-3D-viewer-lantern-and-avocado.gif" />
+
 
 ## Installation
 
