@@ -220,5 +220,11 @@
         "repository": "https://github.com/facebook/react",
         "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
         "parents": "poc-archiver"
+    },
+    "three@0.157.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/mrdoob/three.js",
+        "licenseUrl": "https://github.com/mrdoob/three.js/raw/master/LICENSE",
+        "parents": "poc-archiver"
     }
 }

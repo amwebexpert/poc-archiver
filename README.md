@@ -24,6 +24,16 @@ Picture Zooming | Drawing surface | Picture Region Selector | Sticker Smash Scre
 --------------- | --------------- | ----------------------- | -------------------- | ------------------------
 <img src="docs/captures/demo-picture-zoom.gif" /> | <img src="docs/captures/demo-drawing-surface.gif" /> | <img src="docs/captures/demo-picture-region-selector.gif" /> | <img src="docs/captures/demo-sticker-smash-screen.gif" /> | <img src="docs/captures/demo-3D-viewer-lantern-and-avocado.gif" />
 
+## TODOs
+
+Some ideas about next features to explore...
+
+### 3D Viewer
+- load `Thres.js` source files directly from bundler instead of assets
+
+### ReactNative Library
+- add a full demo of a RN library
+
 
 ## Installation
 

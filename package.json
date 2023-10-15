@@ -24,6 +24,7 @@
     "date-fns": "^2.30.0",
     "expo": "~49.0.13",
     "expo-asset": "~8.10.1",
+    "expo-device": "~5.4.0",
     "expo-document-picker": "~11.5.4",
     "expo-file-system": "~15.4.4",
     "expo-image-picker": "~14.3.2",
@@ -46,7 +47,7 @@
     "react-native-svg": "13.9.0",
     "react-native-view-shot": "3.7.0",
     "react-native-webview": "13.2.2",
-    "expo-device": "~5.4.0"
+    "three": "^0.157.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
