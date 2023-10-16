@@ -7,12 +7,9 @@ import { useTheme } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import { useHtmlViewerAssets } from "./useHtmlViewerAssets";
-import {
-  exportToPNG,
-  htmlDocumentMessage,
-  logHtmlDocumentEvent,
-} from "./webview-utils";
+import { htmlDocumentMessage, logHtmlDocumentEvent } from "./webview.utils";
 import { useSnackbar } from "~/components/snack-bar/useSnackbar";
+import { exportToPNG } from "./View3D.utils";
 
 const View3D = () => {
   const styles = useStyles();
