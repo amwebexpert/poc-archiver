@@ -20,7 +20,7 @@ ReactNative Expo proof of concepts app
 
 ## Screen recordings of some POCs
 
-Picture Zooming | Drawing surface | Region Selector | Image Tagger | 3D glTF Model Viewer
+Picture Zooming | Drawing surface | Region Selector | Image Tagger | 3D glTF Viewer
 --------------- | --------------- | ----------------------- | -------------------- | ------------------------
 <img src="docs/captures/demo-picture-zoom.gif" /> | <img src="docs/captures/demo-drawing-surface.gif" /> | <img src="docs/captures/demo-picture-region-selector.gif" /> | <img src="docs/captures/demo-sticker-smash-screen.gif" /> | <img src="docs/captures/demo-3D-viewer-lantern-and-avocado.gif" />
 
