@@ -1,5 +1,3 @@
-import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useRef, useState } from "react";
 
 import { ActivityIndicator, StyleSheet, View } from "react-native";
@@ -9,14 +7,19 @@ import { useTheme } from "react-native-paper";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 import { useHtmlViewerAssets } from "./useHtmlViewerAssets";
-import { htmlDocumentMessage, logHtmlDocumentEvent } from "./webview-utils";
-import { nowToISOLikeButLocalForFilename } from "~/utils/date.utils";
+import {
+  exportToPNG,
+  htmlDocumentMessage,
+  logHtmlDocumentEvent,
+} from "./webview-utils";
+import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 
 const View3D = () => {
   const styles = useStyles();
   const webViewRef = useRef(null);
   const [isHtmlDocumentReady, setIsHtmlDocumentReady] = useState(false);
   const { isLoading, html, injectedJavaScript } = useHtmlViewerAssets();
+  const showSnackbarMessage = useSnackbar();
 
   const onMessage = (payload = {}) => {
     setIsHtmlDocumentReady(true);
@@ -52,16 +55,16 @@ const View3D = () => {
     dataUriScheme = "",
     cameraPosition = {},
   }) => {
-    // TODO put this into a generic pure js service
-    const base64 = dataUriScheme.split("data:image/png;base64,")[1];
-    console.log("camera position", { cameraPosition });
-    const filename = FileSystem.documentDirectory + `3D-Capture-${nowToISOLikeButLocalForFilename()}.png`;
-    await FileSystem.writeAsStringAsync(filename, base64, {
-      encoding: FileSystem.EncodingType.Base64,
+    const { isSuccess, filename, error } = await exportToPNG({
+      dataUriScheme,
+      cameraPosition,
     });
 
-    const mediaResult = await MediaLibrary.saveToLibraryAsync(filename);
-    console.log("mediaResult", mediaResult);
+    if (isSuccess) {
+      showSnackbarMessage(`Saved into media library: ${filename}`);
+    } else {
+      showSnackbarMessage(error);
+    }
   };
 
   if (isLoading) {
