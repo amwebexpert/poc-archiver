@@ -20,19 +20,9 @@ ReactNative Expo proof of concepts app
 
 ## Screen recordings of some POCs
 
-Picture Zooming | Drawing surface | Picture Region Selector | Sticker Smash Screen | 3D glTF Viewer
+Picture Zooming | Drawing surface | Region Selector | Image Tagger | 3D glTF Model Viewer
 --------------- | --------------- | ----------------------- | -------------------- | ------------------------
 <img src="docs/captures/demo-picture-zoom.gif" /> | <img src="docs/captures/demo-drawing-surface.gif" /> | <img src="docs/captures/demo-picture-region-selector.gif" /> | <img src="docs/captures/demo-sticker-smash-screen.gif" /> | <img src="docs/captures/demo-3D-viewer-lantern-and-avocado.gif" />
-
-## TODOs
-
-Some ideas about next features to explore...
-
-### 3D Viewer
-- load model from asset and call `loader.parse()` directly passing `base64` model
-
-### ReactNative Library
-- add a full demo of a RN library with both `Swift` and `Kotlin` implementations
 
 
 ## Installation
@@ -50,7 +40,10 @@ npm start
 npm run android  # for Android devices 
 npm run ios      # for iOS devices  
 ```  
-4. Run on web browser:  
-```bash  
-npm run web      # for web browsers  
-```
+
+## Future POCs (TODO list)
+
+Some ideas about next features to explore...
+
+- 3D Viewer: load model from asset and call `loader.parse()` directly passing `base64` model
+- add a full demo of a RN custom library integration with both `Swift` and `Kotlin` implementations
