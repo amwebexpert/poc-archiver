@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { WebView } from "react-native-webview";
-import { useTheme } from "react-native-paper";
+import { useTheme, ProgressBar } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 
@@ -13,6 +13,10 @@ import { exportToPNG } from "./View3D.utils";
 
 const View3D = () => {
   const styles = useStyles();
+
+  const [isProgressVisible, setIsProgressVisible] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const webViewRef = useRef(null);
   const [isHtmlDocumentReady, setIsHtmlDocumentReady] = useState(false);
   const { isLoading, html, injectedJavaScript } = useHtmlViewerAssets();
@@ -26,10 +30,12 @@ const View3D = () => {
       const { type, data } = JSON.parse(payloadData);
       if (type === "console") {
         logHtmlDocumentEvent(data);
+      } else if (type === "loadingModel") {
+        onLoadingModelUpdate(data);
       } else if (type === "capture") {
         onSnapshotUpdate(data);
       } else {
-        logger.log(`[webview]: onMessage: ${type}: ${data}`);
+        console.log(`[webview]: onMessage: ${type}: ${data}`);
       }
     } catch (e) {
       console.error("Error parsing JSON onMessage", e, payloadData);
@@ -47,6 +53,11 @@ const View3D = () => {
       webViewRef.current?.injectJavaScript(jsCode);
     }
   }, [isHtmlDocumentReady]);
+
+  const onLoadingModelUpdate = ({ isVisible = false, progress = 0 }) => {
+    setIsProgressVisible(isVisible);
+    setProgress(progress);
+  };
 
   const onSnapshotUpdate = async ({
     dataUriScheme = "",
@@ -78,6 +89,8 @@ const View3D = () => {
         onMessage={onMessage}
         injectedJavaScript={injectedJavaScript}
       />
+
+      <ProgressBar visible={isProgressVisible} progress={progress} />
     </AppLayout>
   );
 };

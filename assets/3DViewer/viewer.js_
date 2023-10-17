@@ -1,10 +1,17 @@
 /* eslint-disable no-undef */
 
-const postMessageRN = (type, log) => {
+const postMessageRN = (type = "", log) => {
   const message = { type: "console", data: { type, log } };
+  postObjectRN(message);
+};
+
+const postObjectRN = (message = {}) => {
   const stringMessage = JSON.stringify(message);
   setTimeout(() => window.ReactNativeWebView.postMessage(stringMessage), 0);
 };
+
+const postLoadingModelRN = (data = {}) =>
+  postObjectRN({ type: "loadingModel", data });
 
 window.onReactNativeMessage = (message = "{}") => {
   const { type, data } = JSON.parse(message ?? "{}");
@@ -112,12 +119,6 @@ const clearScene = (scene = {}) => {
   camera.position.set(0, 0, 100);
 };
 
-const initProgressBar = () => {
-  const progressBar = document.getElementById("progressBar");
-  progressBar.style.display = "block";
-  return progressBar;
-};
-
 const scaleModelToFitView = (scene) => {
   const lastChild = scene.children[scene.children.length - 1];
 
@@ -131,25 +132,27 @@ const scaleModelToFitView = (scene) => {
 };
 
 const loadModelGLTF = (url, scene) => {
-  postMessageRN("info", "loadModelGLTF");
+  postMessageRN("info", `loadModelGLTF 3D model loading... ${url}`);
+  postLoadingModelRN({ isVisible: true, progress: 0 });
 
-  const progressBar = initProgressBar();
   const loader = new THREE.GLTFLoader();
-  postMessageRN("info", `3D model loading... ${url}`);
   loader.load(
     url,
     (gltf) => {
-      progressBar.style.display = "none";
+      postLoadingModelRN({ isVisible: false, progress: 0 });
       postMessageRN("info", `3D model file loaded: ${url}`);
       scaleModelToFitView(gltf.scene);
       scene.add(gltf.scene);
     },
     (xhr) => {
       const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
-      progressBar.value = percentComplete === Infinity ? 100 : percentComplete;
-      postMessageRN("info", `${percentComplete}% loaded`);
+      const progress = percentComplete === Infinity ? 100 : percentComplete;
+      postLoadingModelRN({ isVisible: true, progress });
     },
-    (error) => postMessageRN("error", JSON.stringify(error))
+    (error) => {
+      postLoadingModelRN({ isVisible: false, progress: 0 });
+      postMessageRN("error", JSON.stringify(error));
+    }
   );
 };
 

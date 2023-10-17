@@ -1,6 +1,5 @@
 import React from "react";
 import { useAssets } from "expo-asset";
-import { logger } from "~/utils/logger";
 import { loadTextContent } from "~/services/file-service";
 
 export const useHtmlViewerAssets = () => {
@@ -18,7 +17,7 @@ export const useHtmlViewerAssets = () => {
 
   React.useEffect(() => {
     if (error) {
-      logger.error("error", error);
+      console.error("error", error);
     }
   }, [error]);
 
@@ -30,7 +29,7 @@ export const useHtmlViewerAssets = () => {
 
       const jsContent = [];
       for (const jsFile of jsFiles) {
-        // logger.info("jsFile", jsFile.uri);
+        // console.info("jsFile", jsFile.uri);
         jsContent.push((await loadTextContent(jsFile.localUri)).content);
       }
 
