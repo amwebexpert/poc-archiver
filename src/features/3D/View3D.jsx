@@ -9,7 +9,7 @@ import { AppLayout } from "~/components/layout/AppLayout";
 import { useHtmlViewerAssets } from "./useHtmlViewerAssets";
 import { htmlDocumentMessage, logHtmlDocumentEvent } from "./webview.utils";
 import { useSnackbar } from "~/components/snack-bar/useSnackbar";
-import { exportToPNG } from "./View3D.utils";
+import { exportToPNG, loadGLTFModel } from "./View3D.utils";
 import { useLoading } from "./useLoading";
 
 const View3D = () => {
@@ -40,6 +40,17 @@ const View3D = () => {
       console.error("Error parsing JSON onMessage", e, payloadData);
     }
   };
+
+  useEffect(() => {
+    loadGLTFModel().then((data) => {
+      if (!data) {
+        return;
+      }
+
+      const jsCode = htmlDocumentMessage({ type: "parseGLTFModel", data });
+      webViewRef.current?.injectJavaScript(jsCode);
+    });
+  }, []);
 
   useEffect(() => {
     if (isHtmlDocumentReady) {

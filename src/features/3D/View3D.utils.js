@@ -1,6 +1,21 @@
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
+
+import * as fileService from "~/services/file-service";
 import { nowToISOLikeButLocalForFilename } from "~/utils/date.utils";
+
+export const loadGLTFModel = async () => {
+  const { exists, uri } = await fileService.pickSingleFile({
+    type: ["*/*"],
+    copyToCacheDirectory: true,
+  });
+
+  if (!exists) {
+    return;
+  }
+
+  return FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+};
 
 export const exportToPNG = async ({
     dataUriScheme = "",
