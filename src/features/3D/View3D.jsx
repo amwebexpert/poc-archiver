@@ -9,18 +9,17 @@ import { AppLayout } from "~/components/layout/AppLayout";
 import { useHtmlViewerAssets } from "./useHtmlViewerAssets";
 import { htmlDocumentMessage, logHtmlDocumentEvent } from "./webview.utils";
 import { useSnackbar } from "~/components/snack-bar/useSnackbar";
-import { exportToPNG } from "./View3D.utils";
+import { exportToPNG, loadGLTFModel } from "./View3D.utils";
+import { useLoading } from "./useLoading";
 
 const View3D = () => {
   const styles = useStyles();
-
-  const [isProgressVisible, setIsProgressVisible] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const webViewRef = useRef(null);
   const [isHtmlDocumentReady, setIsHtmlDocumentReady] = useState(false);
   const { isLoading, html, injectedJavaScript } = useHtmlViewerAssets();
   const showSnackbarMessage = useSnackbar();
+  const { isProgressVisible, progress, onLoadingModelUpdate } = useLoading();
 
   const onMessage = (payload = {}) => {
     setIsHtmlDocumentReady(true);
@@ -43,6 +42,17 @@ const View3D = () => {
   };
 
   useEffect(() => {
+    loadGLTFModel().then((data) => {
+      if (!data) {
+        return;
+      }
+
+      const jsCode = htmlDocumentMessage({ type: "parseGLTFModel", data });
+      webViewRef.current?.injectJavaScript(jsCode);
+    });
+  }, []);
+
+  useEffect(() => {
     if (isHtmlDocumentReady) {
       // update camera position
       const cameraPosition = { x: 0, y: 0, z: 100 };
@@ -53,11 +63,6 @@ const View3D = () => {
       webViewRef.current?.injectJavaScript(jsCode);
     }
   }, [isHtmlDocumentReady]);
-
-  const onLoadingModelUpdate = ({ isVisible = false, progress = 0 }) => {
-    setIsProgressVisible(isVisible);
-    setProgress(progress);
-  };
 
   const onSnapshotUpdate = async ({
     dataUriScheme = "",

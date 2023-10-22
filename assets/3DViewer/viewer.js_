@@ -24,6 +24,8 @@ window.onReactNativeMessage = (message = "{}") => {
     camera.lookAt(0, 0, 0);
   } else if (type === "toggleCameraControl") {
     controls.enabled = !controls.enabled;
+  } else if (type === "parseGLTFModel") {
+    parseGLTFModel({ base64: data, scene });
   } else {
     postMessageRN("info", `webapp: onReactNativeMessage ${type}: ${data}`);
   }
@@ -132,7 +134,7 @@ const scaleModelToFitView = (scene) => {
 };
 
 const loadModelGLTF = (url, scene) => {
-  postMessageRN("info", `loadModelGLTF 3D model loading... ${url}`);
+  postMessageRN("info", `loadModelGLTF 3D model loading... ${url.substring(0, 200)}...`);
   postLoadingModelRN({ isVisible: true, progress: 0 });
 
   const loader = new THREE.GLTFLoader();
@@ -140,7 +142,7 @@ const loadModelGLTF = (url, scene) => {
     url,
     (gltf) => {
       postLoadingModelRN({ isVisible: false, progress: 0 });
-      postMessageRN("info", `3D model file loaded: ${url}`);
+      postMessageRN("info", `3D model file loaded: ${url.substring(0, 200)}...`);
       scaleModelToFitView(gltf.scene);
       scene.add(gltf.scene);
     },
@@ -154,6 +156,15 @@ const loadModelGLTF = (url, scene) => {
       postMessageRN("error", JSON.stringify(error));
     }
   );
+};
+
+const parseGLTFModel = async ({ base64 = "", scene }) => {
+  if (!base64 || !scene) {
+    return;
+  }
+
+  const dataUrl = `data:application/octet-binary;base64,${base64}`;
+  loadModelGLTF(dataUrl, scene);
 };
 
 const setupFileSelector = (scene) => {
@@ -225,3 +236,4 @@ const doubleClickHandler = (event) => {
 };
 
 document.body.addEventListener("dblclick", doubleClickHandler);
+postMessageRN("info", "Preparing 3D scene. Done.");
