@@ -1,11 +1,11 @@
 {
-    "@aws-sdk/client-lex-runtime-service@3.427.0": {
+    "@aws-sdk/client-lex-runtime-service@3.433.0": {
         "licenses": "Apache-2.0",
         "repository": "https://github.com/aws/aws-sdk-js-v3",
         "licenseUrl": "https://github.com/aws/aws-sdk-js-v3/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "@openspacelabs/react-native-zoomable-view@2.1.1": {
+    "@openspacelabs/react-native-zoomable-view@2.1.4": {
         "licenses": "MIT",
         "repository": "https://github.com/openspacelabs/react-native-zoomable-view",
         "licenseUrl": "https://github.com/openspacelabs/react-native-zoomable-view/raw/master/LICENSE",
@@ -23,19 +23,19 @@
         "licenseUrl": "https://github.com/react-native-netinfo/react-native-netinfo/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "@react-navigation/drawer@6.6.4": {
+    "@react-navigation/drawer@6.6.5": {
         "licenses": "MIT",
         "repository": "https://github.com/react-navigation/react-navigation",
         "licenseUrl": "https://github.com/react-navigation/react-navigation/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "@react-navigation/native-stack@6.9.14": {
+    "@react-navigation/native-stack@6.9.15": {
         "licenses": "MIT",
         "repository": "https://github.com/react-navigation/react-navigation",
         "licenseUrl": "https://github.com/react-navigation/react-navigation/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "@react-navigation/native@6.1.8": {
+    "@react-navigation/native@6.1.9": {
         "licenses": "MIT",
         "repository": "https://github.com/react-navigation/react-navigation",
         "licenseUrl": "https://github.com/react-navigation/react-navigation/raw/master/LICENSE",
@@ -137,7 +137,7 @@
         "licenseUrl": "https://github.com/expo/expo",
         "parents": "poc-archiver"
     },
-    "expo@49.0.13": {
+    "expo@49.0.16": {
         "licenses": "MIT",
         "repository": "https://github.com/expo/expo",
         "licenseUrl": "https://github.com/expo/expo",
@@ -161,7 +161,7 @@
         "licenseUrl": "https://github.com/software-mansion/react-native-gesture-handler/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "react-native-paper@5.10.6": {
+    "react-native-paper@5.11.0": {
         "licenses": "MIT",
         "repository": "https://github.com/callstack/react-native-paper",
         "licenseUrl": "https://github.com/callstack/react-native-paper/raw/master/LICENSE.md",
@@ -173,7 +173,7 @@
         "licenseUrl": "https://github.com/software-mansion/react-native-reanimated/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "react-native-redash@18.1.0": {
+    "react-native-redash@18.1.1": {
         "licenses": "MIT",
         "repository": "https://github.com/wcandillon/redash",
         "licenseUrl": "https://github.com/wcandillon/redash/raw/master/LICENSE",
@@ -209,7 +209,7 @@
         "licenseUrl": "https://github.com/react-native-webview/react-native-webview/raw/master/LICENSE",
         "parents": "poc-archiver"
     },
-    "react-native@0.72.5": {
+    "react-native@0.72.6": {
         "licenses": "MIT",
         "repository": "github:facebook/react-native",
         "licenseUrl": "github:facebook/react-native",
