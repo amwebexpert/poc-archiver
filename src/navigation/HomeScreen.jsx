@@ -7,7 +7,7 @@ import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Paragraph, Text, useTheme } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
-import { APP_URL } from "./constants";
+import { APP_URL } from "./HomeScreen.constants";
 
 export const HomeScreen = () => {
   const styles = useStyles();
@@ -52,10 +52,6 @@ export const HomeScreen = () => {
             Stay tuned because this is also an evolutive app used as a sandbox
             to learn by implementing real solutions to real problems.
           </Paragraph>
-
-          <Paragraph style={styles.paragraph}>
-            Like it? Do not forget to star the repo!
-          </Paragraph>
         </View>
 
         <Button
@@ -84,22 +80,28 @@ export const HomeScreen = () => {
         </Button>
       </ScrollView>
 
-      <View style={styles.actions}>
-        <Button
-          mode="outlined"
-          onPress={() => Linking.openURL(APP_URL)}
-          icon="star"
-        >
-          Star it!
-        </Button>
+      <View>
+        <Paragraph style={styles.paragraphCentered}>
+          Like it? Do not forget to star the repo!
+        </Paragraph>
 
-        <Button
-          mode="outlined"
-          onPress={() => navigation.navigate("About")}
-          icon="book-information-variant"
-        >
-          Licences…
-        </Button>
+        <View style={styles.actions}>
+          <Button
+            mode="outlined"
+            onPress={() => Linking.openURL(APP_URL)}
+            icon="star"
+          >
+            Star it!
+          </Button>
+
+          <Button
+            mode="outlined"
+            onPress={() => navigation.navigate("About")}
+            icon="book-information-variant"
+          >
+            Licences…
+          </Button>
+        </View>
       </View>
     </AppLayout>
   );
@@ -120,6 +122,10 @@ const useStyles = () => {
     },
     paragraph: {
       marginVertical: theme.spacing(1),
+    },
+    paragraphCentered: {
+      marginVertical: theme.spacing(1),
+      textAlign: "center",
     },
     actions: {
       flexDirection: "row",

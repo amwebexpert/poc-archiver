@@ -21,14 +21,7 @@ export const PictureZoomScreen = () => {
   return (
     <AppLayout title="Picture zoom">
       <View style={styles.container}>
-        <View
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderColor: "red",
-            width: "100%",
-          }}
-        >
+        <View style={{flex: 1}}>
           <ReactNativeZoomableView
             ref={zoomableViewRef}
             initialZoom={1}

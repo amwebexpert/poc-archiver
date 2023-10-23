@@ -12,6 +12,8 @@ import { useSnackbar } from "~/components/snack-bar/useSnackbar";
 import { exportToPNG, loadGLTFModel } from "./View3D.utils";
 import { useLoading } from "./useLoading";
 
+const selectFileAtStartup = false;
+
 const View3D = () => {
   const styles = useStyles();
 
@@ -42,6 +44,10 @@ const View3D = () => {
   };
 
   useEffect(() => {
+    if (!selectFileAtStartup) {
+      return;
+    }
+
     loadGLTFModel().then((data) => {
       if (!data) {
         return;
