@@ -5,7 +5,7 @@ import { Button, Paragraph, useTheme } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 
-const StorageManagement = () => {
+const StorageManagementScreen = () => {
   const styles = useStyles();
   const navigation = useNavigation();
 
@@ -60,4 +60,4 @@ const useStyles = () => {
   });
 };
 
-export default StorageManagement;
+export default StorageManagementScreen;

@@ -5,7 +5,7 @@ import { Button, Paragraph, useTheme } from "react-native-paper";
 
 import { AppLayout } from "~/components/layout/AppLayout";
 
-const ImageManipulations = () => {
+const ImageManipulationsScreen = () => {
   const styles = useStyles();
   const navigation = useNavigation();
 
@@ -89,4 +89,4 @@ const useStyles = () => {
   });
 };
 
-export default ImageManipulations;
+export default ImageManipulationsScreen;

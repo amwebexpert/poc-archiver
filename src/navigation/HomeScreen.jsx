@@ -57,7 +57,7 @@ export const HomeScreen = () => {
         <Button
           mode="outlined"
           style={styles.category}
-          onPress={() => navigation.navigate("ImageManipulation")}
+          onPress={() => navigation.navigate("ImageTransform")}
           icon="image"
         >
           Image manipulation…
@@ -65,7 +65,7 @@ export const HomeScreen = () => {
         <Button
           mode="outlined"
           style={styles.category}
-          onPress={() => navigation.navigate("StorageManagement")}
+          onPress={() => navigation.navigate("DeviceStorage")}
           icon="database"
         >
           Storage management…

@@ -1,5 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as Device from "expo-device";
 import { Provider as PaperProvider } from "react-native-paper";
 
@@ -9,10 +8,7 @@ import { appTheme } from "~/theme";
 
 import { setupLogBox } from "~/utils/logger";
 
-const Stack = createNativeStackNavigator();
-
 setupLogBox();
-
 
 const App = () => {
   console.info(

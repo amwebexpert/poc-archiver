@@ -14,7 +14,7 @@ import { useLoading } from "./useLoading";
 
 const selectFileAtStartup = false;
 
-const View3D = () => {
+export const View3D = () => {
   const styles = useStyles();
 
   const webViewRef = useRef(null);
@@ -116,4 +116,3 @@ const useStyles = () => {
     },
   });
 };
-export default View3D;
